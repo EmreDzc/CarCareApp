@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView_settings"
     android:layout_width="match_parent"
@@ -13,289 +14,706 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- 1. Edit Profile Bölümü -->
-        <androidx.cardview.widget.CardView
+        <!-- Modern Edit Profile Bölümü -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_edit_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
-                <ImageView
-                    android:id="@+id/img_edit_profile_icon"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header: Açılır/Kapanır alan -->
+                <LinearLayout
+                    android:id="@+id/layout_edit_profile_header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher_foreground"
-                android:contentDescription="Edit Profile Icon" />
-                <TextView
-                    android:id="@+id/txt_edit_profile"
-                    android:layout_width="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- Başlık simgesi -->
+                    <ImageView
+                        android:id="@+id/img_profile_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_profile" />
+
+                    <TextView
+                        android:id="@+id/tv_edit_profile_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Edit Profile"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:paddingStart="8dp"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar: Başlangıçta gizli -->
+                <LinearLayout
+                    android:id="@+id/layout_edit_profile_details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Edit Profile"
-                    android:textSize="16sp"
-                    android:layout_marginStart="16dp"/>
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <!-- Name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Name" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Email -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Email" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Phone -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Phone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Save Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_save_profile"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save" />
+                </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
+
 
         <!-- 2. Vehicle Appointment & Insurance Bölümü -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_vehicle_appointment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <!-- Next Vehicle Maintenance Appointment -->
-                <TextView
-                    android:id="@+id/txt_next_maintenance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Next Vehicle Maintenance Appointment" />
-                <EditText
-                    android:id="@+id/edit_next_maintenance_date"
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_vehicle_appointment_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="gg.aa.yyyy"
-                    android:inputType="datetime" />
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+                    <!-- İkon -->
+                    <ImageView
+                        android:id="@+id/img_vehicle_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_vehicle"/>
 
-                <!-- Traffic Insurance Expiry Date -->
-                <TextView
-                    android:id="@+id/txt_traffic_insurance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Traffic Insurance Expiry Date" />
-                <EditText
-                    android:id="@+id/edit_traffic_insurance_date"
+
+                    <TextView
+                        android:id="@+id/tv_vehicle_appointment_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="Vehicle Appointment and Insurance"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_vehicle_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_vehicle_appointment_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="gg.aa.yyyy"
-                    android:inputType="datetime" />
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
 
-                <!-- Car Insurance Expiry Date -->
-                <TextView
-                    android:id="@+id/txt_car_insurance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Car Insurance Expiry Date" />
-                <EditText
-                    android:id="@+id/edit_car_insurance_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="gg.aa.yyyy"
-                    android:inputType="datetime" />
+                    <!-- Next Vehicle Maintenance Appointment -->
+                    <TextView
+                        android:id="@+id/txt_next_maintenance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Next Vehicle Maintenance Appointment"
+                        android:textStyle="italic"/>
 
-                <!-- Save Button -->
-                <Button
-                    android:id="@+id/btn_save_vehicle_appointment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Save"
-                    android:layout_marginTop="16dp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_next_maintenance_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="gg.aa.yyyy"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Traffic Insurance Expiry Date -->
+                    <TextView
+                        android:id="@+id/txt_traffic_insurance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Traffic Insurance Expiry Date"
+                        android:textStyle="italic"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_traffic_insurance_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="gg.aa.yyyy"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Car Insurance Expiry Date -->
+                    <TextView
+                        android:id="@+id/txt_car_insurance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Car Insurance Expiry Date"
+                        android:textStyle="italic"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_car_insurance_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="gg.aa.yyyy"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Save Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_save_vehicle_appointment"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- 3. Profile Picture Bölümü -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_profile_picture"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_upload_picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
-                <ImageView
-                    android:id="@+id/img_profile_picture"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_launcher_foreground"
-                    android:contentDescription="Profile Picture"/>
-                <TextView
-                    android:id="@+id/txt_upload_picture"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_upload_picture_header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Upload Picture"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="16dp"/>
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- Profil Resmi İkonu -->
+                    <ImageView
+                        android:id="@+id/img_profile_picture_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_profile_picture"/>
+
+                    <TextView
+                        android:id="@+id/tv_upload_picture_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="Upload Picture"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_upload_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_upload_picture_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <!-- Profil resmi önizlemesi -->
+                    <ImageView
+                        android:id="@+id/img_profile_picture"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_launcher_foreground"
+                        android:contentDescription="Profile Picture"/>
+
+                    <!-- Resim Seçme Butonu -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_choose_picture"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Choose Picture"
+                        android:layout_marginTop="16dp"
+                        android:layout_gravity="center_horizontal"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- 4. Dark Mode Toggle Bölümü -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_dark_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/txt_dark_mode"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_dark_mode_header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Dark Mode" />
-                <Switch
-                    android:id="@+id/switch_dark_mode"
-                    android:layout_width="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- Dark Mode İkonu -->
+                    <ImageView
+                        android:id="@+id/img_dark_mode_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_dark_mode" />
+
+                    <TextView
+                        android:id="@+id/tv_dark_mode_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="Dark Mode"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_dark_mode_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_dark_mode_details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:checked="false"/>
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <Switch
+                        android:id="@+id/switch_dark_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enable Dark Mode"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- 5. FAQ Bölümü -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_faq"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <!-- FAQ arama alanı -->
-                <EditText
-                    android:id="@+id/edit_search_faq"
+                android:orientation="vertical">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_faq_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Search FAQ"/>
-                <!-- Soru ve cevaplar -->
-                <TextView
-                    android:id="@+id/txt_faq_profile"
-                    android:layout_width="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- FAQ Simge -->
+                    <ImageView
+                        android:id="@+id/img_faq_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_faq"/>
+
+                    <TextView
+                        android:id="@+id/tv_faq_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="FAQ"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_faq_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_faq_details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="How do I update my profile?"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-                <TextView
-                    android:id="@+id/txt_faq_profile_answer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="You can update your profile by going to the 'Edit Profile' section in the settings menu."/>
-                <TextView
-                    android:id="@+id/txt_faq_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How can I change my password?"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-                <TextView
-                    android:id="@+id/txt_faq_password_answer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="To change your password, go to the 'Security' section in your account settings."/>
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <!-- Soru & Cevap 1 -->
+                    <TextView
+                        android:id="@+id/txt_faq_1_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="How do I update my profile?"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/txt_faq_1_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You can update your profile by going to the 'Edit Profile' section in the settings menu."
+                        android:textStyle="italic"/>
+
+                    <!-- Soru & Cevap 2 -->
+                    <TextView
+                        android:id="@+id/txt_faq_2_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="How can I change my password?"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/txt_faq_2_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="To change your password, go to the 'Security' section in your account settings."
+                        android:textStyle="italic"/>
+
+                    <!-- Ek Soru & Cevap -->
+                    <TextView
+                        android:id="@+id/txt_faq_3_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="What is this app about?"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/txt_faq_3_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="This app is designed to help manage your vehicle care and related services."
+                        android:textStyle="italic"/>
+
+                    <TextView
+                        android:id="@+id/txt_faq_4_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="How can I contact support?"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/txt_faq_4_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You can contact our support team via the 'Contact Us' section in the app."
+                        android:textStyle="italic"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- 6. Rate the App Bölümü -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_rate_app"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rate the App" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/btn_rate_app"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rate on Play Store" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
         <!-- 7. Log Out Bölümü -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/txt_logout"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_logout_header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Log Out" />
-                <Button
-                    android:id="@+id/btn_logout"
-                    android:layout_width="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- Log Out İkonu -->
+                    <ImageView
+                        android:id="@+id/img_logout_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_logout"/>
+
+                    <TextView
+                        android:id="@+id/tv_logout_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="Log Out"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_logout_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_logout_details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Log Out"
-                    android:layout_gravity="end"
-                    android:layout_marginStart="16dp"
-                    />
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_logout_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Are you sure you want to log out?"
+                        android:textStyle="italic"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_confirm_logout"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Confirm Log Out"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- 8. Delete Account Bölümü -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_delete_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/txt_delete_warning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Warning: Deleting your account will permanently remove all your data."/>
-                <EditText
-                    android:id="@+id/edit_confirm_password"
+                android:orientation="vertical">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/layout_delete_account_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Confirm password"
-                    android:inputType="textPassword"
-                    android:layout_marginTop="8dp"/>
-                <Button
-                    android:id="@+id/btn_delete_account"
-                    android:layout_width="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground">
+
+                    <!-- Delete Account İkonu -->
+                    <ImageView
+                        android:id="@+id/img_delete_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_delete_account"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_delete_account_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="8dp"
+                        android:text="Delete Account"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textStyle="italic"/>
+
+                    <ImageView
+                        android:id="@+id/img_delete_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_down"/>
+                </LinearLayout>
+
+                <!-- Detaylar (Başlangıçta gizli) -->
+                <LinearLayout
+                    android:id="@+id/layout_delete_account_details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Delete Account"
-                    android:layout_marginTop="16dp"/>
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_delete_warning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Warning: Deleting your account will permanently remove all your data."
+                        android:textColor="@color/warning_red"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_confirm_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Confirm password"
+                            android:inputType="textPassword"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_confirm_delete_account"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Account"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
+
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
 
     </LinearLayout>
 </ScrollView>
