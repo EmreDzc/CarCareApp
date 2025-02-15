@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "662680003664",
+    "firebase_url": "https://carcareapp-d5bd7-default-rtdb.firebaseio.com",
+    "project_id": "carcareapp-d5bd7",
+    "storage_bucket": "carcareapp-d5bd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662680003664:android:92c0872559c3493c181d55",
+        "android_client_info": {
+          "package_name": "com.example.carcare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwoFCXLGpFf48Ez4fFSl727mnYQaLPU6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662680003664:android:da9d8bd060cf19a9181d55",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwoFCXLGpFf48Ez4fFSl727mnYQaLPU6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662680003664:android:00381928a44804f7181d55",
+        "android_client_info": {
+          "package_name": "com.example.newmyapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwoFCXLGpFf48Ez4fFSl727mnYQaLPU6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
