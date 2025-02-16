@@ -4,43 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:background="?attr/selectableItemBackground">
+    android:padding="16dp">
 
+    <!-- Bildirimin başlığı -->
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Başlık"
         android:textStyle="bold"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:text="Başlık" />
 
+    <!-- Bildirimin mesajı -->
     <TextView
-        android:id="@+id/tvMessage"
+        android:id="@+id/messageTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mesaj"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
+        android:textSize="14sp"
+        android:text="Mesaj" />
 
+    <!-- Butonların bulunduğu yatay LinearLayout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:gravity="end">
 
         <Button
-            android:id="@+id/btnUpdate"
-            android:layout_width="0dp"
+            android:id="@+id/updateButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Güncelle" />
 
         <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="0dp"
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Sil"
             android:layout_marginStart="8dp" />
     </LinearLayout>

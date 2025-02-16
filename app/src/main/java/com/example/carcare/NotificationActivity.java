@@ -2,17 +2,14 @@ package com.example.carcare;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,62 +41,20 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Programatik olarak layout oluşturuyoruz
+        // XML layout'u kullanıyoruz
+        setContentView(R.layout.activity_notification);
 
-        // Ana dikey LinearLayout
-        LinearLayout rootLayout = new LinearLayout(this);
-        rootLayout.setOrientation(LinearLayout.VERTICAL);
-        rootLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
+        // XML'deki view'ları alıyoruz
+        errorTextView = findViewById(R.id.errorTextView);
+        listView = findViewById(R.id.notificationListView);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
-        // Üst başlık (TopAppBar benzeri)
-        TextView titleTextView = new TextView(this);
-        titleTextView.setText("Bildirimler");
-        titleTextView.setTextSize(20);
-        titleTextView.setPadding(16, 16, 16, 16);
-        rootLayout.addView(titleTextView);
-
-        // Hata mesajı için TextView
-        errorTextView = new TextView(this);
-        errorTextView.setTextColor(Color.RED);
-        errorTextView.setVisibility(View.GONE);
-        rootLayout.addView(errorTextView);
-
-        // Bildirimlerin listeleneceği ListView
-        listView = new ListView(this);
-        LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
-        listView.setLayoutParams(listParams);
-        rootLayout.addView(listView);
-
-        // Ana rootLayout'u FrameLayout içerisine alarak FAB için konumlandırma yapıyoruz
-        FrameLayout frameLayout = new FrameLayout(this);
-        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
-        frameLayout.addView(rootLayout);
-
-        // FloatingActionButton oluşturuluyor
-        final FloatingActionButton fab = new FloatingActionButton(this);
-        fab.setImageResource(android.R.drawable.ic_input_add);
-        FrameLayout.LayoutParams fabParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM | Gravity.END);
-        int margin = (int) (16 * getResources().getDisplayMetrics().density);
-        fabParams.setMargins(margin, margin, margin, margin);
-        fab.setLayoutParams(fabParams);
-        frameLayout.addView(fab);
-
-        setContentView(frameLayout);
-
-        // Bildirim listesi ve adapter
+        // Bildirim listesi ve adapter kurulumu
         notifications = new ArrayList<>();
         adapter = new NotificationAdapter();
         listView.setAdapter(adapter);
 
-        // Firebase yöneticisi başlatılıyor
+        // Firebase yöneticisini başlatıyoruz
         notificationManager = new FirebaseNotificationManager();
 
         // Uygulama açıldığında bildirimleri yüklüyoruz
@@ -172,8 +127,8 @@ public class NotificationActivity extends AppCompatActivity {
         });
     }
 
+    // Bildirim güncelleme işlemi: update butonuna tıklanırsa çağrılır.
     private void updateNotification(final NotificationData notification) {
-        // AlertDialog ile bildirim başlığını düzenleme
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Bildirim Düzenle");
 
@@ -218,6 +173,7 @@ public class NotificationActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // Bildirim silme işlemi: delete butonuna tıklanırsa çağrılır.
     private void deleteNotification(final NotificationData notification) {
         if (notification.getId() != null) {
             notificationManager.deleteNotification(notification.getId(), new FirebaseNotificationManager.SimpleCallback() {
@@ -242,7 +198,7 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
-    // ListView için adapter
+    // ListView için adapter: Her satırda item_notification.xml dosyası inflate ediliyor.
     private class NotificationAdapter extends BaseAdapter {
 
         @Override
@@ -262,75 +218,46 @@ public class NotificationActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            LinearLayout layout;
-            final ViewHolder holder;
+            NotificationViewHolder holder;
             if (convertView == null) {
-                layout = new LinearLayout(NotificationActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-                int padding = (int) (16 * getResources().getDisplayMetrics().density);
-                layout.setPadding(padding, padding, padding, padding);
-
-                // Başlık TextView
-                TextView titleView = new TextView(NotificationActivity.this);
-                titleView.setTextSize(18);
-                titleView.setId(View.generateViewId());
-                layout.addView(titleView);
-
-                // Mesaj TextView
-                TextView messageView = new TextView(NotificationActivity.this);
-                messageView.setId(View.generateViewId());
-                layout.addView(messageView);
-
-                // Butonların yer alacağı yatay LinearLayout
-                LinearLayout buttonLayout = new LinearLayout(NotificationActivity.this);
-                buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-                buttonLayout.setGravity(Gravity.END);
-
-                Button updateButton = new Button(NotificationActivity.this);
-                updateButton.setText("Güncelle");
-                updateButton.setId(View.generateViewId());
-                buttonLayout.addView(updateButton);
-
-                Button deleteButton = new Button(NotificationActivity.this);
-                deleteButton.setText("Sil");
-                deleteButton.setId(View.generateViewId());
-                buttonLayout.addView(deleteButton);
-
-                layout.addView(buttonLayout);
-
-                holder = new ViewHolder();
-                holder.titleView = titleView;
-                holder.messageView = messageView;
-                holder.updateButton = updateButton;
-                holder.deleteButton = deleteButton;
-                layout.setTag(holder);
+                convertView = LayoutInflater.from(NotificationActivity.this)
+                        .inflate(R.layout.item_notification, parent, false);
+                holder = new NotificationViewHolder();
+                holder.titleTextView = convertView.findViewById(R.id.titleTextView);
+                holder.messageTextView = convertView.findViewById(R.id.messageTextView);
+                holder.updateButton = convertView.findViewById(R.id.updateButton);
+                holder.deleteButton = convertView.findViewById(R.id.deleteButton);
+                convertView.setTag(holder);
             } else {
-                layout = (LinearLayout) convertView;
-                holder = (ViewHolder) layout.getTag();
+                holder = (NotificationViewHolder) convertView.getTag();
             }
 
             final NotificationData notification = notifications.get(position);
-            holder.titleView.setText((notification.getTitle() != null) ? notification.getTitle() : "Başlık Yok");
-            holder.messageView.setText((notification.getMessage() != null) ? notification.getMessage() : "Mesaj Yok");
+            holder.titleTextView.setText(notification.getTitle() != null ? notification.getTitle() : "Başlık Yok");
+            holder.messageTextView.setText(notification.getMessage() != null ? notification.getMessage() : "Mesaj Yok");
 
+            // Güncelle butonuna tıklanınca updateNotification() metodunu çağırıyoruz.
             holder.updateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     updateNotification(notification);
                 }
             });
+
+            // Sil butonuna tıklanınca deleteNotification() metodunu çağırıyoruz.
             holder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     deleteNotification(notification);
                 }
             });
-            return layout;
+
+            return convertView;
         }
 
-        private class ViewHolder {
-            TextView titleView;
-            TextView messageView;
+        private class NotificationViewHolder {
+            TextView titleTextView;
+            TextView messageTextView;
             Button updateButton;
             Button deleteButton;
         }
@@ -343,37 +270,29 @@ public class NotificationActivity extends AppCompatActivity {
         private String message;
         private Date timestamp;
 
-        // Varsayılan yapıcı metod (Firestore'un deserialize edebilmesi için gerekli)
         public NotificationData() { }
 
         public String getId() {
             return id;
         }
-
         public void setId(String id) {
             this.id = id;
         }
-
         public String getTitle() {
             return title;
         }
-
         public void setTitle(String title) {
             this.title = title;
         }
-
         public String getMessage() {
             return message;
         }
-
         public void setMessage(String message) {
             this.message = message;
         }
-
         public Date getTimestamp() {
             return timestamp;
         }
-
         public void setTimestamp(Date timestamp) {
             this.timestamp = timestamp;
         }
@@ -422,7 +341,7 @@ public class NotificationActivity extends AppCompatActivity {
                     });
         }
 
-        // Tüm bildirimleri listeleme (timestamp sırasına göre)
+        // Tüm bildirimleri listeleme (timestamp'e göre)
         public void getAllNotifications(final NotificationListCallback callback) {
             notificationsRef.orderBy("timestamp")
                     .get()
