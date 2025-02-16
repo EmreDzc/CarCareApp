@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Modern Edit Profile Bölümü -->
+        <!-- 1. Modern Edit Profile Bölümü (Güncellenmiş) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_edit_profile"
             android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Header: Açılır/Kapanır alan -->
+                <!-- Header: Açılır/Kapanır Alan -->
                 <LinearLayout
                     android:id="@+id/layout_edit_profile_header"
                     android:layout_width="match_parent"
@@ -40,32 +40,34 @@
                     android:gravity="center_vertical"
                     android:background="?attr/selectableItemBackground">
 
-                    <!-- Başlık simgesi -->
+                    <!-- Başlık Simge -->
                     <ImageView
                         android:id="@+id/img_profile_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_profile" />
 
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_edit_profile_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:paddingStart="8dp"
                         android:text="Edit Profile"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:paddingStart="8dp"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar: Başlangıçta gizli -->
+                <!-- Detaylar: Başlangıçta Gizli -->
                 <LinearLayout
                     android:id="@+id/layout_edit_profile_details"
                     android:layout_width="match_parent"
@@ -74,7 +76,7 @@
                     android:padding="16dp"
                     android:visibility="gone">
 
-                    <!-- Name -->
+                    <!-- Name Alanı -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -86,19 +88,19 @@
                             android:hint="Name" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Email -->
+                    <!-- Surname Alanı -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp">
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_email"
+                            android:id="@+id/edit_surname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Email" />
+                            android:hint="Surname" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Phone -->
+                    <!-- Phone Alanı -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -120,9 +122,6 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
-
 
         <!-- 2. Vehicle Appointment & Insurance Bölümü -->
         <com.google.android.material.card.MaterialCardView
@@ -154,9 +153,9 @@
                         android:id="@+id/img_vehicle_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_vehicle"/>
+                        android:src="@drawable/ic_vehicle" />
 
-
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_vehicle_appointment_title"
                         android:layout_width="0dp"
@@ -166,13 +165,14 @@
                         android:text="Vehicle Appointment and Insurance"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_vehicle_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
                 <!-- Detaylar (Başlangıçta gizli) -->
@@ -190,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Next Vehicle Maintenance Appointment"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -200,7 +200,7 @@
                             android:id="@+id/edit_next_maintenance_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="gg.aa.yyyy"/>
+                            android:hint="gg.aa.yyyy" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Traffic Insurance Expiry Date -->
@@ -210,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Traffic Insurance Expiry Date"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -220,7 +220,7 @@
                             android:id="@+id/edit_traffic_insurance_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="gg.aa.yyyy"/>
+                            android:hint="gg.aa.yyyy" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Car Insurance Expiry Date -->
@@ -230,7 +230,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Car Insurance Expiry Date"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -240,7 +240,7 @@
                             android:id="@+id/edit_car_insurance_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="gg.aa.yyyy"/>
+                            android:hint="gg.aa.yyyy" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Save Button -->
@@ -250,13 +250,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Save"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="16dp" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- 3. Profile Picture Bölümü -->
         <com.google.android.material.card.MaterialCardView
@@ -289,8 +286,9 @@
                         android:id="@+id/img_profile_picture_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_profile_picture"/>
+                        android:src="@drawable/ic_profile_picture" />
 
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_upload_picture_title"
                         android:layout_width="0dp"
@@ -300,16 +298,17 @@
                         android:text="Upload Picture"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_upload_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar (Başlangıçta gizli) -->
+                <!-- Detaylar (Başlangıçta Gizli) -->
                 <LinearLayout
                     android:id="@+id/layout_upload_picture_details"
                     android:layout_width="match_parent"
@@ -318,14 +317,14 @@
                     android:padding="16dp"
                     android:visibility="gone">
 
-                    <!-- Profil resmi önizlemesi -->
+                    <!-- Profil Resmi Önizlemesi -->
                     <ImageView
                         android:id="@+id/img_profile_picture"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_gravity="center_horizontal"
                         android:src="@drawable/ic_launcher_foreground"
-                        android:contentDescription="Profile Picture"/>
+                        android:contentDescription="Profile Picture" />
 
                     <!-- Resim Seçme Butonu -->
                     <com.google.android.material.button.MaterialButton
@@ -335,13 +334,10 @@
                         android:layout_height="wrap_content"
                         android:text="Choose Picture"
                         android:layout_marginTop="16dp"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- 4. Dark Mode Toggle Bölümü -->
         <com.google.android.material.card.MaterialCardView
@@ -376,6 +372,7 @@
                         android:layout_height="24dp"
                         android:src="@drawable/ic_dark_mode" />
 
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_dark_mode_title"
                         android:layout_width="0dp"
@@ -385,16 +382,17 @@
                         android:text="Dark Mode"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_dark_mode_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar (Başlangıçta gizli) -->
+                <!-- Detaylar (Başlangıçta Gizli) -->
                 <LinearLayout
                     android:id="@+id/layout_dark_mode_details"
                     android:layout_width="match_parent"
@@ -407,13 +405,10 @@
                         android:id="@+id/switch_dark_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Enable Dark Mode"/>
+                        android:text="Enable Dark Mode" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- 5. FAQ Bölümü -->
         <com.google.android.material.card.MaterialCardView
@@ -446,8 +441,9 @@
                         android:id="@+id/img_faq_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_faq"/>
+                        android:src="@drawable/ic_faq" />
 
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_faq_title"
                         android:layout_width="0dp"
@@ -457,16 +453,17 @@
                         android:text="FAQ"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_faq_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar (Başlangıçta gizli) -->
+                <!-- Detaylar (Başlangıçta Gizli) -->
                 <LinearLayout
                     android:id="@+id/layout_faq_details"
                     android:layout_width="match_parent"
@@ -481,13 +478,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="How do I update my profile?"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/txt_faq_1_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="You can update your profile by going to the 'Edit Profile' section in the settings menu."
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
                     <!-- Soru & Cevap 2 -->
                     <TextView
@@ -496,50 +493,48 @@
                         android:layout_height="wrap_content"
                         android:text="How can I change my password?"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp" />
                     <TextView
                         android:id="@+id/txt_faq_2_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="To change your password, go to the 'Security' section in your account settings."
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
-                    <!-- Ek Soru & Cevap -->
+                    <!-- Ek Soru & Cevap 3 -->
                     <TextView
                         android:id="@+id/txt_faq_3_question"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="What is this app about?"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp" />
                     <TextView
                         android:id="@+id/txt_faq_3_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="This app is designed to help manage your vehicle care and related services."
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Ek Soru & Cevap 4 -->
                     <TextView
                         android:id="@+id/txt_faq_4_question"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="How can I contact support?"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp" />
                     <TextView
                         android:id="@+id/txt_faq_4_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="You can contact our support team via the 'Contact Us' section in the app."
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
-
-        <!-- 7. Log Out Bölümü -->
+        <!-- 6. Collapsible Log Out Bölümü -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_logout"
             android:layout_width="match_parent"
@@ -570,8 +565,9 @@
                         android:id="@+id/img_logout_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_logout"/>
+                        android:src="@drawable/ic_logout" />
 
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_logout_title"
                         android:layout_width="0dp"
@@ -581,16 +577,17 @@
                         android:text="Log Out"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_logout_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar (Başlangıçta gizli) -->
+                <!-- Detaylar (Başlangıçta Gizli) -->
                 <LinearLayout
                     android:id="@+id/layout_logout_details"
                     android:layout_width="match_parent"
@@ -604,7 +601,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Are you sure you want to log out?"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_confirm_logout"
@@ -612,15 +609,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Confirm Log Out"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="16dp" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
-
-        <!-- 8. Delete Account Bölümü -->
+        <!-- 7. Collapsible Delete Account Bölümü -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_delete_account"
             android:layout_width="match_parent"
@@ -651,9 +645,9 @@
                         android:id="@+id/img_delete_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_delete_account"/>
+                        android:src="@drawable/ic_delete_account" />
 
-
+                    <!-- Başlık Metni -->
                     <TextView
                         android:id="@+id/tv_delete_account_title"
                         android:layout_width="0dp"
@@ -663,16 +657,17 @@
                         android:text="Delete Account"
                         android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="?attr/colorOnBackground"
-                        android:textStyle="italic"/>
+                        android:textStyle="italic" />
 
+                    <!-- Toggle İkonu -->
                     <ImageView
                         android:id="@+id/img_delete_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down"/>
+                        android:src="@drawable/ic_arrow_down" />
                 </LinearLayout>
 
-                <!-- Detaylar (Başlangıçta gizli) -->
+                <!-- Detaylar (Başlangıçta Gizli) -->
                 <LinearLayout
                     android:id="@+id/layout_delete_account_details"
                     android:layout_width="match_parent"
@@ -687,7 +682,7 @@
                         android:layout_height="wrap_content"
                         android:text="Warning: Deleting your account will permanently remove all your data."
                         android:textColor="@color/warning_red"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -698,7 +693,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Confirm password"
-                            android:inputType="textPassword"/>
+                            android:inputType="textPassword" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton
@@ -707,13 +702,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delete Account"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="16dp" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
 
     </LinearLayout>
 </ScrollView>
