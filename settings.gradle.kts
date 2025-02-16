@@ -10,6 +10,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        // Bu satırı ekleyin:
+        id("com.google.gms.google-services") version "4.4.2"
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -21,4 +25,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "CarCare++"
 include(":app")
- 
