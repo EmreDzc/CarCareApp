@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -18,4 +19,13 @@
         android:layout_height="wrap_content"
         android:text="Bildirimlere Git"
         android:layout_marginTop="16dp" />
+
+    <!-- Harita sayfasına geçiş butonu -->
+    <Button
+        android:id="@+id/btn_go_to_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Harita Sayfasına Git"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>

@@ -35,5 +35,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
             startActivity(intent);
         });
+
+        // "Harita Sayfasına Git" butonunu tanımla ve MapActivity'ye yönlendir.
+        Button btnGoToMap = findViewById(R.id.btn_go_to_map);
+        btnGoToMap.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, MapActivity.class);
+            startActivity(intent);
+        });
     }
 }
