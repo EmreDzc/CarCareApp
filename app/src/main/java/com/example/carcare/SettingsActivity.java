@@ -1,9 +1,7 @@
 package com.example.carcare;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.content.res.Configuration;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,15 +11,26 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    // Vehicle Appointment & Insurance bölümü elemanları
+    // Edit Profile alanları
+    private EditText editName, editSurname, editEmail, editPhone, editReauthPassword;
+    // Vehicle Appointment & Insurance alanları
     private EditText editNextMaintenanceDate, editTrafficInsuranceDate, editCarInsuranceDate;
-    // Delete Account bölümü elemanları
+    // Delete Account alanları
     private EditText editConfirmPassword;
     private Button btnDeleteAccount;
 
@@ -30,7 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        // --- 1. Collapsible Edit Profile Bölümü ---
+        // ============================================================
+        // 1. Collapsible Edit Profile Bölümü (Güncellenmiş)
+        // ============================================================
         LinearLayout layoutEditProfileHeader = findViewById(R.id.layout_edit_profile_header);
         final LinearLayout layoutEditProfileDetails = findViewById(R.id.layout_edit_profile_details);
         final ImageView imgToggle = findViewById(R.id.img_toggle);
@@ -47,7 +58,50 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        // --- 2. Collapsible Vehicle Appointment and Insurance Bölümü ---
+        // Edit Profile alanlarını tanımla (Email ve reauth alanları kaldırıldı)
+        editName = findViewById(R.id.edit_name);
+        editSurname = findViewById(R.id.edit_surname);
+        editPhone = findViewById(R.id.edit_phone);
+        Button btnSaveProfile = findViewById(R.id.btn_save_profile);
+
+        btnSaveProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = editName.getText().toString().trim();
+                String surname = editSurname.getText().toString().trim();
+                String phone = editPhone.getText().toString().trim();
+
+                if (name.isEmpty() || surname.isEmpty()) {
+                    Toast.makeText(SettingsActivity.this, "Name and Surname cannot be empty.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // FirebaseAuth üzerinden oturum açmış kullanıcıyı alıyoruz.
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    Toast.makeText(SettingsActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Firestore güncellemesi: "name", "surname" ve "phone" alanları güncellenecek
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                Map<String, Object> profileUpdates = new HashMap<>();
+                profileUpdates.put("name", name);
+                profileUpdates.put("surname", surname);
+                profileUpdates.put("phone", phone);
+
+                db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .set(profileUpdates, SetOptions.merge())
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(SettingsActivity.this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(SettingsActivity.this, "Profile update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+            }
+        });
+        // ============================================================
+        // 2. Collapsible Vehicle Appointment & Insurance Bölümü
+        // ============================================================
         LinearLayout layoutVehicleHeader = findViewById(R.id.layout_vehicle_appointment_header);
         final LinearLayout layoutVehicleDetails = findViewById(R.id.layout_vehicle_appointment_details);
         final ImageView imgVehicleToggle = findViewById(R.id.img_vehicle_toggle);
@@ -63,8 +117,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Vehicle Appointment & Insurance işlemleri
         editNextMaintenanceDate = findViewById(R.id.edit_next_maintenance_date);
         editTrafficInsuranceDate = findViewById(R.id.edit_traffic_insurance_date);
         editCarInsuranceDate = findViewById(R.id.edit_car_insurance_date);
@@ -75,12 +127,13 @@ public class SettingsActivity extends AppCompatActivity {
                 String maintenanceDate = editNextMaintenanceDate.getText().toString();
                 String trafficDate = editTrafficInsuranceDate.getText().toString();
                 String carInsuranceDate = editCarInsuranceDate.getText().toString();
-                // Gerekli doğrulama ve veri kaydetme işlemleri burada yapılabilir.
                 Toast.makeText(SettingsActivity.this, "Vehicle appointment details saved.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // --- 3. Collapsible Upload Picture Bölümü ---
+        // ============================================================
+        // 3. Collapsible Upload Picture Bölümü
+        // ============================================================
         LinearLayout layoutUploadPictureHeader = findViewById(R.id.layout_upload_picture_header);
         final LinearLayout layoutUploadPictureDetails = findViewById(R.id.layout_upload_picture_details);
         final ImageView imgUploadToggle = findViewById(R.id.img_upload_toggle);
@@ -100,14 +153,15 @@ public class SettingsActivity extends AppCompatActivity {
         btnChoosePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Cihazın galerisinden resim seçme işlemi
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, 100);
             }
         });
 
-        // --- 4. Collapsible Dark Mode Bölümü ---
+        // ============================================================
+        // 4. Collapsible Dark Mode Bölümü
+        // ============================================================
         LinearLayout layoutDarkModeHeader = findViewById(R.id.layout_dark_mode_header);
         final LinearLayout layoutDarkModeDetails = findViewById(R.id.layout_dark_mode_details);
         final ImageView imgDarkModeToggle = findViewById(R.id.img_dark_mode_toggle);
@@ -123,29 +177,26 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
         Switch switchDarkMode = findViewById(R.id.switch_dark_mode);
         int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switchDarkMode.setChecked(currentNightMode == Configuration.UI_MODE_NIGHT_YES);
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // Eğer switch açık ise (dark mode aktif):
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 Toast.makeText(SettingsActivity.this, "Dark Mode On", Toast.LENGTH_SHORT).show();
             } else {
-                // Eğer switch kapalı ise (dark mode kapalı):
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 Toast.makeText(SettingsActivity.this, "Dark Mode Off", Toast.LENGTH_SHORT).show();
             }
-            // Tema değişikliğinin hemen yansıması için activity'yi yeniden oluşturun:
             recreate();
         });
 
-        // --- Collapsible FAQ Bölümü ---
+        // ============================================================
+        // 5. Collapsible FAQ Bölümü
+        // ============================================================
         LinearLayout layoutFaqHeader = findViewById(R.id.layout_faq_header);
         final LinearLayout layoutFaqDetails = findViewById(R.id.layout_faq_details);
         final ImageView imgFaqToggle = findViewById(R.id.img_faq_toggle);
-
         layoutFaqHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,12 +210,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-
-        // --- Collapsible Log Out Bölümü ---
+        // ============================================================
+        // 6. Collapsible Log Out Bölümü
+        // ============================================================
         LinearLayout layoutLogoutHeader = findViewById(R.id.layout_logout_header);
         final LinearLayout layoutLogoutDetails = findViewById(R.id.layout_logout_details);
         final ImageView imgLogoutToggle = findViewById(R.id.img_logout_toggle);
-
         layoutLogoutHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -177,21 +228,24 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
         Button btnConfirmLogout = findViewById(R.id.btn_confirm_logout);
         btnConfirmLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Burada gerçek log out işlemini gerçekleştirin
+                FirebaseAuth.getInstance().signOut();
                 Toast.makeText(SettingsActivity.this, "Logged out", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
-        // --- Collapsible Delete Account Bölümü ---
+        // ============================================================
+        // 7. Collapsible Delete Account Bölümü
+        // ============================================================
         LinearLayout layoutDeleteHeader = findViewById(R.id.layout_delete_account_header);
         final LinearLayout layoutDeleteDetails = findViewById(R.id.layout_delete_account_details);
         final ImageView imgDeleteToggle = findViewById(R.id.img_delete_toggle);
-
         layoutDeleteHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,16 +258,50 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
         editConfirmPassword = findViewById(R.id.edit_confirm_password);
         Button btnConfirmDeleteAccount = findViewById(R.id.btn_confirm_delete_account);
         btnConfirmDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Şifre doğrulaması ve hesap silme işlemleri burada yapılır.
-                Toast.makeText(SettingsActivity.this, "Account deleted", Toast.LENGTH_SHORT).show();
+                String password = editConfirmPassword.getText().toString().trim();
+                if (password.isEmpty()) {
+                    Toast.makeText(SettingsActivity.this, "Lütfen şifrenizi girin.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    Toast.makeText(SettingsActivity.this, "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Reauthentication için mevcut email ve girilen şifre kullanılır.
+                AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
+                user.reauthenticate(credential)
+                        .addOnSuccessListener(aVoid -> {
+                            // Önce Firestore'daki kullanıcı belgesini sil
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .document(user.getUid())
+                                    .delete()
+                                    .addOnSuccessListener(aVoid1 -> {
+                                        // Ardından, FirebaseAuth'den kullanıcıyı sil
+                                        user.delete()
+                                                .addOnSuccessListener(aVoid2 -> {
+                                                    Toast.makeText(SettingsActivity.this, "Hesabınız silindi.", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(SettingsActivity.this, "Hesap silme başarısız: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(SettingsActivity.this, "Firestore belgesi silinemedi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(SettingsActivity.this, "Doğrulama başarısız: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
             }
         });
-
     }
 }
