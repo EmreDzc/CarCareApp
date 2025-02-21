@@ -1,51 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- Email Girişi -->
-    <EditText
-        android:id="@+id/edit_email"
+    <!-- Arka Plan Resmi -->
+    <ImageView
+        android:id="@+id/img_background_register"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_carcare"  />
 
-    <!-- Şifre Girişi -->
-    <EditText
-        android:id="@+id/edit_password"
+    <!-- Yarı saydam overlay (arka planı karartmak için) -->
+    <View
+        android:id="@+id/overlay_view_register"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Şifre"
-        android:inputType="textPassword"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent"
+        android:background="#80000000" />
 
-    <!-- Şifre Tekrarı (Opsiyonel) -->
-    <EditText
-        android:id="@+id/edit_confirm_password"
+    <!-- Ana içerik alanı -->
+    <LinearLayout
+        android:id="@+id/register_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Şifre Tekrarı"
-        android:inputType="textPassword"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
 
-    <!-- Kayıt Ol Butonu -->
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kayıt Ol"
-        android:layout_marginTop="16dp" />
+        <!-- Başlık (Create Account) -->
+        <TextView
+            android:id="@+id/tv_register_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:textSize="32sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="32dp" />
 
-    <!-- Geri Dön (Giriş Sayfasına) Butonu - Opsiyonel -->
-    <Button
-        android:id="@+id/btn_back_to_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Giriş'e Dön"
-        android:layout_marginTop="8dp" />
-</LinearLayout>
+        <!-- Email, Password, Confirm Password Alanları -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/edit_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- REGISTER Butonu -->
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGISTER"
+            android:textAllCaps="true"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Alt Kısım: "Already have an account? Sign In" -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_already_have_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already have an account?"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/tv_go_to_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign In"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:padding="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

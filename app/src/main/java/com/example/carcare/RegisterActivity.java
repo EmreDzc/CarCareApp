@@ -5,32 +5,36 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText editEmail, editPassword, editConfirmPassword;
-    private Button btnRegister, btnBackToLogin;
+    private Button btnRegister;
+    private TextView tvGoToLogin;
+
     private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_register); // Yeni tasarım XML'in adı
 
-        // Layout'daki view'leri tanımlayın
+        // View'leri tanımla
         editEmail = findViewById(R.id.edit_email);
         editPassword = findViewById(R.id.edit_password);
         editConfirmPassword = findViewById(R.id.edit_confirm_password);
         btnRegister = findViewById(R.id.btn_register);
-        btnBackToLogin = findViewById(R.id.btn_back_to_login);
+        tvGoToLogin = findViewById(R.id.tv_go_to_login);
 
-        // FirebaseAuth nesnesini alıyoruz
         auth = FirebaseAuth.getInstance();
 
-        // "Kayıt Ol" butonuna tıklanınca:
+        // "REGISTER" butonuna tıklayınca kayıt işlemi
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,20 +43,20 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = editPassword.getText().toString().trim();
                 String confirmPassword = editConfirmPassword.getText().toString().trim();
 
-                if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
+                if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Tüm alanları doldurun.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(!password.equals(confirmPassword)){
+                if (!password.equals(confirmPassword)) {
                     Toast.makeText(RegisterActivity.this, "Şifreler uyuşmuyor.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // FirebaseAuth ile kullanıcı kaydı oluşturma
+                // FirebaseAuth ile kullanıcı kaydı
                 auth.createUserWithEmailAndPassword(email, password)
                         .addOnSuccessListener(authResult -> {
                             Toast.makeText(RegisterActivity.this, "Kayıt başarılı!", Toast.LENGTH_SHORT).show();
-                            // Kayıt başarılı ise doğrudan giriş yapıp MainActivity’ye yönlendir
+                            // Kayıt başarılı ise MainActivity'ye geç
                             startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                             finish();
                         })
@@ -62,12 +66,12 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // "Giriş'e Dön" butonu (opsiyonel) ile LoginActivity'ye geri dönme
-        btnBackToLogin.setOnClickListener(new View.OnClickListener() {
+        // "Already have an account? Sign In" metnine tıklayınca LoginActivity'ye dön
+        tvGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

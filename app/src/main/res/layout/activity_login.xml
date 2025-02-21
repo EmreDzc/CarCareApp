@@ -1,43 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- Email Girişi -->
-    <EditText
-        android:id="@+id/edit_email"
+    <!-- Arka Plan Resmi -->
+    <ImageView
+        android:id="@+id/img_background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_carcare" />
 
-    <!-- Şifre Girişi -->
-    <EditText
-        android:id="@+id/edit_password"
+    <!-- Yarı saydam overlay (arka planı biraz karartmak için) -->
+    <View
+        android:id="@+id/overlay_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Şifre"
-        android:inputType="textPassword"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent"
+        android:background="#80000000" />
 
-    <!-- Giriş Yap Butonu -->
-    <Button
-        android:id="@+id/btn_login"
+    <!-- Ana içerik alanı -->
+    <LinearLayout
+        android:id="@+id/login_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Giriş Yap"
-        android:layout_marginTop="16dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
 
-    <!-- Kayıt Ol Sayfasına Git Butonu -->
-    <Button
-        android:id="@+id/btn_go_to_register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kayıt Ol"
-        android:layout_marginTop="8dp" />
+        <!-- Uygulama Başlığı -->
+        <TextView
+            android:id="@+id/tv_app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="CarCare+"
+            android:textSize="45sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/white"
+            android:textStyle="normal"
+            android:layout_marginBottom="60dp" />
 
-</LinearLayout>
+
+        <!-- Email ve Password giriş alanlarını içeren LinearLayout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@android:color/transparent"
+                android:layout_marginBottom="8dp"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="1dp" />
+
+            <EditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:background="@android:color/transparent"
+                android:layout_marginBottom="8dp"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF"
+                android:drawablePadding="12dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="1dp" />
+
+
+        </LinearLayout>
+
+        <!-- Sign In Butonu -->
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SIGN IN"
+            android:textAllCaps="true"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Alt Kısım: Create an Account ve Forgot Password -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Create an Account linki -->
+            <TextView
+                android:id="@+id/tv_create_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create an Account"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_marginEnd="24dp"
+                android:padding="8dp" />
+
+            <!-- Forgot Password linki -->
+            <TextView
+                android:id="@+id/tv_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:padding="8dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
