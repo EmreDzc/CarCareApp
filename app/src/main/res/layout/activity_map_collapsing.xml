@@ -6,27 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Harita Fragment'ı -->
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <!-- Map container: Harita buraya yüklenecek -->
+    <FrameLayout
+        android:id="@+id/map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
-    <!-- Üst kısımda küçük bir arama barı (CardView) -->
+    <!-- Floating Search Card: Haritanın üstünde yüzen küçük arama kutusu -->
     <androidx.cardview.widget.CardView
         android:id="@+id/search_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginTop="32dp"
-        android:elevation="6dp"
         app:cardCornerRadius="16dp"
-        android:layout_gravity="top"
-        android:background="@android:color/white"
-        app:cardUseCompatPadding="true"
-        style="@style/Widget.MaterialComponents.CardView"
-        >
+        android:elevation="8dp"
+        android:layout_gravity="top|center_horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,30 +35,26 @@
                 android:layout_weight="1"
                 android:hint="Burada arayın"
                 android:padding="8dp"
-                android:background="@null"
-                android:layout_marginRight="8dp"
-                android:drawablePadding="8dp" />
+                android:background="@null"/>
 
             <Button
                 android:id="@+id/btn_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ara"
-                android:layout_marginRight="8dp" />
+                android:text="Ara"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Alt kısımda sürüklenebilir Bottom Sheet -->
+    <!-- Bottom Sheet: Sürüklenebilir çekmece, yakındaki benzin istasyonları listesi -->
     <FrameLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom"
         android:background="@android:color/white"
-        app:behavior_peekHeight="120dp"
-        android:layout_gravity="bottom">
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_peekHeight="120dp">
 
-        <!-- İçerik: Örneğin, bir LinearLayout veya NestedScrollView ile liste/detay -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -75,7 +65,7 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Yakındaki Yerler"
+                android:text="Yakındaki Benzin İstasyonları"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"/>
