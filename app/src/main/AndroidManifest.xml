@@ -2,12 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -46,22 +43,13 @@
             android:name=".NotificationActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".MapActivity"
-            android:exported="false" />
+        <activity android:name=".MapsActivity" android:exported="false" />
 
-        <!-- Firebase Messaging Service: FCM bildirimlerini almak için -->
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAwVxJdi9hYUBSu9g07lLeP5B8d_pUHobo" />
+            android:value="AIzaSyAwVxJdi9hYUBSu9g07lLeP5B8d_pUHobo"/>
+
     </application>
 
 </manifest>
