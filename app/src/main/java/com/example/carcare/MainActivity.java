@@ -42,5 +42,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, MapActivity.class);
             startActivity(intent);
         });
+
+        // "Arabam" butonunu tanımla ve CarActivity'ye yönlendir.
+        Button btnGoToCar = findViewById(R.id.btn_go_to_car);
+        btnGoToCar.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, CarActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

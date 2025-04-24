@@ -49,6 +49,7 @@
 
         <activity android:name=".MapActivity" android:exported="false" />
 
+        <activity android:name=".CarActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
