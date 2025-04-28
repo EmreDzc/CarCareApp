@@ -1,5 +1,6 @@
 package com.example.carcare;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -38,6 +39,34 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_settings); // Başlangıçta Store seçili olsun
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_store) {
+                startActivity(new Intent(SettingsActivity.this, StoreActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_map) {
+                startActivity(new Intent(SettingsActivity.this, MapsActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_notifications) {
+                startActivity(new Intent(SettingsActivity.this, NotificationActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_settings) {
+                return true;
+            }
+            return false;
+        });
 
         // ============================================================
         // 1. Collapsible Edit Profile Bölümü (Güncellenmiş)

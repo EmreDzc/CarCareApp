@@ -1,5 +1,8 @@
 package com.example.carcare;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +36,35 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        // Başlangıçta Notifications sekmesini vurgula
+        bottomNavigationView.setSelectedItemId(R.id.nav_notifications);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(NotificationActivity.this, MainActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_store) {
+                startActivity(new Intent(NotificationActivity.this, StoreActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_map) {
+                startActivity(new Intent(NotificationActivity.this, MapsActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_notifications) {
+                return true;
+            } else if (id == R.id.nav_settings) {
+                startActivity(new Intent(NotificationActivity.this, SettingsActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
 
         // XML'deki view'ları alıyoruz
         errorTextView = findViewById(R.id.errorTextView);

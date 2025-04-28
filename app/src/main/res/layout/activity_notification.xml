@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="0dp"
+        android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <!-- Hata mesajı için TextView (varsayılan görünmez) -->
@@ -21,7 +23,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <!-- Bildirimleri listelemek için ListView -->
         <ListView
@@ -34,6 +36,8 @@
             android:padding="16dp" />
     </LinearLayout>
 
-    <!-- Artık FAB kaldırıldı -->
+    <!-- Persistent Bottom Navigation -->
+    <include layout="@layout/include_bottom_nav" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
