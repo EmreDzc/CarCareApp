@@ -156,7 +156,111 @@ class GasStationAdapter extends RecyclerView.Adapter<GasStationAdapter.GasStatio
     }
 }
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GasStationAdapter.OnStationClickListener {
+
+class CarWash {
+    private String name;
+    private LatLng location;
+    private double distance; // kilometre cinsinden
+
+    public CarWash(String name, LatLng location, double distance) {
+        this.name = name;
+        this.location = location;
+        this.distance = distance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+}
+// RecyclerView Adapter for car washes
+class CarWashAdapter extends RecyclerView.Adapter<CarWashAdapter.CarWashViewHolder> {
+
+    private List<CarWash> carWashes;
+    private Context context;
+    private OnCarWashClickListener listener;
+
+    public interface OnCarWashClickListener {
+        void onCarWashClick(CarWash carWash);
+    }
+
+    public CarWashAdapter(Context context, List<CarWash> carWashes, OnCarWashClickListener listener) {
+        this.context = context;
+        this.carWashes = carWashes;
+        this.listener = listener;
+    }
+
+    @NonNull
+    @Override
+    public CarWashViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.car_wash_item, parent, false);
+        return new CarWashViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CarWashViewHolder holder, int position) {
+        CarWash carWash = carWashes.get(position);
+        holder.textCarWashName.setText(carWash.getName());
+        holder.textCarWashDistance.setText(String.format(Locale.getDefault(), "%.1f km uzaklıkta", carWash.getDistance()));
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCarWashClick(carWash);
+            }
+        });
+
+        holder.btnNavigate.setOnClickListener(v -> {
+            // Google Maps navigasyonunu başlat
+            LatLng location = carWash.getLocation();
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + location.latitude + "," + location.longitude);
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+
+            if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(mapIntent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return carWashes.size();
+    }
+
+    public void updateCarWashes(List<CarWash> newCarWashes) {
+        this.carWashes = newCarWashes;
+        notifyDataSetChanged();
+    }
+
+    static class CarWashViewHolder extends RecyclerView.ViewHolder {
+        TextView textCarWashName;
+        TextView textCarWashDistance;
+        ImageButton btnNavigate;
+
+        public CarWashViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textCarWashName = itemView.findViewById(R.id.text_carwash_name);
+            textCarWashDistance = itemView.findViewById(R.id.text_carwash_distance);
+            btnNavigate = itemView.findViewById(R.id.btn_navigate);
+        }
+    }
+}
+
+public class MapsActivity extends FragmentActivity implements
+        OnMapReadyCallback,
+        GasStationAdapter.OnStationClickListener,
+        CarWashAdapter.OnCarWashClickListener {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -173,9 +277,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // BottomSheet bileşenleri
     private BottomSheetBehavior<View> bottomSheetBehavior;
-    private RecyclerView recyclerGasStations;
+    private RecyclerView recyclerView;
+
+    // Gas Station bileşenleri
     private GasStationAdapter gasStationAdapter;
     private List<GasStation> gasStationList = new ArrayList<>();
+
+    // Car Wash bileşenleri
+    private CarWashAdapter carWashAdapter;
+    private List<CarWash> carWashList = new ArrayList<>();
+
+    // Kategori butonları
+    private Button btnGasStations;
+    private Button btnCarWash;
+
+    // Aktif kategori (varsayılan: benzin istasyonları)
+    private boolean isGasStationActive = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,10 +316,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         // RecyclerView ayarları
-        recyclerGasStations = findViewById(R.id.recycler_gas_stations);
-        recyclerGasStations.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView = findViewById(R.id.recycler_gas_stations);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Gas Station adapter'ı
         gasStationAdapter = new GasStationAdapter(this, gasStationList, this);
-        recyclerGasStations.setAdapter(gasStationAdapter);
+
+        // Car Wash adapter'ı
+        carWashAdapter = new CarWashAdapter(this, carWashList, this);
+
+        // Varsayılan adapter'ı ayarla
+        recyclerView.setAdapter(gasStationAdapter);
+
+        // Kategori butonlarını tanımla
+        btnGasStations = findViewById(R.id.btn_gas_stations);
+        btnCarWash = findViewById(R.id.btn_car_wash);
+
+        // Buton tıklama olaylarını ayarla
+        setupCategoryButtons();
 
         // Arama butonuna tıklandığında çalışacak kod
         searchButton.setOnClickListener(v -> {
@@ -219,6 +350,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
+        }
+    }
+
+    private void setupCategoryButtons() {
+        btnGasStations.setOnClickListener(v -> {
+            isGasStationActive = true;
+            recyclerView.setAdapter(gasStationAdapter);
+            updateButtonStates();
+
+            // Haritayı temizle ve benzin istasyonlarını göster
+            mMap.clear();
+            if (currentLocation != null) {
+                addMarkerOnMap(currentLocation.latitude, currentLocation.longitude,
+                        "Bulunduğunuz Konum", BitmapDescriptorFactory.HUE_AZURE);
+
+                // Benzin istasyonlarını haritaya ekle
+                for (GasStation station : gasStationList) {
+                    LatLng location = station.getLocation();
+                    addGasStationMarker(location.latitude, location.longitude, station.getName());
+                }
+            }
+        });
+
+        btnCarWash.setOnClickListener(v -> {
+            isGasStationActive = false;
+            recyclerView.setAdapter(carWashAdapter);
+            updateButtonStates();
+
+            // Haritayı temizle ve araç yıkama yerlerini göster
+            mMap.clear();
+            if (currentLocation != null) {
+                addMarkerOnMap(currentLocation.latitude, currentLocation.longitude,
+                        "Bulunduğunuz Konum", BitmapDescriptorFactory.HUE_AZURE);
+
+                // Araç yıkama yerlerini haritaya ekle
+                for (CarWash carWash : carWashList) {
+                    LatLng location = carWash.getLocation();
+                    addCarWashMarker(location.latitude, location.longitude, carWash.getName());
+                }
+            }
+        });
+
+        // Varsayılan buton durumlarını ayarla
+        updateButtonStates();
+    }
+
+    private void updateButtonStates() {
+        if (isGasStationActive) {
+            btnGasStations.setAlpha(1.0f);
+            btnCarWash.setAlpha(0.5f);
+        } else {
+            btnGasStations.setAlpha(0.5f);
+            btnCarWash.setAlpha(1.0f);
         }
     }
 
@@ -255,6 +439,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     "Bulunduğunuz Konum", BitmapDescriptorFactory.HUE_AZURE);
 
                             searchNearbyGasStations(userLocation);
+                            searchNearbyCarWashes(userLocation);
                         } else {
                             LatLng istanbul = new LatLng(41.0082, 28.9784);
                             currentLocation = istanbul;
@@ -262,6 +447,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             addMarkerOnMap(istanbul.latitude, istanbul.longitude,
                                     "İstanbul", BitmapDescriptorFactory.HUE_AZURE);
                             searchNearbyGasStations(istanbul);
+                            searchNearbyCarWashes(istanbul);
                         }
                     });
         }
@@ -280,6 +466,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addMarkerOnMap(istanbul.latitude, istanbul.longitude,
                         "İstanbul", BitmapDescriptorFactory.HUE_AZURE);
                 searchNearbyGasStations(istanbul);
+                searchNearbyCarWashes(istanbul);
             }
         }
     }
@@ -294,6 +481,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addGasStationMarker(double lat, double lng, String name) {
         addMarkerOnMap(lat, lng, name, BitmapDescriptorFactory.HUE_RED);
+    }
+
+    private void addCarWashMarker(double lat, double lng, String name) {
+        addMarkerOnMap(lat, lng, name, BitmapDescriptorFactory.HUE_BLUE);
     }
 
     private double calculateDistance(LatLng start, LatLng end) {
@@ -336,7 +527,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 double distance = calculateDistance(currentLocation, stationLocation);
 
                                 gasStationList.add(new GasStation(name, stationLocation, distance));
-                                addGasStationMarker(lat, lng, name);
+
+                                // Eğer benzin istasyonları seçiliyse haritaya ekle
+                                if (isGasStationActive) {
+                                    addGasStationMarker(lat, lng, name);
+                                }
                             }
 
                             Collections.sort(gasStationList, new Comparator<GasStation>() {
@@ -348,7 +543,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             gasStationAdapter.updateStations(gasStationList);
 
-                            if (!gasStationList.isEmpty()) {
+                            if (isGasStationActive && !gasStationList.isEmpty()) {
                                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             }
 
@@ -362,6 +557,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onErrorResponse(VolleyError error) {
                         Log.e("MapsActivity", "Volley isteği hatası: ", error);
                         Toast.makeText(MapsActivity.this, "Benzin istasyonları aranamadı: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        requestQueue.add(request);
+    }
+
+    private void searchNearbyCarWashes(LatLng location) {
+        // Google Places API'de "car_wash" doğrudan bir tür değil, bu yüzden "car_repair" ve keyword olarak "car wash" kullanıyoruz
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+                "location=" + location.latitude + "," + location.longitude +
+                "&radius=3000" +
+                "&type=car_repair" +
+                "&keyword=car%20wash" +
+                "&key=" + API_KEY;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray results = response.getJSONArray("results");
+                            Log.d("MapsActivity", "Bulunan araç yıkama yeri sayısı: " + results.length());
+
+                            carWashList.clear();
+
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject carWash = results.getJSONObject(i);
+                                JSONObject geometry = carWash.getJSONObject("geometry");
+                                JSONObject locationObj = geometry.getJSONObject("location");
+                                double lat = locationObj.getDouble("lat");
+                                double lng = locationObj.getDouble("lng");
+                                String name = carWash.getString("name");
+
+                                LatLng carWashLocation = new LatLng(lat, lng);
+                                double distance = calculateDistance(currentLocation, carWashLocation);
+
+                                carWashList.add(new CarWash(name, carWashLocation, distance));
+
+                                // Eğer araç yıkama seçiliyse haritaya ekle
+                                if (!isGasStationActive) {
+                                    addCarWashMarker(lat, lng, name);
+                                }
+                            }
+
+                            Collections.sort(carWashList, new Comparator<CarWash>() {
+                                @Override
+                                public int compare(CarWash c1, CarWash c2) {
+                                    return Double.compare(c1.getDistance(), c2.getDistance());
+                                }
+                            });
+
+                            carWashAdapter.updateCarWashes(carWashList);
+
+                            if (!isGasStationActive && !carWashList.isEmpty()) {
+                                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e("MapsActivity", "JSON ayrıştırma hatası: ", e);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("MapsActivity", "Volley isteği hatası: ", error);
+                        Toast.makeText(MapsActivity.this, "Araç yıkama yerleri aranamadı: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
         requestQueue.add(request);
@@ -396,6 +657,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
                                     addMarkerOnMap(lat, lng, formattedAddress, BitmapDescriptorFactory.HUE_GREEN);
                                     searchNearbyGasStations(currentLocation);
+                                    searchNearbyCarWashes(currentLocation);
 
                                     Toast.makeText(MapsActivity.this, "Konum bulundu: " + formattedAddress, Toast.LENGTH_SHORT).show();
                                 } else {
@@ -427,6 +689,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onStationClick(GasStation station) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(station.getLocation(), 16));
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @Override
+    public void onCarWashClick(CarWash carWash) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carWash.getLocation(), 16));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 }

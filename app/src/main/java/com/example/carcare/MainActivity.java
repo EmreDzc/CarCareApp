@@ -1,5 +1,6 @@
 package com.example.carcare;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -30,24 +31,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Eğer kullanıcı giriş yapmamışsa, LoginActivity'ye yönlendir.
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
             return;
         }
 
-        // Kullanıcı giriş yapmışsa MainActivity layout'unu yükle.
         setContentView(R.layout.activity_main);
 
-        // Bildirim kanalını oluştur (Android Oreo ve sonrası için)
         createNotificationChannel();
-        // İlk giriş kontrolü yap ve gerekirse hoş geldiniz bildirimi ekle
         checkFirstTimeLogin();
 
-        // WorkManager ile görevleri planla:
         scheduleMaintenanceWorker();
-        scheduleTrafficFineWorker(); // 6 ayda bir trafik cezası sorgulama hatırlatması
+        scheduleTrafficFineWorker();
         scheduleTrafficInsuranceWorker();
         scheduleWinterMaintenanceWorker();
         scheduleSummerMaintenanceWorker();
@@ -57,26 +53,34 @@ public class MainActivity extends AppCompatActivity {
         scheduleBrakeSystemWorker();
         scheduleSparkPlugWorker();
 
+        // ALT BAR İŞLEMİ BAŞLIYOR
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // "Open Settings" butonuna tıklayınca SettingsActivity'ye yönlendir.
-        Button btnOpenSettings = findViewById(R.id.btn_open_settings);
-        btnOpenSettings.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-        });
+        bottomNavigationView.setSelectedItemId(R.id.nav_dashboard); // Başlangıçta Dashboard seçili olsun
 
-        // "Notifications" butonuna tıklayınca NotificationActivity'ye yönlendir.
-        Button btnGoToNotification = findViewById(R.id.btn_go_to_notification);
-        btnGoToNotification.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-            startActivity(intent);
-        });
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
 
-        // "Harita Sayfasına Git" butonuna tıklayınca MapActivity'ye yönlendir.
-        Button btnGoToMap = findViewById(R.id.btn_go_to_map);
-        btnGoToMap.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            startActivity(intent);
+            if (id == R.id.nav_dashboard) {
+                return true;
+            } else if (id == R.id.nav_store) {
+                startActivity(new Intent(MainActivity.this, StoreActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_map) {
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_notifications) {
+                startActivity(new Intent(MainActivity.this, NotificationActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (id == R.id.nav_settings) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
         });
 
         // "Arabam" butonunu tanımla ve CarActivity'ye yönlendir.

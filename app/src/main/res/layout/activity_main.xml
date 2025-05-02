@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_open_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Open Settings" />
+    <!-- Üst içerik (istersen butonlar koyarsın sonra) -->
+    <FrameLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/btn_go_to_notification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Bildirimlere Git" />
+    <!-- Altta sabit BottomNavigationView -->
+    <include layout="@layout/include_bottom_nav" />
 
-    <!-- Harita sayfasına geçiş butonu -->
-    <Button
-        android:id="@+id/btn_go_to_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Harita Sayfasına Git" />
-
-    <Button
-        android:id="@+id/btn_go_to_car"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Arabam" />
 
 </LinearLayout>
