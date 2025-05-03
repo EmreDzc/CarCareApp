@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         scheduleSparkPlugWorker();
 
         // ALT BAR İŞLEMİ BAŞLIYOR
+
+        setContentView(R.layout.activity_car);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setSelectedItemId(R.id.nav_dashboard); // Başlangıçta Dashboard seçili olsun
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_dashboard) {
+                startActivity(new Intent(MainActivity.this, CarActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_store) {
                 startActivity(new Intent(MainActivity.this, StoreActivity.class));
@@ -83,12 +88,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // "Arabam" butonunu tanımla ve CarActivity'ye yönlendir.
-        Button btnGoToCar = findViewById(R.id.btn_go_to_car);
-        btnGoToCar.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, CarActivity.class);
-            startActivity(intent);
-        });
+
 
     }
 

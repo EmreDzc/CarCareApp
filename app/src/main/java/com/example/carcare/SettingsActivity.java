@@ -47,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_dashboard) {
-                startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                startActivity(new Intent(SettingsActivity.this, CarActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_store) {

@@ -19,7 +19,7 @@ public class StoreActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_dashboard) {
-                startActivity(new Intent(StoreActivity.this, MainActivity.class));
+                startActivity(new Intent(StoreActivity.this, CarActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_store) {
