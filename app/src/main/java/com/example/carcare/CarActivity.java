@@ -68,7 +68,7 @@ public class CarActivity extends AppCompatActivity {
         tvTPRR             .setText(tpRr + " PSI");
         tvOilLevelValue   .setText(oilLevel + " %");
 
-        // Buton tıklamaları — hepsi aynı siteyi açıyor
+        
         Intent gov = new Intent(Intent.ACTION_VIEW, Uri.parse("https://turkiye.gov.tr"));
         btnOpenSite              .setOnClickListener(v -> startActivity(gov));
         btnTrafficFineInquiry    .setOnClickListener(v -> startActivity(gov));
