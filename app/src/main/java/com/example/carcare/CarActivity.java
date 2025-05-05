@@ -8,6 +8,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.example.carcare.activities.StoreActivity;
+
+
 public class CarActivity extends AppCompatActivity {
 
     private TextView tvKilometerValue, tvFuelValue, tvEngineTempValue;

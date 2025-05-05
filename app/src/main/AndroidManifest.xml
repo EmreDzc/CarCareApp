@@ -46,7 +46,10 @@
         <activity android:name=".MapsActivity" android:exported="false" />
 
         <activity android:name=".CarActivity"/>
-        <activity android:name=".StoreActivity" />
+        <activity android:name=".activities.StoreActivity" />
+        <activity android:name=".activities.CartActivity" />
+        <activity android:name=".activities.CheckoutActivity" />
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

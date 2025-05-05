@@ -1,27 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#000000">
 
-    <!-- İçerik Alanı -->
-    <FrameLayout
-        android:id="@+id/store_content"
+    <!-- Top Bar: Search + Cart -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/cart_button"
+            android:layout_marginEnd="50dp"
+            android:hint="Search for car supplies..."
+            android:inputType="text"
+            android:textColorHint="#888"
+            android:textColor="#000"
+            android:background="@drawable/bg_rounded_edittext"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"/>
+
+        <ImageButton
+            android:id="@+id/cart_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_store"
+            android:tint="@color/white"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Cart"
+            android:padding="8dp"
+            android:scaleType="centerInside" />
+
+    </RelativeLayout>
+
+    <!-- Product List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:contentDescription="Product List" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Store Sayfası"
-            android:layout_gravity="center"
-            android:textSize="24sp" />
-    </FrameLayout>
-
-    <!-- Alt Bar -->
-    <include layout="@layout/include_bottom_nav" />
-
-
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_gravity="bottom" />
 </LinearLayout>
