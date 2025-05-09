@@ -17,6 +17,16 @@
         android:theme="@style/Theme.CarCare"
         tools:targetApi="31">
 
+        <!-- API anahtarınızı buraya ekleyin -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAycvep_5exb1QAjfNbMyabQ8t-0yUVnq0" />
+
+        <!-- Maps API'nin kullanılacağını belirten meta-data -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
@@ -50,10 +60,6 @@
         <activity android:name=".activities.CartActivity" />
         <activity android:name=".activities.CheckoutActivity" />
 
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAwVxJdi9hYUBSu9g07lLeP5B8d_pUHobo"/>
 
     </application>
 
