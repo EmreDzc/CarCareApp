@@ -3,63 +3,59 @@ package com.example.carcare.api;
 import java.util.List;
 
 public class NearbySearchResponse {
-    private List<PlaceResult> results;
-    // API'den dönebilecek diğer alanlar (örneğin status, next_page_token vb.) eklenebilir
+    private List<Result> results;
+    private String status;
 
-    public List<PlaceResult> getResults() {
+    public List<Result> getResults() {
         return results;
     }
 
-    public void setResults(List<PlaceResult> results) {
-        this.results = results;
+    public String getStatus() {
+        return status;
     }
 
-    // --- Inner Class: PlaceResult ---
-    public static class PlaceResult {
+    public static class Result {
+        private String place_id;
         private String name;
-        private String vicinity; // Adres bilgisi
+        private String vicinity;
+        private float rating;
         private Geometry geometry;
+        private OpeningHours opening_hours;
+
+        public String getPlaceId() {
+            return place_id;
+        }
 
         public String getName() {
             return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public String getVicinity() {
             return vicinity;
         }
 
-        public void setVicinity(String vicinity) {
-            this.vicinity = vicinity;
+        public float getRating() {
+            return rating;
         }
 
         public Geometry getGeometry() {
             return geometry;
         }
 
-        public void setGeometry(Geometry geometry) {
-            this.geometry = geometry;
+        public OpeningHours getOpeningHours() {
+            return opening_hours;
         }
     }
 
-    // --- Inner Class: Geometry ---
     public static class Geometry {
-        private LocationData location;
+        private Location location;
 
-        public LocationData getLocation() {
+        public Location getLocation() {
             return location;
         }
-
-        public void setLocation(LocationData location) {
-            this.location = location;
-        }
     }
 
-    // --- Inner Class: LocationData ---
-    public static class LocationData {
+    public static class Location {
         private double lat;
         private double lng;
 
@@ -67,16 +63,16 @@ public class NearbySearchResponse {
             return lat;
         }
 
-        public void setLat(double lat) {
-            this.lat = lat;
-        }
-
         public double getLng() {
             return lng;
         }
+    }
 
-        public void setLng(double lng) {
-            this.lng = lng;
+    public static class OpeningHours {
+        private boolean open_now;
+
+        public boolean isOpenNow() {
+            return open_now;
         }
     }
 }
