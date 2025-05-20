@@ -11,15 +11,16 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        // Bu satırı ekleyin:
         id("com.google.gms.google-services") version "4.4.2"
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
+        // JitPack burada olmalı
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

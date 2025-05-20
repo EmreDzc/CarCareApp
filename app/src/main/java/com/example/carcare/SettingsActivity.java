@@ -1,7 +1,9 @@
 package com.example.carcare;
 
+import android.content.Context;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +39,21 @@ public class SettingsActivity extends AppCompatActivity {
     // Delete Account alanları
     private EditText editConfirmPassword;
     private Button btnDeleteAccount;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // Tema tercihini kontrol et ve uygula - aktivite oluşturulmadan önce yapılmalı
+        SharedPreferences themePref = newBase.getSharedPreferences("ThemePrefs", MODE_PRIVATE);
+        boolean isDarkMode = themePref.getBoolean("isDarkMode", false);
+
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
+        super.attachBaseContext(newBase);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,18 +226,24 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Tema ayarlarını al
+        SharedPreferences themePref = getSharedPreferences("ThemePrefs", MODE_PRIVATE);
+        boolean isDarkMode = themePref.getBoolean("isDarkMode", false);
+
         Switch switchDarkMode = findViewById(R.id.switch_dark_mode);
-        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switchDarkMode.setChecked(currentNightMode == Configuration.UI_MODE_NIGHT_YES);
+        switchDarkMode.setChecked(isDarkMode);
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                Toast.makeText(SettingsActivity.this, "Dark Mode On", Toast.LENGTH_SHORT).show();
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                Toast.makeText(SettingsActivity.this, "Dark Mode Off", Toast.LENGTH_SHORT).show();
-            }
-            recreate();
+            // Tema değiştir - CarCareApplication sınıfını kullan
+            CarCareApplication.changeTheme(isChecked, themePref);
+
+            // Aktiviteyi yeniden başlat (animasyonlu)
+            final Intent intent = getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
 
         // ============================================================

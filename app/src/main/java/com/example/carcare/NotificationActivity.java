@@ -18,6 +18,8 @@ import com.example.carcare.activities.StoreActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -226,13 +228,21 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     // Firebase ile CRUD işlemlerini yöneten sınıf
+    // NotificationActivity.java içinde - FirebaseNotificationManager iç sınıfını aşağıdaki şekilde güncelleyin
+
     public static class FirebaseNotificationManager {
         private FirebaseFirestore db;
-        private CollectionReference notificationsRef;
+        private FirebaseUser currentUser;
+        private String userId;
 
         public FirebaseNotificationManager() {
             db = FirebaseFirestore.getInstance();
-            notificationsRef = db.collection("notifications");
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                userId = currentUser.getUid();
+            } else {
+                Log.e("FirebaseNotificationManager", "Kullanıcı oturum açmamış");
+            }
         }
 
         // Callback arayüzleri
@@ -248,21 +258,35 @@ public class NotificationActivity extends AppCompatActivity {
 
         // Hoş geldiniz bildirimi ekleme metodu
         public void addWelcomeNotification(final SimpleCallback callback) {
+            if (currentUser == null) {
+                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                return;
+            }
+
             NotificationData notification = new NotificationData();
             notification.setTitle("CarCare+");
             notification.setMessage("CarCare+ uygulamamıza hoş geldiniz. Keyifli kullanımlar dileriz.");
             notification.setTimestamp(new Date());
 
-            notificationsRef.add(notification)
+            db.collection("users")
+                    .document(userId)
+                    .collection("notifications")
+                    .add(notification)
                     .addOnSuccessListener(documentReference -> callback.onSuccess())
                     .addOnFailureListener(callback::onFailure);
         }
 
-        // Bildirim ekleme işlemi otomatik yapıldığı için kaldırıldı.
-
         // Tüm bildirimleri listeleme (timestamp'e göre)
         public void getAllNotifications(final NotificationListCallback callback) {
-            notificationsRef.orderBy("timestamp")
+            if (currentUser == null) {
+                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                return;
+            }
+
+            db.collection("users")
+                    .document(userId)
+                    .collection("notifications")
+                    .orderBy("timestamp")
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         List<NotificationData> notifications = new ArrayList<>();
@@ -281,14 +305,30 @@ public class NotificationActivity extends AppCompatActivity {
         }
 
         public void updateNotification(String docId, java.util.Map<String, Object> updates, final SimpleCallback callback) {
-            notificationsRef.document(docId)
+            if (currentUser == null) {
+                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                return;
+            }
+
+            db.collection("users")
+                    .document(userId)
+                    .collection("notifications")
+                    .document(docId)
                     .update(updates)
                     .addOnSuccessListener(aVoid -> callback.onSuccess())
                     .addOnFailureListener(callback::onFailure);
         }
 
         public void deleteNotification(String docId, final SimpleCallback callback) {
-            notificationsRef.document(docId)
+            if (currentUser == null) {
+                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                return;
+            }
+
+            db.collection("users")
+                    .document(userId)
+                    .collection("notifications")
+                    .document(docId)
                     .delete()
                     .addOnSuccessListener(aVoid -> callback.onSuccess())
                     .addOnFailureListener(callback::onFailure);
