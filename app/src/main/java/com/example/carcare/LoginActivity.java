@@ -124,4 +124,6 @@ public class LoginActivity extends AppCompatActivity {
         builder.setNegativeButton("İptal", null);
         builder.show();
     }
+
+
 }

@@ -2,4 +2,12 @@
     <string name="app_name">CarCare++</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="google_places_api_key">AIzaSyAycvep_5exb1QAjfNbMyabQ8t-0yUVnq0</string>
+
+    <string-array name="sort_options">
+        <item>Relevance</item>
+        <item>Ascending Price</item>
+        <item>Descending Price</item>
+        <item>A-Z</item>
+        <item>Z-A</item>
+    </string-array>
 </resources>

@@ -5,52 +5,149 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="#FFFFFF">
 
-    <!-- Top Bar: Search + Cart -->
+    <!-- Üst Çubuk: Logo, Favori ve Sepet -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="16dp">
 
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+        <TextView
+            android:id="@+id/store_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CarCare"
+            android:textColor="#4285F4"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/cart_button"
-            android:layout_marginEnd="50dp"
-            android:hint="Search for car supplies..."
-            android:inputType="text"
-            android:textColorHint="#888"
-            android:textColor="#000"
-            android:background="@drawable/bg_rounded_edittext"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"/>
+            android:layout_centerVertical="true"/>
+
+        <!-- Cart butonunu sağa yasla -->
+        <TextView
+            android:id="@+id/cart_badge_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/cart_button"
+            android:layout_alignEnd="@id/cart_button"
+            android:layout_marginTop="-4dp"
+            android:layout_marginEnd="-4dp"
+            android:background="@drawable/badge_background"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:minWidth="16dp"
+            android:minHeight="16dp"
+            android:gravity="center"
+            android:text="0"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/cart_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_store"
-            android:tint="@color/white"
+            android:src="@drawable/ic_cart"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Cart"
-            android:padding="8dp"
-            android:scaleType="centerInside" />
+            android:contentDescription="Cart"/>
+
+        <ImageButton
+            android:id="@+id/favorites_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_toStartOf="@+id/cart_button"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_favorite_border"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Favorites"/>
 
     </RelativeLayout>
 
-    <!-- Product List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProducts"
+    <!-- Ürünler Başlığı -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Araç Malzemeleri"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- Arama Çubuğu -->
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Ürün ara..."
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:background="@drawable/bg_rounded_edittext"
+        android:elevation="2dp"/>
+
+    <!-- Filtre Butonu -->
+    <Button
+        android:id="@+id/filter_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Filters"
+        android:drawableStart="@drawable/ic_filter"
+        android:drawablePadding="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#F5F5F5"
+        android:textColor="#000000"
+        android:gravity="center"/>
+
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Hata Mesajı -->
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textColor="@android:color/holo_red_dark" />
+
+    <!-- Ürün Listesi ve Admin Butonu -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        android:contentDescription="Product List" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProducts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false" />
+
+        <!-- Admin FloatingActionButton -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add"
+            android:visibility="gone"
+            app:backgroundTint="#4285F4"
+            android:contentDescription="Add Product" />
+    </FrameLayout>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -60,4 +157,5 @@
         android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_nav_menu"
         android:layout_gravity="bottom" />
+
 </LinearLayout>

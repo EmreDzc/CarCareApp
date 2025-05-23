@@ -69,9 +69,18 @@
         <activity android:name=".MapsActivity" android:exported="false" />
 
         <activity android:name=".CarActivity"/>
-        <activity android:name=".activities.StoreActivity" />
+        <activity android:name=".StoreActivity" />
+        <activity android:name=".FilterActivity"    />
+
         <activity android:name=".activities.CartActivity" />
         <activity android:name=".activities.CheckoutActivity" />
+        <activity
+            android:name=".WishlistActivity"
+            android:label="My Wishlist" />
+
+        <activity
+            android:name=".AdminProductActivity"
+            android:label="Ürün Yönetimi" />
 
 
     </application>

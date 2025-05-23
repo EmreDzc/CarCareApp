@@ -13,8 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.example.carcare.NotificationActivity.FirebaseNotificationManager;
-import com.example.carcare.activities.StoreActivity;
 
 public class MainActivity extends AppCompatActivity {
 

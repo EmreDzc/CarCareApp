@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Ürün Resmi -->
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image"
+            android:background="#F5F5F5" />
+
+        <!-- Ürün Adı -->
+        <TextView
+            android:id="@+id/productName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wireless Headphones"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Eklenme Tarihi -->
+        <TextView
+            android:id="@+id/addedDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Added on 20.05.2025"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Fiyat -->
+        <TextView
+            android:id="@+id/productPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$199.99"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#4285F4"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Butonlar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnAddToCart"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_alignParentStart="true"
+                android:text="🛒 Add to Cart"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4285F4"
+                android:textSize="12sp"
+                android:minWidth="120dp" />
+
+            <ImageButton
+                android:id="@+id/btnRemove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Remove from wishlist"
+                app:tint="#FF5252" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

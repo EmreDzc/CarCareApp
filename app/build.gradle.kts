@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.volley)
     implementation(libs.places)
+    implementation(libs.firebase.storage)
 
 
     // Test bağımlılıkları

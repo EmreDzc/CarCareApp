@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Başlık ve Hide Filters Butonu -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Products"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <!-- Hide Filters Butonu -->
+    <Button
+        android:id="@+id/btn_hide_filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hide Filters"
+        android:drawableStart="@drawable/ic_filter"
+        android:drawablePadding="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#F5F5F5"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:onClick="onHideFiltersClick"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Başlık ve Temizle Butonu -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Filters"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"/>
+
+                <Button
+                    android:id="@+id/btn_clear_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear All"
+                    android:textColor="#4285F4"
+                    android:background="@android:color/transparent"
+                    android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+
+            <!-- Arama Filtresi -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/search_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search products..."
+                android:padding="12dp"
+                android:background="@drawable/bg_rounded_edittext"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Kategoriler -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Categories"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <CheckBox android:id="@+id/category_oil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Motor Yağları"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_filters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Filtreler"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_tires"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lastikler"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_batteries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aküler"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_cleaning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Temizlik Ürünleri"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_repair"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tamir Kitleri"
+                    android:padding="8dp"/>
+
+                <CheckBox android:id="@+id/category_accessories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aksesuar"
+                    android:padding="8dp"/>
+            </LinearLayout>
+
+            <!-- Fiyat Aralığı -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Price Range"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/min_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Min"
+                    android:inputType="numberDecimal"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_rounded_edittext"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" - "
+                    android:textSize="18sp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_gravity="center_vertical"/>
+
+                <EditText
+                    android:id="@+id/max_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Max"
+                    android:inputType="numberDecimal"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_rounded_edittext"/>
+            </LinearLayout>
+
+            <!-- Sıralama -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sort By"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/sort_by_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="@drawable/bg_rounded_edittext"
+                android:layout_marginBottom="24dp"
+                android:entries="@array/sort_options"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Uygula Butonu -->
+    <Button
+        android:id="@+id/btn_apply_filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply Filters"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#4285F4"
+        android:padding="12dp"
+        android:layout_margin="16dp"/>
+
+</LinearLayout>
