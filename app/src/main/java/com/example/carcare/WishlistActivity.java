@@ -1,6 +1,7 @@
 package com.example.carcare;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -21,9 +22,13 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WishlistActivity extends AppCompatActivity {
+    private static final String TAG = "WishlistActivity";
+
 
     private RecyclerView recyclerView;
     private WishlistAdapter adapter;
@@ -85,8 +90,20 @@ public class WishlistActivity extends AppCompatActivity {
                         return;
                     }
 
+                    // Duplikat kontrolü için Set kullan
+                    Set<String> processedProductIds = new HashSet<>();
+                    List<String> documentsToDelete = new ArrayList<>();
+
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String productId = document.getString("productId");
+
+                        // Eğer bu productId daha önce işlendiyse, fazla olanları sil
+                        if (processedProductIds.contains(productId)) {
+                            documentsToDelete.add(document.getId());
+                            continue;
+                        }
+
+                        processedProductIds.add(productId);
 
                         // Ürün bilgilerini getir
                         db.collection("products").document(productId)
@@ -107,12 +124,29 @@ public class WishlistActivity extends AppCompatActivity {
                                     }
                                 });
                     }
+
+                    // Duplikat kayıtları sil
+                    deleteDuplicateRecords(user.getUid(), documentsToDelete);
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
                     showEmptyMessage("Favoriler yüklenirken hata oluştu");
                     Toast.makeText(this, "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void deleteDuplicateRecords(String userId, List<String> documentIds) {
+        for (String docId : documentIds) {
+            db.collection("users").document(userId)
+                    .collection("favorites").document(docId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Duplicate record deleted: " + docId);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error deleting duplicate: " + docId, e);
+                    });
+        }
     }
 
     private void showLoading(boolean isLoading) {

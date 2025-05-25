@@ -54,7 +54,7 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
     // Firebase bağımlılıkları
-    implementation(libs.firebase.auth)       // Örneğin: 'com.google.firebase:firebase-auth:21.1.0'
+    implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.coordinatorlayout)  // Örneğin: 'com.google.firebase:firebase-firestore:24.4.0'
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
@@ -64,6 +64,21 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.places)
     implementation(libs.firebase.storage)
+
+    implementation ("com.google.firebase:firebase-firestore:24.9.1")
+    implementation ("com.squareup.picasso:picasso:2.8")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.material:material:1.10.0")
+
+    implementation ("com.google.firebase:firebase-auth:22.3.0")
+    implementation ("com.google.firebase:firebase-firestore:24.10.0")
+
+    // Firebase Storage ekleyin
+    implementation ("com.google.firebase:firebase-storage:20.3.0")
+
+    // Image loading için Glide (muhtemelen zaten var)
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 
     // Test bağımlılıkları

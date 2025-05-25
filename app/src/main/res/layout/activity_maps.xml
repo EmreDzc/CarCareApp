@@ -19,7 +19,6 @@
         app:layout_constraintTop_toBottomOf="@+id/search_card" />
 
     <!-- Search card with optimized padding and elevation -->
-    <!-- Search card with optimized padding and elevation -->
     <androidx.cardview.widget.CardView
         android:id="@+id/search_card"
         android:layout_width="match_parent"
