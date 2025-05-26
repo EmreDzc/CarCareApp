@@ -7,25 +7,24 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.carcare.FilterActivity;
-import com.example.carcare.R;
 import com.example.carcare.activities.CartActivity;
 import com.example.carcare.adapters.ProductAdapter;
 import com.example.carcare.models.Product;
 import com.example.carcare.utils.AdminUtils;
+import com.example.carcare.utils.Cart;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -43,7 +42,6 @@ public class StoreActivity extends AppCompatActivity {
     private List<Product> products;
     private Button filterButton;
     private EditText searchBar;
-    private boolean filtersVisible = false;
     private ProgressBar progressBar;
     private TextView errorText;
     private FirebaseFirestore db;
@@ -54,24 +52,70 @@ public class StoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
+        Log.d(TAG, "StoreActivity başlatıldı");
+
         // Firebase Firestore başlat
         db = FirebaseFirestore.getInstance();
+        Log.d(TAG, "Firestore initialized");
 
-        // Views
+        // Views'ları başlat
+        initViews();
+
+        // RecyclerView ayarla
+        setupRecyclerView();
+
+        // Event listeners ayarla
+        setupEventListeners();
+
+        // Bottom navigation ayarla
+        setupBottomNavigation();
+
+        // Sepet rozeti güncelleme
+        updateCartBadge();
+
+        // Ürünleri Firebase'den yükle
+        loadProducts();
+
+        // Admin butonu kontrol et
+        checkAndShowAdminButton();
+    }
+
+    private void initViews() {
         recyclerView = findViewById(R.id.recyclerViewProducts);
         progressBar = findViewById(R.id.progress_bar);
         errorText = findViewById(R.id.error_text);
         searchBar = findViewById(R.id.search_bar);
         badgeTextView = findViewById(R.id.cart_badge_text);
+        filterButton = findViewById(R.id.filter_button);
 
-        // RecyclerView ayarla
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        Log.d(TAG, "Views initialized");
+    }
 
-        // Ürün listesi başlat
+    private void setupRecyclerView() {
+        Log.d(TAG, "Setting up RecyclerView");
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+
         products = new ArrayList<>();
-        adapter = new ProductAdapter(this, products, badgeTextView);
-        recyclerView.setAdapter(adapter);
 
+        Log.d(TAG, "RecyclerView layout manager set");
+
+        // RecyclerView'in görünür olup olmadığını kontrol et
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Log.d(TAG, "RecyclerView layout - Width: " + recyclerView.getWidth() +
+                        ", Height: " + recyclerView.getHeight());
+                Log.d(TAG, "RecyclerView visibility: " + recyclerView.getVisibility());
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        Log.d(TAG, "RecyclerView setup complete");
+    }
+
+    private void setupEventListeners() {
         // Arama çubuğu dinleyicisi
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,44 +123,33 @@ public class StoreActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.filter(s.toString());
+                if(adapter != null) {
+                    adapter.filter(s.toString());
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        // Filtre butonu ayarla
-        filterButton = findViewById(R.id.filter_button);
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFilters();
-            }
-        });
+        // Filtre butonu
+        filterButton.setOnClickListener(v -> toggleFilters());
 
-        // Üst çubuk butonları ayarla
+        // Üst çubuk butonları
         ImageButton favoritesButton = findViewById(R.id.favorites_button);
-        favoritesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Wishlist sayfasına git
-                Intent intent = new Intent(StoreActivity.this, WishlistActivity.class);
-                startActivity(intent);
-            }
+        favoritesButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StoreActivity.this, WishlistActivity.class);
+            startActivity(intent);
         });
 
         ImageButton cartButton = findViewById(R.id.cart_button);
-        cartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Sepet butonuna tıklama işlemi
-                Intent intent = new Intent(StoreActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
+        cartButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StoreActivity.this, CartActivity.class);
+            startActivity(intent);
         });
+    }
 
-        // Alt navigasyon menüsü
+    private void setupBottomNavigation() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_store);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -127,7 +160,6 @@ public class StoreActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_store) {
-                // Zaten buradayız
                 return true;
             } else if (id == R.id.nav_map) {
                 startActivity(new Intent(StoreActivity.this, MapsActivity.class));
@@ -145,43 +177,28 @@ public class StoreActivity extends AppCompatActivity {
 
             return false;
         });
-
-        // Sepet rozeti güncelleme
-        updateCartBadge();
-
-        // Ürünleri Firebase'den yükle
-        loadProducts();
-
-        checkAndShowAdminButton();
-        addAdminManually();
-
     }
-
-    private void addAdminManually() {
-        AdminUtils.makeUserAdmin("youremail@gmail.com", isSuccess -> {
-            if (isSuccess) {
-                Toast.makeText(this, "Admin eklendi", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Admin eklenemedi", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
     private void checkAndShowAdminButton() {
         AdminUtils.checkAdminStatus(isAdmin -> {
+            Log.d(TAG, "Is admin: " + isAdmin);
             if (isAdmin) {
                 runOnUiThread(() -> {
                     com.google.android.material.floatingactionbutton.FloatingActionButton fabAdmin =
                             findViewById(R.id.fab_admin);
                     if (fabAdmin != null) {
+                        Log.d(TAG, "FAB found, making visible");
                         fabAdmin.setVisibility(View.VISIBLE);
                         fabAdmin.setOnClickListener(v -> {
                             Intent intent = new Intent(StoreActivity.this, AdminProductActivity.class);
                             startActivity(intent);
                         });
+                    } else {
+                        Log.e(TAG, "FAB not found in layout");
                     }
                 });
+            } else {
+                Log.d(TAG, "User is not admin");
             }
         });
     }
@@ -192,6 +209,7 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void loadProducts() {
+        Log.d(TAG, "loadProducts() çağrıldı");
         showLoading(true);
 
         // Filtre ayarlarını kontrol et
@@ -199,34 +217,100 @@ public class StoreActivity extends AppCompatActivity {
         boolean hasFilters = prefs.getBoolean("hasFilters", false);
 
         if (hasFilters) {
-            // Filtreleri uygula
+            Log.d(TAG, "Filtreler uygulanıyor");
             applyFilters();
         } else {
-            // Tüm ürünleri getir
-            db.collection("products")
-                    .orderBy("name")
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        showLoading(false);
-                        products.clear();
-
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Product product = document.toObject(Product.class);
-                            products.add(product);
-                        }
-
-                        if (products.isEmpty()) {
-                            showError("Henüz ürün bulunmamaktadır");
-                        } else {
-                            adapter.updateList(products);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        showLoading(false);
-                        showError("Ürünler yüklenirken hata oluştu: " + e.getMessage());
-                        Log.e(TAG, "Error loading products", e);
-                    });
+            Log.d(TAG, "Tüm ürünler getiriliyor");
+            getAllProducts();
         }
+    }
+
+    private void getAllProducts() {
+        Log.d(TAG, "Firebase'den tüm ürünler isteniyor");
+
+        db.collection("products")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Log.d(TAG, "Firebase sorgusu başarılı. Döküman sayısı: " + queryDocumentSnapshots.size());
+                    showLoading(false);
+                    products.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        try {
+                            Log.d(TAG, "Processing document: " + document.getId());
+
+                            // Manuel veri çekme
+                            String id = document.getId();
+                            String name = document.getString("name");
+                            String description = document.getString("description");
+                            String imageUrl = document.getString("imageUrl");
+                            String category = document.getString("category");
+
+                            // Price ve stock için güvenli çekim
+                            Object priceObj = document.get("price");
+                            Object stockObj = document.get("stock");
+
+                            double price = 0;
+                            long stock = 0;
+
+                            if (priceObj instanceof Number) {
+                                price = ((Number) priceObj).doubleValue();
+                            }
+
+                            if (stockObj instanceof Number) {
+                                stock = ((Number) stockObj).longValue();
+                            }
+
+                            Log.d(TAG, "Product data - Name: " + name + ", Price: " + price + ", ImageUrl: " + imageUrl);
+
+                            // Manuel Product oluşturma
+                            Product product = new Product();
+                            product.setId(id);
+                            product.setName(name);
+                            product.setDescription(description);
+                            product.setPrice(price);
+                            product.setImageUrl(imageUrl);
+                            product.setCategory(category);
+                            product.setStock((int) stock);
+
+                            products.add(product);
+                            Log.d(TAG, "Product added: " + product.getName());
+
+                        } catch (Exception e) {
+                            Log.e(TAG, "Ürün dönüştürülürken hata: " + document.getId(), e);
+                        }
+                    }
+
+                    Log.d(TAG, "Toplam ürün sayısı: " + products.size());
+
+                    if (products.isEmpty()) {
+                        showError("Henüz ürün bulunmamaktadır");
+                    } else {
+                        hideError();
+
+                        Log.d(TAG, "Creating new adapter with " + products.size() + " products");
+
+                        // YENİ ADAPTER OLUŞTUR
+                        adapter = new ProductAdapter(this, products, badgeTextView);
+                        recyclerView.setAdapter(adapter);
+
+                        Log.d(TAG, "New adapter set. Item count: " + adapter.getItemCount());
+
+                        // Verification
+                        recyclerView.post(() -> {
+                            Log.d(TAG, "=== POST-UPDATE VERIFICATION ===");
+                            Log.d(TAG, "Adapter item count: " + adapter.getItemCount());
+                            Log.d(TAG, "RecyclerView child count: " + recyclerView.getChildCount());
+                            Log.d(TAG, "RecyclerView dimensions: " + recyclerView.getWidth() + "x" + recyclerView.getHeight());
+                            Log.d(TAG, "RecyclerView visibility: " + recyclerView.getVisibility());
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Firebase sorgusu başarısız", e);
+                    showLoading(false);
+                    showError("Ürünler yüklenirken hata oluştu: " + e.getMessage());
+                });
     }
 
     private void applyFilters() {
@@ -237,25 +321,25 @@ public class StoreActivity extends AppCompatActivity {
         String categories = prefs.getString("categories", "");
         String sortBy = prefs.getString("sortBy", "Relevance");
 
-        // Kategori listesini ayır
         List<String> categoryList = new ArrayList<>();
         if (!categories.isEmpty()) {
             categoryList = Arrays.asList(categories.split(","));
         }
 
-        // Firestore sorgusu oluştur
         Query query = db.collection("products");
 
-        // Fiyat filtresi uygula
-        query = query.whereGreaterThanOrEqualTo("price", minPrice)
-                .whereLessThanOrEqualTo("price", maxPrice);
+        // Fiyat filtresi
+        if (maxPrice != Float.MAX_VALUE) {
+            query = query.whereGreaterThanOrEqualTo("price", minPrice)
+                    .whereLessThanOrEqualTo("price", maxPrice);
+        }
 
-        // Kategori filtresi (eğer seçili kategoriler varsa)
+        // Kategori filtresi
         if (!categoryList.isEmpty()) {
             query = query.whereIn("category", categoryList);
         }
 
-        // Sıralama uygula
+        // Sıralama
         if (sortBy.equals("Artan Fiyat")) {
             query = query.orderBy("price", Query.Direction.ASCENDING);
         } else if (sortBy.equals("Azalan Fiyat")) {
@@ -264,18 +348,50 @@ public class StoreActivity extends AppCompatActivity {
             query = query.orderBy("name", Query.Direction.ASCENDING);
         }
 
-        // Sorguyu çalıştır
         query.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     showLoading(false);
                     products.clear();
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Product product = document.toObject(Product.class);
-                        products.add(product);
+                        try {
+                            // Manuel parsing (getAllProducts ile aynı)
+                            String id = document.getId();
+                            String name = document.getString("name");
+                            String description = document.getString("description");
+                            String imageUrl = document.getString("imageUrl");
+                            String category = document.getString("category");
+
+                            Object priceObj = document.get("price");
+                            Object stockObj = document.get("stock");
+
+                            double price = 0;
+                            long stock = 0;
+
+                            if (priceObj instanceof Number) {
+                                price = ((Number) priceObj).doubleValue();
+                            }
+
+                            if (stockObj instanceof Number) {
+                                stock = ((Number) stockObj).longValue();
+                            }
+
+                            Product product = new Product();
+                            product.setId(id);
+                            product.setName(name);
+                            product.setDescription(description);
+                            product.setPrice(price);
+                            product.setImageUrl(imageUrl);
+                            product.setCategory(category);
+                            product.setStock((int) stock);
+
+                            products.add(product);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing filtered product: " + document.getId(), e);
+                        }
                     }
 
-                    // Arama filtresi uygula
+                    // Arama filtresi
                     if (!searchText.isEmpty()) {
                         List<Product> filteredList = new ArrayList<>();
                         for (Product product : products) {
@@ -290,7 +406,15 @@ public class StoreActivity extends AppCompatActivity {
                     if (products.isEmpty()) {
                         showError("Filtrelenmiş sonuç bulunamadı");
                     } else {
-                        adapter.updateList(products);
+                        hideError();
+
+                        Log.d(TAG, "Creating filtered adapter with " + products.size() + " products");
+
+                        // Filtered results için de yeni adapter oluştur
+                        adapter = new ProductAdapter(this, products, badgeTextView);
+                        recyclerView.setAdapter(adapter);
+
+                        Log.d(TAG, "Filtered adapter set. Item count: " + adapter.getItemCount());
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -301,19 +425,43 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void showLoading(boolean isLoading) {
-        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        recyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        errorText.setVisibility(View.GONE);
+        Log.d(TAG, "showLoading called with: " + isLoading);
+
+        if (isLoading) {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            errorText.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+
+        Log.d(TAG, "After showLoading - RecyclerView visibility: " + recyclerView.getVisibility());
     }
 
     private void showError(String message) {
         errorText.setText(message);
         errorText.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
+        Log.e(TAG, "Hata gösteriliyor: " + message);
+    }
+
+    private void hideError() {
+        Log.d(TAG, "hideError called");
+        errorText.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+
+        Log.d(TAG, "RecyclerView visibility after hideError: " + recyclerView.getVisibility());
+        Log.d(TAG, "ErrorText visibility after hideError: " + errorText.getVisibility());
+
+        // RecyclerView'in layout parametrelerini kontrol et
+        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+        Log.d(TAG, "RecyclerView LayoutParams - Width: " + params.width + ", Height: " + params.height);
     }
 
     private void updateCartBadge() {
-        int itemCount = com.example.carcare.utils.Cart.getInstance().getItems().size();
+        int itemCount = Cart.getInstance().getItems().size();
         if (itemCount > 0) {
             badgeTextView.setVisibility(View.VISIBLE);
             badgeTextView.setText(String.valueOf(itemCount));
@@ -325,22 +473,20 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Filtrelerin uygulanıp uygulanmadığını kontrol et
+        Log.d(TAG, "onResume() çağrıldı");
+
         SharedPreferences prefs = getSharedPreferences("FilterPrefs", MODE_PRIVATE);
         boolean hasFilters = prefs.getBoolean("hasFilters", false);
 
-        // Filtre butonunun yazısını güncelle
         if (hasFilters) {
             filterButton.setText("Hide Filters");
         } else {
             filterButton.setText("Show Filters");
         }
 
-        // Sepet rozetini güncelle
         updateCartBadge();
 
-        // Filtrelenmişse ürünleri yeniden yükle
-        if (hasFilters && products.isEmpty()) {
+        if (hasFilters && (products == null || products.isEmpty())) {
             loadProducts();
         }
     }

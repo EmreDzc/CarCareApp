@@ -24,7 +24,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"/>
 
-        <!-- Cart butonunu sağa yasla -->
+        <!-- Cart Badge -->
         <TextView
             android:id="@+id/cart_badge_text"
             android:layout_width="wrap_content"
@@ -105,35 +105,38 @@
         android:textColor="#000000"
         android:gravity="center"/>
 
-    <!-- ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <!-- Hata Mesajı -->
-    <TextView
-        android:id="@+id/error_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:padding="16dp"
-        android:visibility="gone"
-        android:textColor="@android:color/holo_red_dark" />
-
-    <!-- Ürün Listesi ve Admin Butonu -->
+    <!-- Ana İçerik Alanı - FrameLayout kullanarak z-index sorununu çöz -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <!-- Hata Mesajı -->
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:padding="16dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textColor="@android:color/holo_red_dark" />
+
+        <!-- Ürün Listesi -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewProducts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="8dp"
+            android:visibility="visible"
             android:clipToPadding="false" />
 
         <!-- Admin FloatingActionButton -->
@@ -155,7 +158,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu"
-        android:layout_gravity="bottom" />
+        app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>

@@ -10,4 +10,15 @@
         <item>A-Z</item>
         <item>Z-A</item>
     </string-array>
+
+    <string-array name="product_categories">
+        <item>accessories</item>
+        <item>maintenance</item>
+        <item>electronics</item>
+        <item>cleaning</item>
+        <item>tools</item>
+        <item>interior</item>
+        <item>exterior</item>
+        <item>other</item>
+    </string-array>
 </resources>
