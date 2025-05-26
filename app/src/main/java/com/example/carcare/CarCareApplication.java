@@ -7,11 +7,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 public class CarCareApplication extends Application {
 
     private static boolean obd2Connected = false;
+    private static BluetoothManager bluetoothManager;
+    private static SimpleOBD2Manager obd2Manager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         // Tema tercihini uygula
         applyTheme();
     }
@@ -47,5 +48,22 @@ public class CarCareApplication extends Application {
 
     public static boolean isObd2Connected() {
         return obd2Connected;
+    }
+
+    // Global OBD2 manager'ları saklama
+    public static void setBluetoothManager(BluetoothManager manager) {
+        bluetoothManager = manager;
+    }
+
+    public static BluetoothManager getBluetoothManager() {
+        return bluetoothManager;
+    }
+
+    public static void setObd2Manager(SimpleOBD2Manager manager) {
+        obd2Manager = manager;
+    }
+
+    public static SimpleOBD2Manager getObd2Manager() {
+        return obd2Manager;
     }
 }

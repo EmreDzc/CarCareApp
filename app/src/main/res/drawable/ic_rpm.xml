@@ -1,0 +1,69 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorOnSurface">
+
+    <!-- Ana çember (gösterge çerçevesi) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="2"
+        android:pathData="M12,12m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0"/>
+
+    <!-- Gösterge çizgileri (tachometer markings) -->
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1.5"
+        android:pathData="M12,4L12,6"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1.5"
+        android:pathData="M20,12L18,12"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1.5"
+        android:pathData="M12,20L12,18"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1.5"
+        android:pathData="M4,12L6,12"/>
+
+    <!-- Diagonal çizgiler -->
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1"
+        android:pathData="M18.36,5.64L17.3,6.7"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1"
+        android:pathData="M18.36,18.36L17.3,17.3"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1"
+        android:pathData="M5.64,18.36L6.7,17.3"/>
+    <path
+        android:strokeColor="@android:color/black"
+        android:strokeWidth="1"
+        android:pathData="M5.64,5.64L6.7,6.7"/>
+
+    <!-- RPM ibresi (pointer) -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12,12L15.5,8.5L16.2,9.2L12.7,12.7L12,12Z"/>
+
+
+    <!-- RPM yazısı -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M9,15.5L9,16.5L10.5,16.5Q11,16.5 11.25,16.75Q11.5,17 11.5,17.5Q11.5,18 11.25,18.25Q11,18.5 10.5,18.5L9,18.5L9,19.5L8,19.5L8,15.5L9,15.5Z"/>
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12.5,15.5L13.5,15.5L13.5,17L15,17L15,18L13.5,18L13.5,19.5L12.5,19.5L12.5,18L12,18L12,17L12.5,17L12.5,15.5Z"/>
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M16,15.5L16,19.5L15,19.5L15,17.5L14,19.5L13.5,19.5L13.5,15.5L14.5,15.5L14.5,17.5L15.5,15.5L16,15.5Z"/>
+</vector>
