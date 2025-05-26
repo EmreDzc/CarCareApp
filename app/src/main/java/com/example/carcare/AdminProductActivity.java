@@ -1,7 +1,9 @@
 package com.example.carcare;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,10 +23,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.carcare.utils.AdminUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,12 +59,14 @@ public class AdminProductActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_product); // Layout'unuzun adını değiştirin
+        setContentView(R.layout.activity_admin_product);
 
         // Firebase initialize
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+
+        Log.d(TAG, "Firebase initialized successfully");
 
         initViews();
         setupImagePicker();
@@ -74,6 +83,8 @@ public class AdminProductActivity extends AppCompatActivity {
         btnSelectImage = findViewById(R.id.btn_select_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         progressBar = findViewById(R.id.progress_bar);
+
+        Log.d(TAG, "Views initialized");
     }
 
     private void setupImagePicker() {
@@ -93,6 +104,8 @@ public class AdminProductActivity extends AppCompatActivity {
                                 btnSelectImage.setText("Resim Seçildi ✓");
                                 Log.d(TAG, "Image selected: " + selectedImageUri.toString());
                             }
+                        } else {
+                            Log.w(TAG, "Image selection cancelled or failed");
                         }
                     }
                 }
@@ -103,30 +116,45 @@ public class AdminProductActivity extends AppCompatActivity {
         btnSelectImage.setOnClickListener(v -> selectImage());
         btnSaveProduct.setOnClickListener(v -> saveProduct());
 
-        // Geri butonu varsa
+        // Geri butonu
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
     private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        imagePickerLauncher.launch(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+
+            // Mime type filtrelemesi
+            String[] mimeTypes = {"image/jpeg", "image/png", "image/gif"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
+            imagePickerLauncher.launch(intent);
+            Log.d(TAG, "Image picker launched");
+        } catch (Exception e) {
+            Log.e(TAG, "Error launching image picker", e);
+            Toast.makeText(this, "Resim seçici açılamadı: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void saveProduct() {
+        Log.d(TAG, "Save product button clicked");
+
         // Form validasyonu
         if (!validateInputs()) {
+            Log.w(TAG, "Form validation failed");
             return;
         }
 
         showLoading(true);
 
-        // Eğer resim seçilmişse önce resmi yükle, sonra ürünü kaydet
+        // Resim seçilip seçilmediğini kontrol et
         if (selectedImageUri != null) {
+            Log.d(TAG, "Image selected, uploading image first");
             uploadImageAndSaveProduct();
         } else {
-            // Resim olmadan ürün kaydet
-            saveProductToFirestore(null);
+            Log.d(TAG, "No image selected, saving product without image");
+            saveProductToFirestore("");
         }
     }
 
@@ -138,74 +166,154 @@ public class AdminProductActivity extends AppCompatActivity {
 
         if (name.isEmpty()) {
             editName.setError("Ürün adı gerekli");
+            editName.requestFocus();
             return false;
         }
 
         if (description.isEmpty()) {
             editDescription.setError("Açıklama gerekli");
+            editDescription.requestFocus();
             return false;
         }
 
         if (priceText.isEmpty()) {
             editPrice.setError("Fiyat gerekli");
+            editPrice.requestFocus();
             return false;
         }
 
         if (stockText.isEmpty()) {
             editStock.setError("Stok miktarı gerekli");
+            editStock.requestFocus();
             return false;
         }
 
         try {
-            Double.parseDouble(priceText);
-            Integer.parseInt(stockText);
+            double price = Double.parseDouble(priceText);
+            int stock = Integer.parseInt(stockText);
+
+            if (price < 0) {
+                editPrice.setError("Fiyat negatif olamaz");
+                editPrice.requestFocus();
+                return false;
+            }
+
+            if (stock < 0) {
+                editStock.setError("Stok negatif olamaz");
+                editStock.requestFocus();
+                return false;
+            }
+
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Geçersiz sayı formatı", Toast.LENGTH_SHORT).show();
             return false;
         }
 
+        Log.d(TAG, "Form validation passed");
         return true;
     }
 
     private void uploadImageAndSaveProduct() {
+        if (selectedImageUri == null) {
+            // Resim seçilmediyse boş URL ile kaydet
+            saveProductToFirestore("");
+            return;
+        }
+
+        try {
+            // Unique dosya ismi oluştur
+            String fileName = "product_images/" + UUID.randomUUID().toString() + ".jpg";
+            StorageReference imageRef = storageRef.child(fileName);
+
+            // Resmi Firebase Storage'a yükle
+            imageRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Download URL'ini al
+                        imageRef.getDownloadUrl()
+                                .addOnSuccessListener(uri -> {
+                                    String uploadedImageUrl = uri.toString();
+                                    Log.d(TAG, "Resim URL'si: " + uploadedImageUrl);
+                                    // Ürünü resim URL'si ile kaydet
+                                    saveProductToFirestore(uploadedImageUrl);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Resim URL'i alınamadı", e);
+                                    Toast.makeText(this, "Resim URL'i alınamadı", Toast.LENGTH_SHORT).show();
+                                    // Boş URL ile kaydet
+                                    saveProductToFirestore("");
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Resim yüklenemedi", e);
+                        Toast.makeText(this, "Resim yüklenemedi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Boş URL ile kaydet
+                        saveProductToFirestore("");
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "Resim yükleme hatası", e);
+            Toast.makeText(this, "Resim yükleme hatası", Toast.LENGTH_SHORT).show();
+            saveProductToFirestore("");
+        }
+    }
+
+    private long getFileSize(Uri uri) {
+        try {
+            AssetFileDescriptor fileDescriptor = getContentResolver().openAssetFileDescriptor(uri, "r");
+            long fileSize = fileDescriptor.getLength();
+            fileDescriptor.close();
+            return fileSize;
+        } catch (IOException e) {
+            Log.e(TAG, "Dosya boyutu alınamadı", e);
+            return -1;
+        }
+    }
+
+    private void uploadImage() {
         // Unique dosya ismi oluştur
         String fileName = "product_images/" + UUID.randomUUID().toString() + ".jpg";
         StorageReference imageRef = storageRef.child(fileName);
 
-        Log.d(TAG, "Uploading image to: " + fileName);
-
         // Resmi Firebase Storage'a yükle
         imageRef.putFile(selectedImageUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(TAG, "Image upload successful");
-
-                    // Upload başarılı, download URL'ini al
+                    // Download URL'ini al
                     imageRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                                uploadedImageUrl = uri.toString();
-                                Log.d(TAG, "Download URL: " + uploadedImageUrl);
-
-                                // Şimdi ürünü kaydet
+                                String uploadedImageUrl = uri.toString();
+                                // Ürünü resim URL'si ile kaydet
                                 saveProductToFirestore(uploadedImageUrl);
                             })
                             .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to get download URL", e);
-                                showLoading(false);
-                                Toast.makeText(this, "Resim URL'i alınamadı: " + e.getMessage(),
-                                        Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, "Resim URL'i alınamadı", e);
+                                Toast.makeText(this, "Resim URL'i alınamadı", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Image upload failed", e);
-                    showLoading(false);
-                    Toast.makeText(this, "Resim yüklenemedi: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                })
-                .addOnProgressListener(taskSnapshot -> {
-                    // Upload progress gösterebilirsiniz
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Log.d(TAG, "Upload progress: " + progress + "%");
+                    Log.e(TAG, "Resim yüklenemedi", e);
+                    Toast.makeText(this, "Resim yüklenemedi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void checkAdminStatus() {
+        AdminUtils.checkAdminStatus(isAdmin -> {
+            if (isAdmin) {
+                // Admin için görünürlük ayarla
+                com.google.android.material.floatingactionbutton.FloatingActionButton fabAdmin =
+                        findViewById(R.id.fab_admin);
+
+                if (fabAdmin != null) {
+                    fabAdmin.setVisibility(View.VISIBLE);
+                    fabAdmin.setOnClickListener(v -> {
+                        Intent intent = new Intent(this, AdminProductActivity.class);
+                        startActivity(intent);
+                    });
+                }
+            } else {
+                // Admin değilse uyarı ver veya erişimi engelle
+                Toast.makeText(this, "Bu sayfaya erişim izniniz yok", Toast.LENGTH_SHORT).show();
+                finish(); // Sayfadan çık
+            }
+        });
     }
 
     private void saveProductToFirestore(String imageUrl) {
@@ -216,47 +324,52 @@ public class AdminProductActivity extends AppCompatActivity {
         int stock = Integer.parseInt(editStock.getText().toString().trim());
         String category = spinnerCategory.getSelectedItem().toString();
 
-        // Product map oluştur
+        // Ürün verilerini hazırla
         Map<String, Object> product = new HashMap<>();
         product.put("name", name);
         product.put("description", description);
         product.put("price", price);
         product.put("stock", stock);
         product.put("category", category);
-        product.put("imageUrl", imageUrl != null ? imageUrl : ""); // Null kontrolü
-        product.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
+        product.put("imageUrl", imageUrl); // Resim URL'si
+        product.put("createdAt", FieldValue.serverTimestamp());
 
-        Log.d(TAG, "Saving product to Firestore: " + product.toString());
+        Log.d(TAG, "Ürün kaydediliyor: " + product.toString());
 
         // Firestore'a kaydet
         db.collection("products")
                 .add(product)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "Product saved successfully with ID: " + documentReference.getId());
-                    showLoading(false);
-                    Toast.makeText(this, "Ürün başarıyla eklendi!", Toast.LENGTH_SHORT).show();
-
-                    // Formu temizle
+                    Log.d(TAG, "Ürün başarıyla eklendi: " + documentReference.getId());
+                    Toast.makeText(this, "Ürün başarıyla eklendi!", Toast.LENGTH_LONG).show();
                     clearForm();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error saving product", e);
-                    showLoading(false);
-                    Toast.makeText(this, "Ürün kaydedilemedi: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Ürün eklenemedi", e);
+                    Toast.makeText(this, "Ürün eklenemedi: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
     private void clearForm() {
+        // Tüm input alanlarını temizle
         editName.setText("");
         editDescription.setText("");
         editPrice.setText("");
         editStock.setText("");
         spinnerCategory.setSelection(0);
+
+        // Resim önizlemesini sıfırla
         imageViewProduct.setImageResource(R.drawable.placeholder_image);
+
+        // Resim seçme butonunu sıfırla
         btnSelectImage.setText("Resim Seç");
         selectedImageUri = null;
-        uploadedImageUrl = null;
+
+        // Fokusları sıfırla
+        editName.clearFocus();
+        editDescription.clearFocus();
+        editPrice.clearFocus();
+        editStock.clearFocus();
     }
 
     private void showLoading(boolean isLoading) {
@@ -269,5 +382,7 @@ public class AdminProductActivity extends AppCompatActivity {
         } else {
             btnSaveProduct.setText("Ürünü Kaydet");
         }
+
+        Log.d(TAG, "Loading state: " + isLoading);
     }
 }

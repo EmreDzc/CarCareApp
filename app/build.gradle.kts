@@ -65,6 +65,16 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.storage)
 
+    // Firebase
+    implementation ("com.google.firebase:firebase-firestore:24.9.1")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-core:21.1.1")
+    implementation ("com.google.firebase:firebase-auth:22.3.0")
+
+    // Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
     // Network
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // Bu sürüm kalabilir, ama daha yenileri olabilir.
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

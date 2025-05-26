@@ -12,13 +12,13 @@
     </string-array>
 
     <string-array name="product_categories">
-        <item>accessories</item>
-        <item>maintenance</item>
-        <item>electronics</item>
-        <item>cleaning</item>
-        <item>tools</item>
-        <item>interior</item>
-        <item>exterior</item>
-        <item>other</item>
+        <item>Motor Yağı</item>
+        <item>Fren Balata</item>
+        <item>Lastik</item>
+        <item>Akü</item>
+        <item>Filtre</item>
+        <item>Temizlik</item>
+        <item>Aksesuar</item>
+        <item>Diğer</item>
     </string-array>
 </resources>
