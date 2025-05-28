@@ -4,36 +4,35 @@ import com.example.carcare.R;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
-// FireStore yapısına uygun olması için IgnoreExtraProperties ekleniyor
 @IgnoreExtraProperties
 public class Product {
     private String id;
     private String name;
     private String description;
     private double price;
-    private String imageUrl;
+    // private String imageUrl; // KALDIRILDI
+    private String imageBase64; // EKLENDİ: Base64 kodlanmış resim string'i için
     private String category;
     private int stock;
 
-    // Sepet işlemleri için ekstra alan (Firestore'a kaydedilmeyen)
     @Exclude
     private String cartItemId;
 
-    // Firebase için boş constructor gerekli
     public Product() {
+        // Firebase için boş constructor gerekli
     }
 
-    public Product(String id, String name, String description, double price, String imageUrl, String category, int stock) {
+    // Constructor güncellendi
+    public Product(String id, String name, String description, double price, String imageBase64, String category, int stock) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageUrl = imageUrl;
+        this.imageBase64 = imageBase64; // GÜNCELLENDİ
         this.category = category;
         this.stock = stock;
     }
 
-    // Getter ve setter metodları
     public String getId() {
         return id;
     }
@@ -66,12 +65,13 @@ public class Product {
         this.price = price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    // imageBase64 için Getter ve Setter
+    public String getImageBase64() {
+        return imageBase64;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     public String getCategory() {
@@ -100,11 +100,10 @@ public class Product {
         this.cartItemId = cartItemId;
     }
 
-    // Ürün görseli için uyumluluk metodu
     @Exclude
     public int getImageResId() {
-        // Yerel kaynak ID yerine artık Firebase Storage URL kullanılıyor
-        // Eğer eski kod hala bu metodu kullanıyorsa çakışma olmasın diye placeholder döndür
+        // Bu metod artık ürün resimleri için doğrudan kullanılmıyor.
+        // Genel bir placeholder döndür.
         return R.drawable.placeholder_image;
     }
 
@@ -112,7 +111,6 @@ public class Product {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         Product product = (Product) obj;
         return id != null && id.equals(product.id);
     }

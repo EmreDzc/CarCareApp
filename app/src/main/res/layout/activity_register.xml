@@ -40,13 +40,33 @@
             android:textColor="@android:color/white"
             android:layout_marginBottom="32dp" />
 
-        <!-- Email, Password, Confirm Password Alanları -->
+        <!-- Email, Full Name, Password, Confirm Password Alanları -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
             android:layout_marginBottom="16dp">
+
+            <!-- Full Name Eklendi -->
+            <EditText
+                android:id="@+id/edit_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Full Name"
+                android:inputType="textPersonName"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#CCFFFFFF" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/edit_email"
@@ -144,4 +164,14 @@
                 android:padding="8dp" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- ProgressBar Eklendi (Ekranın ortasında) -->
+    <ProgressBar
+        android:id="@+id/progressBarRegister"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
 </FrameLayout>

@@ -1,6 +1,8 @@
 package com.example.carcare;
 
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,14 +15,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.carcare.R;
 import com.example.carcare.models.Product;
 import com.example.carcare.utils.Cart;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ProductDetailActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProductDetailActivity";
 
     private ImageView productImage;
     private TextView productName, productPrice, productDescription, productCategory, productStockStatus;
@@ -30,6 +38,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private String productId;
     private Product currentProduct;
 
@@ -38,18 +47,22 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
-        // Ürün ID'sini al
         productId = getIntent().getStringExtra("PRODUCT_ID");
-        if (productId == null) {
-            Toast.makeText(this, "Ürün bulunamadı", Toast.LENGTH_SHORT).show();
+        if (productId == null || productId.isEmpty()) {
+            Toast.makeText(this, "Ürün ID bulunamadı", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // FireStore başlat
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
-        // View elemanlarını tanımla
+        initViews();
+        setupListeners();
+        loadProductDetails();
+    }
+
+    private void initViews() {
         productImage = findViewById(R.id.product_detail_image);
         productName = findViewById(R.id.product_detail_name);
         productPrice = findViewById(R.id.product_detail_price);
@@ -61,52 +74,45 @@ public class ProductDetailActivity extends AppCompatActivity {
         backButton = findViewById(R.id.btn_back);
         favoriteButton = findViewById(R.id.btn_favorite_detail);
         progressBar = findViewById(R.id.progress_bar_detail);
+    }
 
-        // Geri butonu
+    private void setupListeners() {
         backButton.setOnClickListener(v -> finish());
-
-        // Ürün bilgilerini yükle
-        loadProductDetails();
-
-        // Sepete Ekle butonu
         addToCartButton.setOnClickListener(v -> {
             if (currentProduct != null) {
                 Cart.getInstance().addItem(currentProduct, this);
                 Toast.makeText(this, currentProduct.getName() + " sepete eklendi", Toast.LENGTH_SHORT).show();
             }
         });
-
-        // Favori butonu - ProductAdapter içindeki toggleFavorite metoduna benzer şekilde
         favoriteButton.setOnClickListener(v -> {
             if (currentProduct != null) {
-                // ProductAdapter'daki toggleFavorite metodunu kullanın
+                toggleFavorite(currentProduct);
             }
         });
     }
 
     private void loadProductDetails() {
         showLoading(true);
-
         db.collection("products").document(productId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    showLoading(false);
-
                     if (documentSnapshot.exists()) {
                         currentProduct = documentSnapshot.toObject(Product.class);
-
                         if (currentProduct != null) {
-                            // UI'ı güncelle
+                            currentProduct.setId(documentSnapshot.getId()); // ID'yi ata
                             updateUI(currentProduct);
+                            checkFavoriteStatus(currentProduct);
                         } else {
-                            showError("Ürün bilgileri yüklenemedi");
+                            showError("Ürün bilgileri dönüştürülemedi");
                         }
                     } else {
                         showError("Ürün bulunamadı");
                     }
+                    showLoading(false);
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
+                    Log.e(TAG, "Ürün yüklenirken hata", e);
                     showError("Ürün yüklenirken hata: " + e.getMessage());
                 });
     }
@@ -116,16 +122,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         productPrice.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
         productDescription.setText(product.getDescription());
 
-        if (product.getCategory() != null) {
-            String categoryText = product.getCategory().substring(0, 1).toUpperCase() + product.getCategory().substring(1);
+        if (product.getCategory() != null && !product.getCategory().isEmpty()) {
+            String categoryText = product.getCategory().substring(0, 1).toUpperCase() + product.getCategory().substring(1).toLowerCase();
             productCategory.setText(categoryText);
         } else {
             productCategory.setText("Genel");
         }
 
-        // Stok durumu
         if (product.getStock() > 0) {
-            productStockStatus.setText("Stokta var");
+            productStockStatus.setText(String.format(Locale.getDefault(),"Stokta var (%d adet)", product.getStock()));
             productStockStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
             addToCartButton.setEnabled(true);
         } else {
@@ -134,53 +139,95 @@ public class ProductDetailActivity extends AppCompatActivity {
             addToCartButton.setEnabled(false);
         }
 
-// Derecelendirme (gerçek uygulamada Firebase'den ortalama derecelendirme alınabilir)
-        productRating.setRating(4.0f);
+        productRating.setRating(4.0f); // Örnek, gerekirse Firebase'den alınmalı
 
-        // Ürün görseli
-        if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(product.getImageUrl())
-                    .placeholder(R.drawable.placeholder_image)
-                    .error(R.drawable.error_image)
-                    .into(productImage);
+        // Base64 string'den resim yükleme
+        String imageBase64 = product.getImageBase64();
+        if (imageBase64 != null && !imageBase64.isEmpty()) {
+            try {
+                byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
+                Glide.with(this)
+                        .load(decodedString)
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.error_image)
+                        .into(productImage);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Base64 decode hatası, ürün: " + product.getName(), e);
+                productImage.setImageResource(R.drawable.error_image);
+            }
         } else {
             productImage.setImageResource(R.drawable.placeholder_image);
         }
-
-        // Favori durumunu kontrol et
-        checkFavoriteStatus();
     }
 
-    private void checkFavoriteStatus() {
-        // ProductAdapter'daki checkFavoriteStatus metodunu kullanın
+    private void toggleFavorite(Product product) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Lütfen önce giriş yapın", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String userId = user.getUid();
+        String prodId = product.getId();
+
+        if (prodId == null || prodId.isEmpty()) {
+            Toast.makeText(this, "Ürün ID bulunamadı", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("users").document(userId).collection("favorites").document(prodId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        db.collection("users").document(userId).collection("favorites").document(prodId)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    favoriteButton.setImageResource(R.drawable.ic_favorite_border);
+                                    Toast.makeText(this, product.getName() + " favorilerden çıkarıldı", Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Map<String, Object> favoriteData = new HashMap<>();
+                        favoriteData.put("productId", prodId);
+                        favoriteData.put("addedAt", FieldValue.serverTimestamp());
+                        db.collection("users").document(userId).collection("favorites").document(prodId)
+                                .set(favoriteData)
+                                .addOnSuccessListener(aVoid -> {
+                                    favoriteButton.setImageResource(R.drawable.ic_favorite);
+                                    Toast.makeText(this, product.getName() + " favorilere eklendi", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+    }
+
+    private void checkFavoriteStatus(Product product) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null || product.getId() == null || product.getId().isEmpty()) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_border);
+            return;
+        }
+        db.collection("users").document(user.getUid()).collection("favorites").document(product.getId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    favoriteButton.setImageResource(documentSnapshot.exists() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+                })
+                .addOnFailureListener(e -> favoriteButton.setImageResource(R.drawable.ic_favorite_border));
     }
 
     private void showLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        if (isLoading) {
-            productImage.setVisibility(View.INVISIBLE);
-            productName.setVisibility(View.INVISIBLE);
-            productPrice.setVisibility(View.INVISIBLE);
-            productDescription.setVisibility(View.INVISIBLE);
-            productCategory.setVisibility(View.INVISIBLE);
-            productStockStatus.setVisibility(View.INVISIBLE);
-            productRating.setVisibility(View.INVISIBLE);
-            addToCartButton.setVisibility(View.INVISIBLE);
-        } else {
-            productImage.setVisibility(View.VISIBLE);
-            productName.setVisibility(View.VISIBLE);
-            productPrice.setVisibility(View.VISIBLE);
-            productDescription.setVisibility(View.VISIBLE);
-            productCategory.setVisibility(View.VISIBLE);
-            productStockStatus.setVisibility(View.VISIBLE);
-            productRating.setVisibility(View.VISIBLE);
-            addToCartButton.setVisibility(View.VISIBLE);
-        }
+        int contentVisibility = isLoading ? View.INVISIBLE : View.VISIBLE;
+        productImage.setVisibility(contentVisibility);
+        productName.setVisibility(contentVisibility);
+        productPrice.setVisibility(contentVisibility);
+        productDescription.setVisibility(contentVisibility);
+        productCategory.setVisibility(contentVisibility);
+        productStockStatus.setVisibility(contentVisibility);
+        productRating.setVisibility(contentVisibility);
+        addToCartButton.setVisibility(contentVisibility);
     }
 
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        finish();
+        // Hata durumunda aktiviteyi sonlandırmak yerine kullanıcıya bilgi vermek daha iyi olabilir.
+        // finish();
     }
 }

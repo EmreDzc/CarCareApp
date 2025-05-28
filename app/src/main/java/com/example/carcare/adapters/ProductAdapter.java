@@ -2,6 +2,8 @@ package com.example.carcare.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import java.util.Random;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
+    private static final String TAG = "ProductAdapter";
     private Context context;
     private List<Product> productList;
     private List<Product> productListFull;
@@ -66,13 +69,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productName.setText(product.getName());
         holder.productPrice.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
 
-        // Firebase Storage'dan görsel yükleme
-        if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            Glide.with(context)
-                    .load(product.getImageUrl())
-                    .placeholder(R.drawable.placeholder_image)
-                    .error(R.drawable.error_image)
-                    .into(holder.productImage);
+        // Base64 string'den resim yükleme
+        String imageBase64 = product.getImageBase64();
+        if (imageBase64 != null && !imageBase64.isEmpty()) {
+            try {
+                byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
+                Glide.with(context)
+                        .load(decodedString) // Byte array'i yükle
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.error_image)
+                        .into(holder.productImage);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Base64 decode hatası, ürün: " + product.getName(), e);
+                holder.productImage.setImageResource(R.drawable.error_image);
+            }
         } else {
             holder.productImage.setImageResource(R.drawable.placeholder_image);
         }
@@ -81,37 +91,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         float rating = 3.5f + (random.nextFloat() * 1.5f);
         int reviewCount = 50 + random.nextInt(150);
         holder.productRating.setRating(rating);
-        holder.productReviewCount.setText(String.format("(%d reviews)", reviewCount));
+        holder.productReviewCount.setText(String.format(Locale.getDefault(),"(%d inceleme)", reviewCount));
 
-        // Sepete Ekle butonuna tıklama işlemi
-        holder.addToCartButton.setOnClickListener(v -> {
-            addToCart(product);
-        });
-
-        // Ürüne tıklama
-        holder.itemView.setOnClickListener(v -> {
-            openProductDetail(product);
-        });
-
-        // Favori butonuna tıklama işlemi
-        holder.favoriteButton.setOnClickListener(v -> {
-            toggleFavorite(holder.favoriteButton, product);
-        });
-
-        // Favori durumunu Firebase'den kontrol et
+        holder.addToCartButton.setOnClickListener(v -> addToCart(product));
+        holder.itemView.setOnClickListener(v -> openProductDetail(product));
+        holder.favoriteButton.setOnClickListener(v -> toggleFavorite(holder.favoriteButton, product));
         checkFavoriteStatus(holder.favoriteButton, product);
     }
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return productList != null ? productList.size() : 0;
     }
 
     public void updateList(List<Product> newList) {
-        productList.clear();
-        productList.addAll(newList);
-        productListFull.clear();
-        productListFull.addAll(newList);
+        this.productList.clear();
+        this.productList.addAll(newList);
+        this.productListFull.clear(); // Filtreleme için tam listeyi de güncelle
+        this.productListFull.addAll(newList);
         notifyDataSetChanged();
     }
 
@@ -120,11 +117,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         if (text.isEmpty()) {
             productList.addAll(productListFull);
         } else {
-            text = text.toLowerCase();
+            text = text.toLowerCase(Locale.getDefault());
             for (Product product : productListFull) {
-                if (product.getName().toLowerCase().contains(text) ||
-                        product.getDescription().toLowerCase().contains(text) ||
-                        (product.getCategory() != null && product.getCategory().toLowerCase().contains(text))) {
+                boolean nameMatch = product.getName() != null && product.getName().toLowerCase(Locale.getDefault()).contains(text);
+                boolean descriptionMatch = product.getDescription() != null && product.getDescription().toLowerCase(Locale.getDefault()).contains(text);
+                boolean categoryMatch = product.getCategory() != null && product.getCategory().toLowerCase(Locale.getDefault()).contains(text);
+                if (nameMatch || descriptionMatch || categoryMatch) {
                     productList.add(product);
                 }
             }
@@ -133,10 +131,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     private void addToCart(Product product) {
-        // Sepete ürün ekle
         Cart.getInstance().addItem(product, context);
-
-        // Sepet rozetini güncelle
         updateCartBadge();
     }
 
@@ -152,34 +147,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             Toast.makeText(context, "Lütfen önce giriş yapın", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Kullanıcı favorilerini kontrol et
         String userId = user.getUid();
-        db.collection("users").document(userId)
-                .collection("favorites").document(product.getId())
+        String productId = product.getId();
+        if (productId == null) {
+            Toast.makeText(context, "Ürün ID bulunamadı.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("users").document(userId).collection("favorites").document(productId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Favori zaten var, kaldır
-                        db.collection("users").document(userId)
-                                .collection("favorites").document(product.getId())
+                        db.collection("users").document(userId).collection("favorites").document(productId)
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     favoriteBtn.setImageResource(R.drawable.ic_favorite_border);
-                                    Toast.makeText(context, "Favorilerden çıkarıldı", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, product.getName() + " favorilerden çıkarıldı", Toast.LENGTH_SHORT).show();
                                 });
                     } else {
-                        // Favorilere ekle
                         Map<String, Object> favoriteMap = new HashMap<>();
-                        favoriteMap.put("productId", product.getId());
+                        favoriteMap.put("productId", productId);
                         favoriteMap.put("addedAt", FieldValue.serverTimestamp());
-
-                        db.collection("users").document(userId)
-                                .collection("favorites").document(product.getId())
+                        db.collection("users").document(userId).collection("favorites").document(productId)
                                 .set(favoriteMap)
                                 .addOnSuccessListener(aVoid -> {
                                     favoriteBtn.setImageResource(R.drawable.ic_favorite);
-                                    Toast.makeText(context, "Favorilere eklendi", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, product.getName() + " favorilere eklendi", Toast.LENGTH_SHORT).show();
                                 });
                     }
                 });
@@ -187,44 +180,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private void checkFavoriteStatus(ImageButton favoriteBtn, Product product) {
         FirebaseUser user = auth.getCurrentUser();
-        if (user == null) {
+        if (user == null || product.getId() == null) {
             favoriteBtn.setImageResource(R.drawable.ic_favorite_border);
             return;
         }
-
-        db.collection("users").document(user.getUid())
-                .collection("favorites").document(product.getId())
+        db.collection("users").document(user.getUid()).collection("favorites").document(product.getId())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        favoriteBtn.setImageResource(R.drawable.ic_favorite);
-                    } else {
-                        favoriteBtn.setImageResource(R.drawable.ic_favorite_border);
-                    }
+                    favoriteBtn.setImageResource(documentSnapshot.exists() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
                 })
-                .addOnFailureListener(e -> {
-                    favoriteBtn.setImageResource(R.drawable.ic_favorite_border);
-                });
+                .addOnFailureListener(e -> favoriteBtn.setImageResource(R.drawable.ic_favorite_border));
     }
 
     private void updateCartBadge() {
         if (cartBadgeText != null) {
             int itemCount = Cart.getInstance().getItems().size();
+            cartBadgeText.setVisibility(itemCount > 0 ? View.VISIBLE : View.GONE);
             if (itemCount > 0) {
-                cartBadgeText.setVisibility(View.VISIBLE);
                 cartBadgeText.setText(String.valueOf(itemCount));
-            } else {
-                cartBadgeText.setVisibility(View.GONE);
             }
         }
     }
 
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView productImage;
-        TextView productName;
-        TextView productPrice;
+        TextView productName, productPrice, productReviewCount;
         RatingBar productRating;
-        TextView productReviewCount;
         Button addToCartButton;
         ImageButton favoriteButton;
 

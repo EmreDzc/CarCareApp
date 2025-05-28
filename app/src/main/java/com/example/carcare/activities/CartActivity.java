@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carcare.R;
 import com.example.carcare.adapters.CartAdapter;
+import com.example.carcare.models.Product; // Gerekirse Product import
 import com.example.carcare.utils.Cart;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,10 +24,10 @@ import java.util.Locale;
 public class CartActivity extends AppCompatActivity implements Cart.CartChangeListener {
 
     private RecyclerView recyclerView;
-    private TextView totalPriceText, emptyCartMsg;
+    private TextView totalPriceText; // emptyCartMsg kaldırıldı, emptyCartView kullanılıyor
     private Button confirmButton, continueShoppingButton;
     private CartAdapter adapter;
-    private View emptyCartView;
+    private View emptyCartView; // LinearLayout veya FrameLayout gibi bir container
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,30 +37,22 @@ public class CartActivity extends AppCompatActivity implements Cart.CartChangeLi
         recyclerView = findViewById(R.id.recyclerViewCart);
         totalPriceText = findViewById(R.id.textTotalPrice);
         confirmButton = findViewById(R.id.buttonConfirm);
-        emptyCartMsg = findViewById(R.id.textEmptyCart);
-        emptyCartView = findViewById(R.id.emptyCartView);
-        continueShoppingButton = findViewById(R.id.buttonContinueShopping);
+        emptyCartView = findViewById(R.id.emptyCartView); // R.id.textEmptyCart yerine bu view'ı kullan
+        continueShoppingButton = findViewById(R.id.buttonContinueShopping); // Layout'ta olduğundan emin ol
 
-        // Sepeti dinle
         Cart.getInstance().addCartChangeListener(this);
 
-        // RecyclerView'ı ayarla
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // CartAdapter'a this (Cart.CartChangeListener) callback'ini geçiyoruz.
         adapter = new CartAdapter(Cart.getInstance().getItems(), this, this);
         recyclerView.setAdapter(adapter);
 
-        // Toplam fiyatı güncelle
         updateTotalPrice();
-
-        // Boş sepet kontrolü
         checkEmptyCart();
 
-        // Sepeti onayla butonu
         confirmButton.setOnClickListener(v -> {
-            // Kullanıcı giriş kontrolü
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
-                // Sepet boş değilse devam et
                 if (!Cart.getInstance().getItems().isEmpty()) {
                     Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
                     startActivity(intent);
@@ -67,35 +60,32 @@ public class CartActivity extends AppCompatActivity implements Cart.CartChangeLi
                     Toast.makeText(this, "Sepetiniz boş!", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                // Giriş yapmamış kullanıcıyı login ekranına yönlendir
                 Toast.makeText(this, "Lütfen önce giriş yapın", Toast.LENGTH_LONG).show();
+                // Örnek: Giriş sayfasına yönlendirme
                 // Intent intent = new Intent(CartActivity.this, LoginActivity.class);
                 // startActivity(intent);
             }
         });
 
-        // Alışverişe Devam Et butonu
-        continueShoppingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Sepet sayfasını kapat ve Store sayfasına dön
-                finish();
-            }
-        });
+        if (continueShoppingButton != null) {
+            continueShoppingButton.setOnClickListener(v -> finish());
+        }
 
-        // Geri butonu
-        ImageButton backToStore = findViewById(R.id.button_back_to_store);
-        backToStore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ImageButton backToStore = findViewById(R.id.button_back_to_store); // Layout'ta olduğundan emin ol
+        if (backToStore != null) {
+            backToStore.setOnClickListener(v -> finish());
+        }
     }
 
     @Override
     public void onCartChanged() {
-        // Sepet değiştiğinde UI'ı güncelle
+        // CartAdapter kendi listesini Cart singleton'ından alıyorsa ve
+        // Cart'taki değişikliklerde CartAdapter.notifyDataSetChanged() çağrılıyorsa
+        // burada adapter.notifyDataSetChanged() gerekmeyebilir.
+        // Ancak, adapter'a yeni bir liste geçirmek daha güvenli olabilir.
+        if (adapter != null) {
+            adapter.updateCartItems(Cart.getInstance().getItems()); // Adapter'a yeni listeyi ver
+        }
         updateTotalPrice();
         checkEmptyCart();
     }
@@ -108,11 +98,11 @@ public class CartActivity extends AppCompatActivity implements Cart.CartChangeLi
     private void checkEmptyCart() {
         if (Cart.getInstance().getItems().isEmpty()) {
             recyclerView.setVisibility(View.GONE);
-            emptyCartView.setVisibility(View.VISIBLE);
+            if (emptyCartView != null) emptyCartView.setVisibility(View.VISIBLE);
             confirmButton.setEnabled(false);
         } else {
             recyclerView.setVisibility(View.VISIBLE);
-            emptyCartView.setVisibility(View.GONE);
+            if (emptyCartView != null) emptyCartView.setVisibility(View.GONE);
             confirmButton.setEnabled(true);
         }
     }
@@ -120,7 +110,6 @@ public class CartActivity extends AppCompatActivity implements Cart.CartChangeLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Activity kapanırken listener'ı kaldır
         Cart.getInstance().removeCartChangeListener(this);
     }
 }

@@ -1,5 +1,7 @@
 package com.example.carcare.adapters;
 
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +13,15 @@ import com.example.carcare.R;
 import com.example.carcare.models.Product;
 import com.bumptech.glide.Glide;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapter.OrderSummaryViewHolder> {
-
+    private static final String TAG = "OrderSummaryAdapter";
     private List<Product> products;
-    private DecimalFormat priceFormat = new DecimalFormat("$#.##");
+    private DecimalFormat priceFormat = new DecimalFormat("$0.00", new DecimalFormatSymbols(Locale.US));
+
 
     public OrderSummaryAdapter(List<Product> products) {
         this.products = products;
@@ -33,17 +38,28 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     @Override
     public void onBindViewHolder(@NonNull OrderSummaryViewHolder holder, int position) {
         Product product = products.get(position);
+        if (product == null) {
+            Log.e(TAG, "Product at position " + position + " is null.");
+            return;
+        }
 
         holder.textProductName.setText(product.getName());
-        holder.textQuantity.setText("Quantity: 1"); // Assuming quantity is 1
+        holder.textQuantity.setText("Adet: 1"); // Miktar CartItem'dan gelmeli
         holder.textPrice.setText(priceFormat.format(product.getPrice()));
 
-        // Load product image using Glide (if you have product images)
-        if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(product.getImageUrl())
-                    .placeholder(R.drawable.ic_product_placeholder)
-                    .into(holder.imageProduct);
+        String imageBase64 = product.getImageBase64();
+        if (imageBase64 != null && !imageBase64.isEmpty()) {
+            try {
+                byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
+                Glide.with(holder.itemView.getContext())
+                        .load(decodedString)
+                        .placeholder(R.drawable.ic_product_placeholder)
+                        .error(R.drawable.ic_product_placeholder)
+                        .into(holder.imageProduct);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Base64 decode hatası, ürün: " + product.getName(), e);
+                holder.imageProduct.setImageResource(R.drawable.ic_product_placeholder);
+            }
         } else {
             holder.imageProduct.setImageResource(R.drawable.ic_product_placeholder);
         }
@@ -51,7 +67,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return products != null ? products.size() : 0;
     }
 
     public static class OrderSummaryViewHolder extends RecyclerView.ViewHolder {

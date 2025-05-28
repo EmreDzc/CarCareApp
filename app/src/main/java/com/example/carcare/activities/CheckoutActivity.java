@@ -2,14 +2,17 @@ package com.example.carcare.activities;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton; // ImageButton olarak değiştirildi
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,66 +25,55 @@ import com.example.carcare.utils.Cart;
 import com.example.carcare.adapters.OrderSummaryAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CheckoutActivity extends AppCompatActivity {
+    private static final String TAG = "CheckoutActivity";
 
-    // Shipping Information Fields
     private EditText inputFullName, inputEmail, inputPhone, inputAddress,
             inputCity, inputState, inputZipCode;
-
-    // Payment Fields
     private EditText inputCardNumber, inputExpiry, inputCVC;
     private RadioGroup paymentRadioGroup;
     private LinearLayout creditCardSection;
-
-    // Order Summary
     private RecyclerView recyclerOrderItems;
     private TextView textSubtotal, textTax, textTotal;
-
-    // Action Buttons
     private Button buttonPay;
     private ProgressBar progressBar;
+    private ImageButton backButton; // Değişiklik: Button yerine ImageButton
+
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private OrderSummaryAdapter orderAdapter;
 
-    private static final double TAX_RATE = 0.08; // 8% tax
-    private DecimalFormat priceFormat = new DecimalFormat("$#.##");
+    private static final double TAX_RATE = 0.08;
+    private DecimalFormat priceFormat = new DecimalFormat("$0.00", new DecimalFormatSymbols(Locale.US));
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
-        // Firebase başlat
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // View elemanlarını tanımla
         initializeViews();
-
-        // Order summary'yi ayarla
         setupOrderSummary();
-
-        // Event listener'ları ayarla
         setupEventListeners();
-
-        // Totalleri hesapla
         calculateTotals();
     }
 
     private void initializeViews() {
-        // Shipping Information
         inputFullName = findViewById(R.id.inputFullName);
         inputEmail = findViewById(R.id.inputEmail);
         inputPhone = findViewById(R.id.inputPhone);
@@ -90,33 +82,36 @@ public class CheckoutActivity extends AppCompatActivity {
         inputState = findViewById(R.id.inputState);
         inputZipCode = findViewById(R.id.inputZipCode);
 
-        // Payment Information
         inputCardNumber = findViewById(R.id.inputCardNumber);
         inputExpiry = findViewById(R.id.inputExpiry);
         inputCVC = findViewById(R.id.inputCVC);
         paymentRadioGroup = findViewById(R.id.paymentRadioGroup);
         creditCardSection = findViewById(R.id.creditCardSection);
 
-        // Order Summary
         recyclerOrderItems = findViewById(R.id.recyclerOrderItems);
         textSubtotal = findViewById(R.id.textSubtotal);
         textTax = findViewById(R.id.textTax);
         textTotal = findViewById(R.id.textTotal);
 
-        // Actions
         buttonPay = findViewById(R.id.buttonPay);
         progressBar = findViewById(R.id.progressBar);
+        // Değişiklik: XML'deki ID ile eşleştirildi
+        backButton = findViewById(R.id.button_back_to_cart);
+
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        } else {
+            Log.w(TAG, "Geri butonu (button_back_to_cart) layout'ta bulunamadı.");
+        }
     }
 
     private void setupOrderSummary() {
-        // RecyclerView setup
         recyclerOrderItems.setLayoutManager(new LinearLayoutManager(this));
         orderAdapter = new OrderSummaryAdapter(Cart.getInstance().getItems());
         recyclerOrderItems.setAdapter(orderAdapter);
     }
 
     private void setupEventListeners() {
-        // Payment method değişimi
         paymentRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radioCreditCard) {
                 creditCardSection.setVisibility(View.VISIBLE);
@@ -125,7 +120,6 @@ public class CheckoutActivity extends AppCompatActivity {
             }
         });
 
-        // Pay butonuna tıklama
         buttonPay.setOnClickListener(v -> {
             if (validateForm()) {
                 processOrder();
@@ -141,165 +135,107 @@ public class CheckoutActivity extends AppCompatActivity {
         textSubtotal.setText(priceFormat.format(subtotal));
         textTax.setText(priceFormat.format(tax));
         textTotal.setText(priceFormat.format(total));
-
-        buttonPay.setText("Pay " + priceFormat.format(total));
+        buttonPay.setText("Öde " + priceFormat.format(total));
     }
 
     private boolean validateForm() {
         boolean valid = true;
-
-        // Shipping Information Validation
-        if (TextUtils.isEmpty(inputFullName.getText().toString().trim())) {
-            inputFullName.setError("Full name is required");
-            valid = false;
+        if (TextUtils.isEmpty(inputFullName.getText())) {
+            inputFullName.setError("Tam ad gerekli."); valid = false;
+        }
+        if (TextUtils.isEmpty(inputAddress.getText())) {
+            inputAddress.setError("Adres gerekli."); valid = false;
+        }
+        if (TextUtils.isEmpty(inputEmail.getText()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail.getText()).matches()) {
+            inputEmail.setError("Geçerli e-posta gerekli."); valid = false;
         }
 
-        if (TextUtils.isEmpty(inputEmail.getText().toString().trim()) ||
-                !android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail.getText().toString().trim()).matches()) {
-            inputEmail.setError("Valid email is required");
-            valid = false;
-        }
-
-        if (TextUtils.isEmpty(inputPhone.getText().toString().trim())) {
-            inputPhone.setError("Phone number is required");
-            valid = false;
-        }
-
-        if (TextUtils.isEmpty(inputAddress.getText().toString().trim())) {
-            inputAddress.setError("Address is required");
-            valid = false;
-        }
-
-        if (TextUtils.isEmpty(inputCity.getText().toString().trim())) {
-            inputCity.setError("City is required");
-            valid = false;
-        }
-
-        if (TextUtils.isEmpty(inputState.getText().toString().trim())) {
-            inputState.setError("State is required");
-            valid = false;
-        }
-
-        if (TextUtils.isEmpty(inputZipCode.getText().toString().trim())) {
-            inputZipCode.setError("ZIP code is required");
-            valid = false;
-        }
-
-        // Payment Method Validation (sadece kredi kartı seçiliyse)
         if (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard) {
-            if (TextUtils.isEmpty(inputCardNumber.getText().toString().trim()) ||
-                    inputCardNumber.getText().toString().trim().length() < 16) {
-                inputCardNumber.setError("Valid card number is required");
-                valid = false;
+            if (TextUtils.isEmpty(inputCardNumber.getText()) || inputCardNumber.getText().length() < 13) {
+                inputCardNumber.setError("Geçerli kart numarası gerekli."); valid = false;
             }
-
-            if (TextUtils.isEmpty(inputExpiry.getText().toString().trim()) ||
-                    !inputExpiry.getText().toString().trim().matches("\\d{2}/\\d{2}")) {
-                inputExpiry.setError("Valid expiry date is required (MM/YY)");
-                valid = false;
+            if (TextUtils.isEmpty(inputExpiry.getText()) || !inputExpiry.getText().toString().matches("\\d{2}/\\d{2}")) {
+                inputExpiry.setError("AA/YY formatında geçerli son kullanma tarihi gerekli."); valid = false;
             }
-
-            if (TextUtils.isEmpty(inputCVC.getText().toString().trim()) ||
-                    inputCVC.getText().toString().trim().length() < 3) {
-                inputCVC.setError("Valid CVC is required");
-                valid = false;
+            if (TextUtils.isEmpty(inputCVC.getText()) || inputCVC.getText().length() < 3) {
+                inputCVC.setError("Geçerli CVC gerekli."); valid = false;
             }
         }
 
-        // Cart validation
         if (Cart.getInstance().getItems().isEmpty()) {
-            Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sepetiniz boş!", Toast.LENGTH_SHORT).show();
             valid = false;
         }
-
         return valid;
     }
 
     private void processOrder() {
-        // Kullanıcı giriş kontrolü
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Please log in first", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Lütfen önce giriş yapın.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Yükleniyor göster
         progressBar.setVisibility(View.VISIBLE);
         buttonPay.setEnabled(false);
 
-        // Sipariş verilerini hazırla
-        Map<String, Object> order = new HashMap<>();
-        order.put("userId", user.getUid());
+        Map<String, Object> orderData = new HashMap<>();
+        orderData.put("userId", user.getUid());
+        orderData.put("fullName", inputFullName.getText().toString().trim());
+        orderData.put("email", inputEmail.getText().toString().trim());
+        orderData.put("phone", inputPhone.getText().toString().trim());
+        orderData.put("address", inputAddress.getText().toString().trim());
+        orderData.put("city", inputCity.getText().toString().trim());
+        orderData.put("state", inputState.getText().toString().trim());
+        orderData.put("zipCode", inputZipCode.getText().toString().trim());
+        String paymentMethod = (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard) ? "Credit Card" : "Cash on Delivery";
+        orderData.put("paymentMethod", paymentMethod);
 
-        // Shipping Information
-        order.put("fullName", inputFullName.getText().toString().trim());
-        order.put("email", inputEmail.getText().toString().trim());
-        order.put("phone", inputPhone.getText().toString().trim());
-        order.put("address", inputAddress.getText().toString().trim());
-        order.put("city", inputCity.getText().toString().trim());
-        order.put("state", inputState.getText().toString().trim());
-        order.put("zipCode", inputZipCode.getText().toString().trim());
-
-        // Payment Information
-        String paymentMethod = (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard)
-                ? "Credit Card" : "Cash on Delivery";
-        order.put("paymentMethod", paymentMethod);
-
-        // Order Details
         double subtotal = Cart.getInstance().getTotalPrice();
         double tax = subtotal * TAX_RATE;
         double total = subtotal + tax;
+        orderData.put("subtotal", subtotal);
+        orderData.put("tax", tax);
+        orderData.put("totalAmount", total);
+        orderData.put("orderDate", FieldValue.serverTimestamp());
+        orderData.put("status", "Sipariş Alındı");
 
-        order.put("subtotal", subtotal);
-        order.put("tax", tax);
-        order.put("totalAmount", total);
-        order.put("orderDate", FieldValue.serverTimestamp());
-        order.put("status", "Order Received");
-
-        // Sipariş öğelerini hazırla
-        List<Map<String, Object>> items = new ArrayList<>();
+        List<Map<String, Object>> orderItems = new ArrayList<>();
         for (Product product : Cart.getInstance().getItems()) {
             Map<String, Object> item = new HashMap<>();
             item.put("productId", product.getId());
             item.put("productName", product.getName());
             item.put("price", product.getPrice());
-            item.put("quantity", 1); // Assuming quantity is 1 for now
-            items.add(item);
+            item.put("quantity", 1);
+            orderItems.add(item);
         }
-        order.put("items", items);
+        orderData.put("items", orderItems);
 
-        // Siparişi Firestore'a ekle
         db.collection("orders")
-                .add(order)
+                .add(orderData)
                 .addOnSuccessListener(documentReference -> {
-                    // Sepeti temizle
                     Cart.getInstance().clearCart(this);
-
-                    // Yükleniyor gizle
                     progressBar.setVisibility(View.GONE);
-
-                    // Sipariş tamamlandı mesajı göster
                     showOrderCompleteDialog(documentReference.getId());
+                    Log.d(TAG, "Sipariş başarıyla oluşturuldu: " + documentReference.getId());
                 })
                 .addOnFailureListener(e -> {
-                    // Hata durumunda
                     progressBar.setVisibility(View.GONE);
                     buttonPay.setEnabled(true);
-                    Toast.makeText(this, "Order processing error: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Sipariş işlenirken hata", e);
+                    Toast.makeText(this, "Sipariş işlenirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
     private void showOrderCompleteDialog(String orderId) {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Order Complete")
-                .setMessage("Your order has been successfully placed. Order ID: " + orderId)
-                .setPositiveButton("Continue Shopping", (dialog, which) -> {
-                    // Mağaza sayfasına dön
+        new AlertDialog.Builder(this)
+                .setTitle("Sipariş Tamamlandı")
+                .setMessage("Siparişiniz başarıyla alındı. Sipariş ID: " + orderId)
+                .setPositiveButton("Alışverişe Devam Et", (dialog, which) -> {
                     Intent intent = new Intent(CheckoutActivity.this, StoreActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    finish();
+                    finishAffinity();
                 })
                 .setCancelable(false)
                 .show();
