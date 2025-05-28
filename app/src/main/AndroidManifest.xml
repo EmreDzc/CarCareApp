@@ -85,6 +85,8 @@
         <activity
             android:name=".AdminProductActivity"
             android:label="Ürün Yönetimi" />
+        <activity android:name=".ProductDetailActivity"
+            android:label="ürün detayları"/>
 
 
     </application>

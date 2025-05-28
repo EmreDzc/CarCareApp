@@ -40,4 +40,43 @@
     <color name="white">#FFFFFF</color>
     <color name="gray">#808080</color>
     <color name="warning_red">#FF5252</color>
+
+    <color name="colorOrderStatusDelivered">#4CAF50</color> <!-- Yeşil tonu -->
+    <color name="colorOrderStatusProcessing">#FF9800</color> <!-- Turuncu tonu -->
+    <color name="colorOrderStatusCancelled">#F44336</color> <!-- Kırmızı tonu -->
+
+
+
+    <!-- Temel Uygulama Renkleri (Mevcut olabilir, projenize göre düzenleyin) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Projede Kullanılan Ek Renkler -->
+
+    <!-- Ana Renkler (Marka Renkleriniz Olabilir) -->
+    <color name="blue_primary">#4285F4</color> <!-- Admin panelindeki butonlar için -->
+    <color name="orange_primary">#FF6F00</color> <!-- Hepsiburada benzeri fiyat ve ana butonlar için -->
+
+    <!-- Nötr Renkler (Gri Tonları) -->
+    <color name="grey_light">#F5F5F5</color>   <!-- Arka planlar, Chip arka planı -->
+    <color name="grey_medium_light">#E0E0E0</color> <!-- Ayırıcı çizgiler (Divider) -->
+    <color name="grey_medium">#9E9E9E</color>    <!-- İkincil metinler, üstü çizili fiyat -->
+    <color name="grey_dark">#616161</color>     <!-- Chip metin rengi, bazı başlıklar -->
+    <color name="grey_very_dark">#424242</color> <!-- Ana metinler, satıcı adı -->
+
+    <!-- Durum Renkleri -->
+    <color name="green_dark">#388E3C</color>    <!-- "Stokta Var" için -->
+    <color name="red_dark">#D32F2F</color>      <!-- "Tükendi" için -->
+
+    <!-- Diğer UI Elemanları İçin -->
+    <color name="rating_star_color">#FFC107</color> <!-- Yıldız puanlama rengi -->
+
+    <!-- İkon Renkleri (Eğer ?attr/colorControlNormal kullanmıyorsanız) -->
+    <color name="icon_tint_color">#757575</color> <!-- Genel ikon rengi (eğer tema kullanılmıyorsa) -->
+
+
 </resources>

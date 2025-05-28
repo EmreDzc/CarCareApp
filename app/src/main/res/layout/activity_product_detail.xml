@@ -2,188 +2,176 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    tools:context=".ProductDetailActivity">
 
-    <!-- App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:fitsSystemWindows="true">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStart="0dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageButton
-                    android:id="@+id/btn_back"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_centerVertical="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_back"
-                    android:contentDescription="Back"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="Ürün Detayı"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
-
-                <ImageButton
-                    android:id="@+id/btn_favorite_detail"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_favorite_border"
-                    android:contentDescription="Favorite"/>
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageButton android:id="@+id/btn_back" android:layout_width="48dp" android:layout_height="48dp" android:layout_centerVertical="true" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_back" android:contentDescription="Back"/>
+                <TextView android:id="@+id/toolbar_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true" android:text="Ürün Detayı" android:textColor="#000000" android:textSize="18sp" android:textStyle="bold" android:ellipsize="end" android:maxLines="1" android:layout_marginStart="56dp" android:layout_marginEnd="56dp"/>
+                <ImageButton android:id="@+id/btn_favorite_detail" android:layout_width="48dp" android:layout_height="48dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_favorite_border" android:contentDescription="Favorite"/>
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Ürün Görseli -->
-            <ImageView
-                android:id="@+id/product_detail_image"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/placeholder_image"
-                android:background="#F5F5F5"/>
+            <ImageView android:id="@+id/product_detail_image" android:layout_width="match_parent" android:layout_height="280dp" android:scaleType="fitCenter" android:src="@drawable/placeholder_image" android:background="#F5F5F5" android:layout_marginBottom="16dp"/>
 
-            <!-- Ürün Bilgileri -->
-            <LinearLayout
+            <TextView android:id="@+id/product_detail_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Apple" android:textColor="@color/blue_primary" android:textSize="14sp" android:textStyle="bold" android:visibility="gone"/>
+            <TextView android:id="@+id/product_detail_name" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Airpods 4- Aktif Gürültülü Önleme" android:textColor="#000000" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="4dp"/>
+            <TextView android:id="@+id/product_detail_model_code" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Model: MXP93TU/A" android:textColor="#757575" android:textSize="13sp" android:layout_marginTop="2dp" android:visibility="gone"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp" android:gravity="center_vertical">
+                <RatingBar android:id="@+id/product_detail_rating_main" style="?android:attr/ratingBarStyleSmall" android:layout_width="wrap_content" android:layout_height="wrap_content" android:numStars="5" tools:rating="4.7" android:stepSize="0.1" android:progressTint="@color/rating_star_color" android:isIndicator="true"/>
+                <TextView android:id="@+id/product_detail_review_count_main" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="(525)" android:textSize="12sp" android:layout_marginStart="8dp" android:textColor="@color/grey_medium"/>
+            </LinearLayout>
+
+            <TextView android:id="@+id/product_detail_seller" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Satıcı: MIX TEKNOLOJI" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:visibility="gone"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="bottom">
+                <TextView android:id="@+id/product_detail_discount_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="7.500,00 TL" android:textColor="@color/orange_primary" android:textSize="24sp" android:textStyle="bold" android:visibility="gone"/>
+                <TextView android:id="@+id/product_detail_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="8.119,00 TL" android:textColor="@color/orange_primary" android:textSize="24sp" android:textStyle="bold" android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/product_colors_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Renk: " android:textStyle="bold" android:textSize="14sp"/>
+                <TextView android:id="@+id/product_detail_color" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Beyaz" android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/product_sizes_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp" android:gravity="center_vertical" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Beden: " android:textStyle="bold" android:textSize="14sp"/>
+                <com.google.android.material.chip.ChipGroup android:id="@+id/chip_group_sizes" android:layout_width="wrap_content" android:layout_height="wrap_content" app:singleLine="true"/>
+            </LinearLayout>
+
+            <TextView android:id="@+id/product_detail_stock_status" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Stokta var" android:textSize="14sp" android:layout_marginTop="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp"/>
+
+            <TextView android:id="@+id/title_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ürün Açıklaması" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:visibility="gone"/>
+            <TextView android:id="@+id/product_detail_description" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Uzun ürün açıklaması..." android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:visibility="gone"/>
+            <View android:id="@+id/divider_after_description" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:visibility="gone"/>
+
+            <TextView android:id="@+id/title_specifications" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ürün Bilgileri" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="8dp" android:visibility="gone"/>
+            <LinearLayout android:id="@+id/product_specifications_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone"/>
+            <View android:id="@+id/divider_after_specs" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:visibility="gone"/>
+
+            <TextView android:id="@+id/title_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Teslimat ve İade" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="16dp" android:visibility="gone"/>
+            <TextView android:id="@+id/product_detail_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Kargo: Ücretsiz Kargo" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_shipping" android:drawablePadding="8dp" android:visibility="gone"/>
+            <TextView android:id="@+id/product_detail_warranty_info" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Garanti: 2 Yıl" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_warranty" android:drawablePadding="8dp" android:visibility="gone"/>
+            <TextView android:id="@+id/product_detail_return_policy" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="İade: 14 gün içinde iade" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_return" android:drawablePadding="8dp" android:visibility="gone"/>
+
+            <com.google.android.material.chip.ChipGroup android:id="@+id/chip_group_tags" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" app:chipSpacingHorizontal="8dp" android:visibility="gone"/>
+
+            <!-- Değerlendirme Bölümleri -->
+            <View android:id="@+id/divider_before_reviews" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="24dp" android:layout_marginBottom="16dp"/>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp">
+                android:text="Ürünü Değerlendir"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
-                <TextView
-                    android:id="@+id/product_detail_name"
+            <RatingBar
+                android:id="@+id/rating_bar_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="1.0"
+                android:progressTint="@color/rating_star_color"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_review_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ürün Adı"
-                    android:textColor="#000000"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:hint="Yorumunuz (isteğe bağlı)"
+                    android:inputType="textMultiLine"
+                    android:minLines="2"
+                    android:gravity="top"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/product_detail_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="$199.99"
-                    android:textColor="#4285F4"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
+            <Button
+                android:id="@+id/btn_submit_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Değerlendirmeyi Gönder"
+                android:layout_gravity="end"
+                app:backgroundTint="@color/blue_primary"
+                android:textColor="@color/white"
+                android:layout_marginBottom="24dp"/>
 
-                <RatingBar
-                    android:id="@+id/product_detail_rating"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:numStars="5"
-                    android:rating="4"
-                    android:stepSize="0.1"
-                    android:progressTint="#FFD700"/>
+            <TextView
+                android:id="@+id/text_reviews_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Değerlendirmeler"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_review"
+                android:visibility="gone"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Kategori: "
-                        android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/text_no_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bu ürün için henüz değerlendirme yapılmamış."
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:visibility="gone"/>
 
-                    <TextView
-                        android:id="@+id/product_detail_category"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Elektronik"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Stok Durumu: "
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/product_detail_stock"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Stokta Var"
-                        android:textColor="@android:color/holo_green_dark"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ürün Açıklaması"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp"/>
-
-                <TextView
-                    android:id="@+id/product_detail_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ürün açıklaması burada yer alacak..."
-                    android:textColor="#666666"
-                    android:layout_marginTop="8dp"
-                    android:lineSpacingExtra="4dp"/>
-            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Sepete Ekle Butonu -->
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="10dp"
-        app:fabCradleVerticalOffset="0dp">
-
+        app:fabCradleMargin="0dp"
+        app:fabCradleRoundedCornerRadius="0dp"
+        app:fabCradleVerticalOffset="0dp"
+        android:backgroundTint="#FFFFFF"
+        app:hideOnScroll="true">
         <Button
             android:id="@+id/btn_add_to_cart_detail"
             android:layout_width="match_parent"
@@ -191,15 +179,11 @@
             android:layout_margin="8dp"
             android:text="Sepete Ekle"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#4285F4"/>
+            app:backgroundTint="@color/orange_primary"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
     </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <!-- Loading Progress Bar -->
-    <ProgressBar
-        android:id="@+id/progress_bar_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
+    <ProgressBar android:id="@+id/progress_bar_detail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

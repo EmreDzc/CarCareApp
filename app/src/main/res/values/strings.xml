@@ -21,4 +21,31 @@
         <item>Aksesuar</item>
         <item>Diğer</item>
     </string-array>
+
+    <!-- AdminProductActivity için yeni alanlar -->
+    <string name="hint_product_brand">Marka</string>
+    <string name="hint_product_model_code">Model Kodu (SKU)</string>
+    <string name="hint_product_seller_name">Satıcı Adı</string>
+    <string name="hint_product_rating">Puan (0.0 - 5.0 arası)</string>
+    <string name="hint_product_review_count">Değerlendirme Sayısı</string>
+    <string name="hint_product_color">Renk (örn: Beyaz, Siyah)</string>
+    <string name="hint_product_sizes">Bedenler (virgülle ayırın, örn: S,M,L)</string>
+    <string name="hint_product_tags">Etiketler (virgülle ayırın, örn: kablosuz,yeni)</string>
+    <string name="hint_product_discount_price">İndirimli Fiyat ($) (Yoksa boş bırakın)</string>
+    <string name="label_is_featured">Öne Çıkan Ürün</string>
+    <string name="hint_product_warranty_info">Garanti Bilgisi (örn: 2 Yıl)</string>
+    <string name="hint_product_shipping_info">Kargo Bilgisi (örn: Ücretsiz Kargo)</string>
+    <string name="hint_product_return_policy">İade Politikası (örn: 14 gün iade)</string>
+    <string name="hint_product_specifications">Teknik Özellikler (Anahtar1:Değer1,Anahtar2:Değer2)</string>
+    <string name="admin_product_title">Ürün Yönetimi</string>
+    <string name="admin_select_image">Resim Seç</string>
+    <string name="admin_save_product">Ürünü Kaydet</string>
+    <string name="admin_product_name_hint">Ürün Adı (*)</string>
+    <string name="admin_product_desc_hint">Ürün Açıklaması (*)</string>
+    <string name="admin_product_price_hint">Fiyat ($) (*)</string>
+    <string name="admin_product_stock_hint">Stok Miktarı (*)</string>
+    <string name="admin_category_label">Kategori (*)</string>
+    <string name="admin_image_selected">Resim Seçildi ✓</string>
+    <string name="admin_saving">Kaydediliyor...</string>
+
 </resources>
