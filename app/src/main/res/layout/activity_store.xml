@@ -69,18 +69,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Favorites"/>
 
-        <!-- Profil / Sipariş Geçmişi Butonu (Favorites'ın solunda) -->
-        <ImageButton
-            android:id="@+id/profile_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_toStartOf="@+id/favorites_button"
-            android:layout_marginEnd="16dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_order_history"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Profile / Order History"/>
-
     </RelativeLayout>
 
     <!-- Ürünler Başlığı -->

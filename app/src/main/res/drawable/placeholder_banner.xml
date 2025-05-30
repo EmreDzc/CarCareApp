@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#E0E0E0"/> <!-- Açık gri bir renk veya markanızla uyumlu bir renk -->
+    <corners android:radius="8dp"/> <!-- İsteğe bağlı köşeler -->
+    <!-- İsterseniz ortasına bir ikon veya metin de ekleyebilirsiniz (layer-list kullanarak) -->
+</shape>

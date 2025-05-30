@@ -1,5 +1,6 @@
 package com.example.carcare;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -50,11 +51,13 @@ public class StoreActivity extends AppCompatActivity {
     private TextView errorText;
     private FirebaseFirestore db;
     private TextView badgeTextView;
-    private ImageButton favoritesButton, cartButton, profileButton; // profileButton eklendi
+    private ImageButton favoritesButton, cartButton;
     private FloatingActionButton fabAdmin; // FAB için tanımlama
 
     // FilterActivity'den sonuç almak için Launcher
     private ActivityResultLauncher<Intent> filterActivityResultLauncher;
+    private ActivityResultLauncher<Intent> searchActivityLauncher;
+
 
 
     @Override
@@ -66,44 +69,85 @@ public class StoreActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         Log.d(TAG, "Firestore başlatıldı");
 
-        // FilterActivity'den sonucu almak için launcher'ı başlat
+        // FilterActivity için launcher
         filterActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
-                        // Filtreler uygulandı veya temizlendi, ürünleri yeniden yükle
                         Log.d(TAG, "FilterActivity'den sonuç alındı, ürünler yeniden yükleniyor.");
-                        loadProducts();
+                        loadProducts(); // Filtreler değiştiğinde ürünleri yükle
                     }
                 }
         );
 
-        initViews();
+        // SearchActivity için launcher
+        searchActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        String searchQuery = result.getData().getStringExtra("SEARCH_QUERY");
+                        if (searchQuery != null && !searchQuery.isEmpty()) {
+                            if (searchBar != null) {
+                                searchBar.setText(searchQuery); // Arama çubuğuna sorguyu yaz
+                                // Arama çubuğuna yazılan metni adapter'a iletmek için
+                                // TextWatcher'ın onTextChanged'i zaten tetiklenecektir.
+                                // Veya doğrudan filtrelemeyi/yüklemeyi tetikleyebilirsiniz:
+                                // if(adapter != null) adapter.filter(searchQuery);
+                            }
+                            // Gelen sorguyla ürünleri yüklemek için:
+                            // loadProductsWithQuery(searchQuery); // Özel bir metodunuz varsa
+                            // Veya mevcut loadProducts'ı kullanıp, TextWatcher'ın filtrelemesini bekleyin
+                            // TextWatcher, searchBar.setText() sonrası zaten çalışacak
+                        }
+                    }
+                }
+        );
+
+        initViews(); // searchBar burada initialize ediliyor
         setupRecyclerView();
-        setupEventListeners();
+        setupEventListeners(); // searchBar listener'ı burada ayarlanıyor
         setupBottomNavigation();
-        // updateCartBadge(); // onResume içinde çağrılıyor
-        // loadProducts(); // onResume içinde çağrılıyor
         checkAndShowAdminButton();
+
+        handleIntent(getIntent()); // onCreate'de ilk gelen Intent'i işle
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent); // Aktivite zaten açıksa yeni Intent'i işle
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent != null) {
+            // SearchActivity'den gelen arama sorgusunu işle
+            String searchQuery = intent.getStringExtra("SEARCH_QUERY");
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                if (searchBar != null) {
+                    searchBar.setText(searchQuery);
+                    // İmleci metnin sonuna getirmek isteyebilirsiniz:
+                    searchBar.setSelection(searchBar.getText().length());
+                }
+                getIntent().putExtra("SEARCH_QUERY_HANDLED", true);
+            }
+        }
     }
 
     private void initViews() {
         recyclerView = findViewById(R.id.recyclerViewProducts);
         progressBar = findViewById(R.id.progress_bar);
         errorText = findViewById(R.id.error_text);
-        searchBar = findViewById(R.id.search_bar);
+        searchBar = findViewById(R.id.search_bar); // EditText
         filterButton = findViewById(R.id.filter_button);
         badgeTextView = findViewById(R.id.cart_badge_text);
         favoritesButton = findViewById(R.id.favorites_button);
         cartButton = findViewById(R.id.cart_button);
-        profileButton = findViewById(R.id.profile_button); // profileButton ID'si ile eşleştirildi
-        fabAdmin = findViewById(R.id.fab_admin); // FAB ID'si ile eşleştirildi
+        fabAdmin = findViewById(R.id.fab_admin);
 
         if (badgeTextView == null) {
             Log.e(TAG, "cart_badge_text (TextView) bulunamadı. Rozet güncellenemeyecek.");
-        }
-        if (profileButton == null) {
-            Log.w(TAG, "profile_button bulunamadı.");
         }
         if (fabAdmin == null) {
             Log.w(TAG, "fab_admin bulunamadı.");
@@ -120,25 +164,39 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     private void setupEventListeners() {
-        searchBar.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(adapter != null) adapter.filter(s.toString());
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
+        // searchBar EditText'ine tıklandığında veya odaklandığında SearchActivity'yi aç
+        if (searchBar != null) {
+            searchBar.setOnClickListener(v -> {
+                Intent intent = new Intent(StoreActivity.this, SearchActivity.class);
+                searchActivityLauncher.launch(intent);
+            });
+            searchBar.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    // EditText'e odaklanıldığında da SearchActivity'yi aç
+                    Intent intent = new Intent(StoreActivity.this, SearchActivity.class);
+                    searchActivityLauncher.launch(intent);
+                }
+            });
+
+            // Metin değişikliği dinleyicisi (kullanıcı doğrudan yazarsa diye)
+            searchBar.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(adapter != null) adapter.filter(s.toString());
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
 
         filterButton.setOnClickListener(v -> toggleFilters());
 
         favoritesButton.setOnClickListener(v -> {
-            // WishlistActivity'e gitmeden önce kullanıcı girişi kontrolü
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 Intent intent = new Intent(StoreActivity.this, WishlistActivity.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(StoreActivity.this, "Favorileri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
-                // Opsiyonel: LoginActivity'e yönlendir
             }
         });
 
@@ -436,6 +494,12 @@ public class StoreActivity extends AppCompatActivity {
         if (filterButton != null) {
             filterButton.setText(hasFilters ? "Filtreleri Kaldır" : "Filtrele");
         }
-        loadProducts(); // Her onResume'da ürünleri yeniden yükle (filtreler değişmiş olabilir)
+        if (getIntent() == null || !getIntent().getBooleanExtra("SEARCH_QUERY_HANDLED", false)) {
+            loadProducts();
+        }
+        // Bayrağı sıfırla ki normal onResume'larda loadProducts çalışsın
+        if (getIntent() != null) {
+            getIntent().removeExtra("SEARCH_QUERY_HANDLED");
+        }
     }
 }

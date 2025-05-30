@@ -98,6 +98,11 @@
             android:exported="false"
             android:theme="@style/Theme.CarCare" />
 
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
 
     </application>
 
