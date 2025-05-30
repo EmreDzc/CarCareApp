@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.example.carcare.R;
 import com.example.carcare.StoreActivity;
@@ -200,6 +202,7 @@ public class CheckoutActivity extends AppCompatActivity {
         return valid;
     }
 
+
     private void processOrder() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
@@ -210,8 +213,9 @@ public class CheckoutActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         buttonPay.setEnabled(false);
 
+        // Sipariş verilerini hazırla
         Map<String, Object> orderData = new HashMap<>();
-        orderData.put("userId", user.getUid());
+        // userId artık gerekli değil çünkü zaten kullanıcının alt koleksiyonunda
         orderData.put("fullName", inputFullName.getText().toString().trim());
         orderData.put("email", inputEmail.getText().toString().trim());
         orderData.put("phone", inputPhone.getText().toString().trim());
@@ -219,43 +223,75 @@ public class CheckoutActivity extends AppCompatActivity {
         orderData.put("city", inputCity.getText().toString().trim());
         orderData.put("state", inputState.getText().toString().trim());
         orderData.put("zipCode", inputZipCode.getText().toString().trim());
-        String paymentMethod = (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard) ? "Credit Card" : "Cash on Delivery";
+
+        String paymentMethod = (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard)
+                ? "Credit Card" : "Cash on Delivery";
         orderData.put("paymentMethod", paymentMethod);
 
+        // Fiyat hesaplamaları
         double subtotal = Cart.getInstance().getTotalPrice();
         double tax = subtotal * TAX_RATE;
         double total = subtotal + tax;
         orderData.put("subtotal", subtotal);
         orderData.put("tax", tax);
         orderData.put("totalAmount", total);
+
+        // Sipariş tarihi ve durumu
         orderData.put("orderDate", FieldValue.serverTimestamp());
         orderData.put("status", "Sipariş Alındı");
 
+        // Kargo ve teslimat bilgileri
+        orderData.put("shippingCompany", "CarCare Express");
+        orderData.put("trackingNumber", generateTrackingNumber());
+
+        // Tahmini teslimat tarihi (3-5 gün sonra)
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 4);
+        orderData.put("estimatedDeliveryDate", new Date(calendar.getTimeInMillis()));
+
+        // Sipariş öğelerini hazırla
         List<Map<String, Object>> orderItems = new ArrayList<>();
         for (Product product : Cart.getInstance().getItems()) {
             Map<String, Object> item = new HashMap<>();
             item.put("productId", product.getId());
             item.put("productName", product.getName());
-            item.put("price", product.getPrice());
+            item.put("price", product.getDiscountPrice() > 0 ? product.getDiscountPrice() : product.getPrice());
             item.put("quantity", 1);
+            item.put("imageBase64", product.getImageBase64());
             orderItems.add(item);
         }
         orderData.put("items", orderItems);
 
-        db.collection("orders")
+        // DEĞİŞİKLİK: Kullanıcının alt koleksiyonuna kaydet
+        db.collection("users")
+                .document(user.getUid())
+                .collection("orders")  // Subcollection
                 .add(orderData)
                 .addOnSuccessListener(documentReference -> {
+                    String orderId = documentReference.getId();
+
+                    // Sepeti temizle
                     Cart.getInstance().clearCart(this);
+
                     progressBar.setVisibility(View.GONE);
-                    showOrderCompleteDialog(documentReference.getId());
-                    Log.d(TAG, "Sipariş başarıyla oluşturuldu: " + documentReference.getId());
+
+                    // Başarı diyaloğu göster
+                    showOrderCompleteDialog(orderId);
+
+                    Log.d(TAG, "Sipariş başarıyla oluşturuldu: " + orderId);
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
                     buttonPay.setEnabled(true);
                     Log.e(TAG, "Sipariş işlenirken hata", e);
-                    Toast.makeText(this, "Sipariş işlenirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Sipariş işlenirken hata: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
                 });
+    }
+
+    // Tracking numarası oluşturma (aynı kalacak)
+    private String generateTrackingNumber() {
+        return String.valueOf(System.currentTimeMillis()).substring(3);
     }
 
     private void showOrderCompleteDialog(String orderId) {

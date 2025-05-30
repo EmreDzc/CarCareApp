@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="8dp"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,115 +14,95 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Üst Kısım: Tarih ve Fiyat -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sipariş ID: "
-                android:textStyle="bold"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/textViewOrderId"
+                android:id="@+id/text_order_date"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                tools:text="...A1B2C3D4"
-                android:textColor="?android:textColorSecondary"
+                android:layout_weight="1"
+                android:text="6 Nisan 2025"
                 android:textSize="16sp"
-                android:gravity="end"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/text_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tarih: "
-                android:textColor="?android:textColorPrimary"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/textViewOrderDate"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                tools:text="24 Eki 2023, 15:30"
-                android:textColor="?android:textColorSecondary"
+                android:text="Detaylar >"
                 android:textSize="14sp"
-                android:gravity="end"/>
+                android:textColor="#FF9800"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Durum: "
-                android:textColor="?android:textColorPrimary"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/textViewOrderStatus"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                tools:text="Teslim Edildi"
-                android:textColor="@color/colorOrderStatusDelivered"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:gravity="end"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Toplam Tutar: "
-                android:textStyle="bold"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/textViewOrderTotal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                tools:text="$125.50"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="16sp"
-                android:gravity="end"/>
-        </LinearLayout>
-
-        <!-- İsteğe Bağlı: Sipariş Detaylarını Gör Butonu
-        <Button
-            android:id="@+id/buttonViewOrderDetails"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <!-- Toplam Fiyat -->
+        <TextView
+            android:id="@+id/text_total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detayları Gör"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"/>
-        -->
+            android:text="Toplam: 2169.93 TL"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
 
+        <!-- Durum -->
+        <TextView
+            android:id="@+id/text_order_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓ Teslim Edildi"
+            android:textSize="14sp"
+            android:textColor="#4CAF50"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Ürün Resimleri -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/layout_product_images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!-- Alt Kısım: Ürün Sayısı ve Değerlendirme -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/text_item_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="2 ürün teslim edildi"
+                android:textSize="12sp"
+                android:textColor="#757575" />
+
+            <TextView
+                android:id="@+id/text_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐ Değerlendir"
+                android:textSize="12sp"
+                android:textColor="#FF9800"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"
+                android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

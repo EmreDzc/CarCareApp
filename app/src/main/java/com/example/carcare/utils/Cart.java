@@ -72,7 +72,7 @@ public class Cart {
                     .collection("cart")
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
-                        // Tüm belgeleri sil - DocumentSnapshot kullan
+                        // Tüm belgeleri sil
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                             document.getReference().delete();
                         }
@@ -80,11 +80,12 @@ public class Cart {
                     });
         } else {
             // Kullanıcı giriş yapmamışsa yerel verileri temizle
-            context.getSharedPreferences("CartPrefs", Context.MODE_PRIVATE)
-                    .edit()
-                    .clear()
-                    .apply();
-            // Toast mesajı yok
+            if (context != null) {
+                context.getSharedPreferences("CartPrefs", Context.MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .apply();
+            }
         }
 
         // Değişikliği dinleyicilere bildir

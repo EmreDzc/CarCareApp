@@ -88,6 +88,16 @@
         <activity android:name=".ProductDetailActivity"
             android:label="ürün detayları"/>
 
+        <activity
+            android:name=".OrderHistoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <activity
+            android:name=".OrderDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
 
     </application>
 

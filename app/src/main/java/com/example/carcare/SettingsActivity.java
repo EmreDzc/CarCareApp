@@ -13,10 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.example.carcare.OrderHistoryActivity;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_settings); // Başlangıçta Store seçili olsun
+        bottomNavigationView.setSelectedItemId(R.id.nav_settings);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 1. Collapsible Edit Profile Bölümü (Güncellenmiş)
+        // 1. Collapsible Edit Profile Bölümü
         // ============================================================
         LinearLayout layoutEditProfileHeader = findViewById(R.id.layout_edit_profile_header);
         final LinearLayout layoutEditProfileDetails = findViewById(R.id.layout_edit_profile_details);
@@ -104,7 +104,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        // Edit Profile alanlarını tanımla (Email ve reauth alanları kaldırıldı)
         editName = findViewById(R.id.edit_name);
         editSurname = findViewById(R.id.edit_surname);
         editPhone = findViewById(R.id.edit_phone);
@@ -122,13 +121,11 @@ public class SettingsActivity extends AppCompatActivity {
                     return;
                 }
 
-                // FirebaseAuth üzerinden oturum açmış kullanıcıyı alıyoruz.
                 if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                     Toast.makeText(SettingsActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Firestore güncellemesi: "name", "surname" ve "phone" alanları güncellenecek
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> profileUpdates = new HashMap<>();
                 profileUpdates.put("name", name);
@@ -145,8 +142,9 @@ public class SettingsActivity extends AppCompatActivity {
                         });
             }
         });
+
         // ============================================================
-        // 2. Collapsible Vehicle Appointment & Insurance Bölümü
+        // 2. Vehicle Appointment & Insurance Bölümü
         // ============================================================
         LinearLayout layoutVehicleHeader = findViewById(R.id.layout_vehicle_appointment_header);
         final LinearLayout layoutVehicleDetails = findViewById(R.id.layout_vehicle_appointment_details);
@@ -163,6 +161,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
         editNextMaintenanceDate = findViewById(R.id.edit_next_maintenance_date);
         editTrafficInsuranceDate = findViewById(R.id.edit_traffic_insurance_date);
         editCarInsuranceDate = findViewById(R.id.edit_car_insurance_date);
@@ -178,7 +177,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 3. Collapsible Upload Picture Bölümü
+        // 3. Upload Picture Bölümü
         // ============================================================
         LinearLayout layoutUploadPictureHeader = findViewById(R.id.layout_upload_picture_header);
         final LinearLayout layoutUploadPictureDetails = findViewById(R.id.layout_upload_picture_details);
@@ -195,6 +194,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
         Button btnChoosePicture = findViewById(R.id.btn_choose_picture);
         btnChoosePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +206,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 4. Collapsible Dark Mode Bölümü
+        // 4. Dark Mode Bölümü
         // ============================================================
         LinearLayout layoutDarkModeHeader = findViewById(R.id.layout_dark_mode_header);
         final LinearLayout layoutDarkModeDetails = findViewById(R.id.layout_dark_mode_details);
@@ -224,17 +224,13 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        // Tema ayarlarını al
         SharedPreferences themePref = getSharedPreferences("ThemePrefs", MODE_PRIVATE);
         boolean isDarkMode = themePref.getBoolean("isDarkMode", false);
 
         Switch switchDarkMode = findViewById(R.id.switch_dark_mode);
         switchDarkMode.setChecked(isDarkMode);
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Tema değiştir - CarCareApplication sınıfını kullan
             CarCareApplication.changeTheme(isChecked, themePref);
-
-            // Aktiviteyi yeniden başlat (animasyonlu)
             final Intent intent = getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             finish();
@@ -244,7 +240,41 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 5. Collapsible FAQ Bölümü
+        // 4.5. Sipariş Geçmişi Bölümü (YENİ)
+        // ============================================================
+        LinearLayout layoutOrderHistoryHeader = findViewById(R.id.layout_order_history_header);
+        final LinearLayout layoutOrderHistoryDetails = findViewById(R.id.layout_order_history_details);
+        final ImageView imgOrderHistoryToggle = findViewById(R.id.img_order_history_toggle);
+
+        layoutOrderHistoryHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (layoutOrderHistoryDetails.getVisibility() == View.GONE) {
+                    layoutOrderHistoryDetails.setVisibility(View.VISIBLE);
+                    imgOrderHistoryToggle.setImageResource(R.drawable.ic_arrow_up);
+                } else {
+                    layoutOrderHistoryDetails.setVisibility(View.GONE);
+                    imgOrderHistoryToggle.setImageResource(R.drawable.ic_arrow_down);
+                }
+            }
+        });
+
+        Button btnViewOrderHistory = findViewById(R.id.btn_view_order_history);
+        btnViewOrderHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    Toast.makeText(SettingsActivity.this, "Sipariş geçmişini görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(SettingsActivity.this, OrderHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // ============================================================
+        // 5. FAQ Bölümü
         // ============================================================
         LinearLayout layoutFaqHeader = findViewById(R.id.layout_faq_header);
         final LinearLayout layoutFaqDetails = findViewById(R.id.layout_faq_details);
@@ -263,7 +293,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 6. Collapsible Log Out Bölümü
+        // 6. Log Out Bölümü
         // ============================================================
         LinearLayout layoutLogoutHeader = findViewById(R.id.layout_logout_header);
         final LinearLayout layoutLogoutDetails = findViewById(R.id.layout_logout_details);
@@ -280,6 +310,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
         Button btnConfirmLogout = findViewById(R.id.btn_confirm_logout);
         btnConfirmLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,7 +324,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // ============================================================
-        // 7. Collapsible Delete Account Bölümü
+        // 7. Delete Account Bölümü
         // ============================================================
         LinearLayout layoutDeleteHeader = findViewById(R.id.layout_delete_account_header);
         final LinearLayout layoutDeleteDetails = findViewById(R.id.layout_delete_account_details);
@@ -310,6 +341,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
         editConfirmPassword = findViewById(R.id.edit_confirm_password);
         Button btnConfirmDeleteAccount = findViewById(R.id.btn_confirm_delete_account);
         btnConfirmDeleteAccount.setOnClickListener(new View.OnClickListener() {
@@ -325,16 +357,14 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(SettingsActivity.this, "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // Reauthentication için mevcut email ve girilen şifre kullanılır.
+
                 AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
                 user.reauthenticate(credential)
                         .addOnSuccessListener(aVoid -> {
-                            // Önce Firestore'daki kullanıcı belgesini sil
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(user.getUid())
                                     .delete()
                                     .addOnSuccessListener(aVoid1 -> {
-                                        // Ardından, FirebaseAuth'den kullanıcıyı sil
                                         user.delete()
                                                 .addOnSuccessListener(aVoid2 -> {
                                                     Toast.makeText(SettingsActivity.this, "Hesabınız silindi.", Toast.LENGTH_SHORT).show();

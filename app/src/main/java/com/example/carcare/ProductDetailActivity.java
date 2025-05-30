@@ -91,8 +91,13 @@ public class ProductDetailActivity extends AppCompatActivity {
         productId = getIntent().getStringExtra("PRODUCT_ID");
         if (TextUtils.isEmpty(productId)) {
             Toast.makeText(this, "Ürün ID bulunamadı", Toast.LENGTH_SHORT).show();
-            finish(); return;
+            finish();
+            return;
         }
+
+        // Sipariş sayfasından gelinip gelilmediğini kontrol et
+        boolean focusReview = getIntent().getBooleanExtra("FOCUS_REVIEW", false);
+        boolean fromOrder = getIntent().getBooleanExtra("FROM_ORDER", false);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -100,6 +105,44 @@ public class ProductDetailActivity extends AppCompatActivity {
         initViews();
         setupListeners();
         loadProductDetails();
+
+        // Eğer sipariş sayfasından gelindiyse değerlendirme bölümüne odaklan
+        if (focusReview && fromOrder) {
+            // Sayfanın yüklenmesini bekle ve sonra scroll yap
+            findViewById(android.R.id.content).post(() -> {
+                scrollToReviewSection();
+            });
+        }
+    }
+
+    private void scrollToReviewSection() {
+        // NestedScrollView'i bul ve değerlendirme bölümüne scroll yap
+        androidx.core.widget.NestedScrollView scrollView = findViewById(R.id.nested_scroll_view);
+        View reviewSection = findViewById(R.id.rating_bar_submit); // Değerlendirme rating bar'ı
+
+        if (scrollView != null && reviewSection != null) {
+            scrollView.post(() -> {
+                // Review section'ına smooth scroll
+                scrollView.smoothScrollTo(0, reviewSection.getTop() - 100); // 100px yukarıdan margin
+            });
+
+            // Rating bar'a odaklan ve animasyon ekle (isteğe bağlı)
+            if (ratingBarSubmit != null) {
+                ratingBarSubmit.postDelayed(() -> {
+                    // Hafif bir animasyon ekleyebilirsiniz
+                    ratingBarSubmit.animate()
+                            .scaleX(1.1f)
+                            .scaleY(1.1f)
+                            .setDuration(200)
+                            .withEndAction(() -> {
+                                ratingBarSubmit.animate()
+                                        .scaleX(1.0f)
+                                        .scaleY(1.0f)
+                                        .setDuration(200);
+                            });
+                }, 500);
+            }
+        }
     }
 
     private void initViews() {
