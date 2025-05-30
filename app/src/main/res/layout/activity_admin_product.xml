@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -10,164 +11,89 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp">
-
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_back"
-                android:contentDescription="Back" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Ürün Ekle"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <ImageButton android:id="@+id/btn_back" android:layout_width="24dp" android:layout_height="24dp" android:layout_alignParentStart="true" android:layout_centerVertical="true" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_back" android:contentDescription="Back" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true" android:text="@string/admin_product_title" android:textColor="#000000" android:textSize="18sp" android:textStyle="bold" />
         </RelativeLayout>
 
-        <!-- Product Image Preview -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ürün Görseli"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <ImageView
-                android:id="@+id/image_product_preview"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:src="@drawable/placeholder_image"
-                android:scaleType="centerCrop"
-                android:background="#F5F5F5"
-                android:layout_marginBottom="8dp" />
-
-            <Button
-                android:id="@+id/btn_select_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Resim Seç"
-                android:backgroundTint="#4285F4"
-                android:textColor="#FFFFFF" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="16dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ürün Görseli" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="8dp" />
+            <ImageView android:id="@+id/image_product_preview" android:layout_width="200dp" android:layout_height="200dp" android:layout_gravity="center" android:src="@drawable/placeholder_image" android:scaleType="centerCrop" android:background="#F5F5F5" android:layout_marginBottom="8dp" />
+            <Button android:id="@+id/btn_select_image" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="@string/admin_select_image" app:backgroundTint="@color/blue_primary" android:textColor="@color/white" />
         </LinearLayout>
 
-        <!-- Product Name -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/edit_product_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ürün Adı"
-                android:inputType="text" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/admin_product_name_hint" android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Product Description -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/edit_product_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ürün Açıklaması"
-                android:inputType="textMultiLine"
-                android:lines="3" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_brand" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_brand" android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Price -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/edit_product_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Fiyat ($)"
-                android:inputType="numberDecimal" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_model_code" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_model_code" android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Stock -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/edit_product_stock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Stok Miktarı"
-                android:inputType="number" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/admin_product_desc_hint" android:inputType="textMultiLine" android:lines="3" android:gravity="top"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Category Spinner -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kategori"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <Spinner
-                android:id="@+id/spinner_category"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:entries="@array/product_categories" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginEnd="8dp">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_price" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/admin_product_price_hint" android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_discount_price" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_discount_price" android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_stock" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/admin_product_stock_hint" android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_category_label" android:textSize="14sp" android:layout_marginBottom="4dp" />
+        <Spinner android:id="@+id/spinner_category" android:layout_width="match_parent" android:layout_height="56dp" android:entries="@array/product_categories" android:layout_marginBottom="12dp" style="@style/Widget.AppCompat.Spinner.Underlined" android:background="@drawable/spinner_background_admin"/> <!-- spinner_background_admin.xml oluşturun -->
 
-        <!-- Progress Bar -->
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Save Button -->
-        <Button
-            android:id="@+id/btn_save_product"
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_color" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_sizes" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_sizes" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_seller_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_seller_name" android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginEnd="8dp">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_rating" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_rating" android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_review_count" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_review_count" android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_specifications" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_specifications" android:inputType="textMultiLine" android:lines="2" android:gravity="top"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_tags" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_tags" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_warranty_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_warranty_info" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_shipping_info" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/edit_product_return_policy" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/hint_product_return_policy" android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_is_featured"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Ürünü Kaydet"
-            android:backgroundTint="#4285F4"
-            android:textColor="#FFFFFF"
+            android:layout_height="wrap_content"
+            android:text="@string/label_is_featured"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
 
+        <ProgressBar android:id="@+id/progress_bar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone" android:layout_marginBottom="16dp" />
+        <Button android:id="@+id/btn_save_product" android:layout_width="match_parent" android:layout_height="56dp" android:text="@string/admin_save_product" app:backgroundTint="@color/blue_primary" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

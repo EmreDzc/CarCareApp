@@ -2,66 +2,70 @@ package com.example.carcare;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
+import androidx.appcompat.widget.SwitchCompat; // Eksik import olabilir
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class AdminProductActivity extends AppCompatActivity {
 
     private static final String TAG = "AdminProductActivity";
 
-    private EditText editName, editDescription, editPrice, editStock;
+    private TextInputEditText editName, editDescription, editPrice, editStock, editBrand, editModelCode,
+            editSellerName, editColor, editSizes, editTags,
+            editDiscountPrice, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications;
+    // editRating ve editReviewCount kaldırılmıştı.
     private Spinner spinnerCategory;
+    private SwitchCompat switchIsFeatured;
     private ImageView imageViewProduct;
     private Button btnSelectImage, btnSaveProduct;
     private ProgressBar progressBar;
 
     private FirebaseFirestore db;
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
-
     private Uri selectedImageUri;
-    private String uploadedImageUrl;
-
-    // ActivityResultLauncher for image selection
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+
+    private static final int IMAGE_MAX_WIDTH = 800;
+    private static final int IMAGE_MAX_HEIGHT = 800;
+    private static final int IMAGE_COMPRESSION_QUALITY = 75;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_product); // Layout'unuzun adını değiştirin
+        setContentView(R.layout.activity_admin_product);
 
-        // Firebase initialize
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
-
         initViews();
-        setupImagePicker();
-        setupClickListeners();
+        setupImagePicker(); // Bu metod imagePickerLauncher'ı initialize ediyor
+        setupClickListeners(); // Bu metod selectImage'i kullanıyor
     }
 
     private void initViews() {
@@ -74,200 +78,251 @@ public class AdminProductActivity extends AppCompatActivity {
         btnSelectImage = findViewById(R.id.btn_select_image);
         btnSaveProduct = findViewById(R.id.btn_save_product);
         progressBar = findViewById(R.id.progress_bar);
+
+        editBrand = findViewById(R.id.edit_product_brand);
+        editModelCode = findViewById(R.id.edit_product_model_code);
+        editSellerName = findViewById(R.id.edit_product_seller_name);
+        editColor = findViewById(R.id.edit_product_color);
+        editSizes = findViewById(R.id.edit_product_sizes);
+        editTags = findViewById(R.id.edit_product_tags);
+        editDiscountPrice = findViewById(R.id.edit_product_discount_price);
+        switchIsFeatured = findViewById(R.id.switch_is_featured);
+        editWarrantyInfo = findViewById(R.id.edit_product_warranty_info);
+        editShippingInfo = findViewById(R.id.edit_product_shipping_info);
+        editReturnPolicy = findViewById(R.id.edit_product_return_policy);
+        editSpecifications = findViewById(R.id.edit_product_specifications);
+        Log.d(TAG, "Views initialized.");
     }
 
     private void setupImagePicker() {
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                            selectedImageUri = result.getData().getData();
-                            if (selectedImageUri != null) {
-                                // Seçilen resmi ImageView'da göster
-                                Glide.with(AdminProductActivity.this)
-                                        .load(selectedImageUri)
-                                        .into(imageViewProduct);
-
-                                btnSelectImage.setText("Resim Seçildi ✓");
-                                Log.d(TAG, "Image selected: " + selectedImageUri.toString());
-                            }
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                        if (selectedImageUri != null) {
+                            Glide.with(this).load(selectedImageUri).into(imageViewProduct);
+                            btnSelectImage.setText(R.string.admin_image_selected);
+                            Log.d(TAG, "Image selected: " + selectedImageUri.toString());
                         }
+                    } else {
+                        Log.w(TAG, "Image selection cancelled or failed.");
                     }
                 }
         );
+        Log.d(TAG, "Image picker setup.");
     }
 
     private void setupClickListeners() {
-        btnSelectImage.setOnClickListener(v -> selectImage());
+        btnSelectImage.setOnClickListener(v -> selectImage()); // selectImage() burada çağrılıyor
         btnSaveProduct.setOnClickListener(v -> saveProduct());
-
-        // Geri butonu varsa
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        Log.d(TAG, "Click listeners setup.");
     }
 
+    // Bu metodun var olduğundan ve doğru yazıldığından emin olun
     private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        imagePickerLauncher.launch(intent);
+        if (imagePickerLauncher == null) {
+            Log.e(TAG, "imagePickerLauncher is null in selectImage(). Did setupImagePicker() run?");
+            Toast.makeText(this, "Resim seçici hazır değil.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/*"); // Sadece resim dosyalarını filtrele
+            imagePickerLauncher.launch(intent);
+            Log.d(TAG, "Image picker launched.");
+        } catch (Exception e) {
+            Log.e(TAG, "Error launching image picker", e);
+            Toast.makeText(this, "Resim seçici açılamadı: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String convertUriToResizedBase64(Uri uri) {
+        if (uri == null) return "";
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) {
+                Log.e(TAG, "InputStream is null for URI: " + uri);
+                return "";
+            }
+            Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
+            if (originalBitmap == null) {
+                Log.e(TAG, "BitmapFactory.decodeStream returned null for URI: " + uri);
+                return "";
+            }
+
+            Bitmap resizedBitmap = resizeBitmap(originalBitmap, IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_COMPRESSION_QUALITY, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            String base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            Log.d(TAG, "Base64 string length: " + base64Image.length() + " bytes. Original bitmap size: " + originalBitmap.getByteCount() + ", Resized byte array size: " + byteArray.length);
+            if (base64Image.length() > 700000) {
+                Toast.makeText(this, "Resim boyutu çok büyük. Lütfen daha küçük bir resim seçin.", Toast.LENGTH_LONG).show();
+                return "";
+            }
+            return base64Image;
+        } catch (IOException | OutOfMemoryError e) {
+            Log.e(TAG, "Error converting URI to Base64 or resizing image", e);
+            Toast.makeText(this, "Resim işlenirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return "";
+        }
+    }
+
+    private Bitmap resizeBitmap(Bitmap image, int maxWidth, int maxHeight) {
+        if (maxHeight <= 0 || maxWidth <= 0 || image == null) return image;
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (width <= maxWidth && height <= maxHeight) return image; // No need to resize
+        float ratioBitmap = (float) width / (float) height;
+        float ratioMax = (float) maxWidth / (float) maxHeight;
+        int finalWidth = maxWidth;
+        int finalHeight = maxHeight;
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (int) ((float) maxHeight * ratioBitmap);
+        } else {
+            finalHeight = (int) ((float) maxWidth / ratioBitmap);
+        }
+        if (finalWidth <= 0) finalWidth = 1;
+        if (finalHeight <= 0) finalHeight = 1;
+        return Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
     }
 
     private void saveProduct() {
-        // Form validasyonu
+        Log.d(TAG, "Save product button clicked.");
         if (!validateInputs()) {
+            Toast.makeText(this, "Lütfen zorunlu alanları (*) doldurun ve geçerli değerler girin.", Toast.LENGTH_LONG).show();
             return;
         }
-
         showLoading(true);
 
-        // Eğer resim seçilmişse önce resmi yükle, sonra ürünü kaydet
+        String imageBase64Data = "";
         if (selectedImageUri != null) {
-            uploadImageAndSaveProduct();
+            Log.d(TAG, "Image selected, converting to Base64...");
+            imageBase64Data = convertUriToResizedBase64(selectedImageUri);
+            if (TextUtils.isEmpty(imageBase64Data) && selectedImageUri != null) {
+                Toast.makeText(this, "Resim işlenemedi. Lütfen farklı bir resim deneyin veya resim seçmeyin.", Toast.LENGTH_LONG).show();
+                showLoading(false);
+                return;
+            }
         } else {
-            // Resim olmadan ürün kaydet
-            saveProductToFirestore(null);
+            Log.d(TAG, "No image selected, will save without image.");
         }
+        saveProductToFirestore(imageBase64Data);
     }
 
     private boolean validateInputs() {
-        String name = editName.getText().toString().trim();
-        String description = editDescription.getText().toString().trim();
-        String priceText = editPrice.getText().toString().trim();
-        String stockText = editStock.getText().toString().trim();
-
-        if (name.isEmpty()) {
-            editName.setError("Ürün adı gerekli");
-            return false;
-        }
-
-        if (description.isEmpty()) {
-            editDescription.setError("Açıklama gerekli");
-            return false;
-        }
-
-        if (priceText.isEmpty()) {
-            editPrice.setError("Fiyat gerekli");
-            return false;
-        }
-
-        if (stockText.isEmpty()) {
-            editStock.setError("Stok miktarı gerekli");
-            return false;
-        }
-
+        if (TextUtils.isEmpty(editName.getText())) { editName.setError("Gerekli"); editName.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editDescription.getText())) { editDescription.setError("Gerekli"); editDescription.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editPrice.getText())) { editPrice.setError("Gerekli"); editPrice.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editStock.getText())) { editStock.setError("Gerekli"); editStock.requestFocus(); return false; }
         try {
-            Double.parseDouble(priceText);
-            Integer.parseInt(stockText);
+            Double.parseDouble(editPrice.getText().toString());
+            Integer.parseInt(editStock.getText().toString());
+            if (!TextUtils.isEmpty(editDiscountPrice.getText())) Double.parseDouble(editDiscountPrice.getText().toString());
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Geçersiz sayı formatı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sayısal alanlarda geçersiz format.", Toast.LENGTH_SHORT).show();
+            // Hatalı alana odaklanma eklenebilir
+            if (editPrice.getText().toString().isEmpty() || !editPrice.getText().toString().matches("\\d+(\\.\\d+)?")) editPrice.requestFocus();
+            else if (editStock.getText().toString().isEmpty() || !editStock.getText().toString().matches("\\d+")) editStock.requestFocus();
+            else if (!editDiscountPrice.getText().toString().isEmpty() && !editDiscountPrice.getText().toString().matches("\\d+(\\.\\d+)?")) editDiscountPrice.requestFocus();
             return false;
         }
-
+        Log.d(TAG, "Input validation successful.");
         return true;
     }
 
-    private void uploadImageAndSaveProduct() {
-        // Unique dosya ismi oluştur
-        String fileName = "product_images/" + UUID.randomUUID().toString() + ".jpg";
-        StorageReference imageRef = storageRef.child(fileName);
-
-        Log.d(TAG, "Uploading image to: " + fileName);
-
-        // Resmi Firebase Storage'a yükle
-        imageRef.putFile(selectedImageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(TAG, "Image upload successful");
-
-                    // Upload başarılı, download URL'ini al
-                    imageRef.getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                uploadedImageUrl = uri.toString();
-                                Log.d(TAG, "Download URL: " + uploadedImageUrl);
-
-                                // Şimdi ürünü kaydet
-                                saveProductToFirestore(uploadedImageUrl);
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to get download URL", e);
-                                showLoading(false);
-                                Toast.makeText(this, "Resim URL'i alınamadı: " + e.getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Image upload failed", e);
-                    showLoading(false);
-                    Toast.makeText(this, "Resim yüklenemedi: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                })
-                .addOnProgressListener(taskSnapshot -> {
-                    // Upload progress gösterebilirsiniz
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Log.d(TAG, "Upload progress: " + progress + "%");
-                });
+    private Map<String, String> parseSpecifications(String specInput) {
+        Map<String, String> specs = new HashMap<>();
+        if (TextUtils.isEmpty(specInput)) return specs;
+        String[] pairs = specInput.split(",");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split(":", 2);
+            if (keyValue.length == 2 && !TextUtils.isEmpty(keyValue[0].trim()) && !TextUtils.isEmpty(keyValue[1].trim())) {
+                specs.put(keyValue[0].trim(), keyValue[1].trim());
+            }
+        }
+        return specs;
     }
 
-    private void saveProductToFirestore(String imageUrl) {
-        // Form verilerini al
-        String name = editName.getText().toString().trim();
-        String description = editDescription.getText().toString().trim();
-        double price = Double.parseDouble(editPrice.getText().toString().trim());
-        int stock = Integer.parseInt(editStock.getText().toString().trim());
-        String category = spinnerCategory.getSelectedItem().toString();
+    private List<String> parseListFromString(String input) {
+        if (TextUtils.isEmpty(input)) return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(input.split("\\s*,\\s*")));
+    }
 
-        // Product map oluştur
+    private void saveProductToFirestore(String imageBase64) {
         Map<String, Object> product = new HashMap<>();
-        product.put("name", name);
-        product.put("description", description);
-        product.put("price", price);
-        product.put("stock", stock);
-        product.put("category", category);
-        product.put("imageUrl", imageUrl != null ? imageUrl : ""); // Null kontrolü
-        product.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
+        product.put("name", editName.getText().toString().trim());
+        product.put("description", editDescription.getText().toString().trim());
+        product.put("price", Double.parseDouble(editPrice.getText().toString().trim()));
+        product.put("stock", Integer.parseInt(editStock.getText().toString().trim()));
+        product.put("category", spinnerCategory.getSelectedItem().toString());
+        product.put("imageBase64", imageBase64 != null ? imageBase64 : ""); // Null check
+        product.put("createdAt", FieldValue.serverTimestamp());
+        product.put("updatedAt", FieldValue.serverTimestamp());
 
-        Log.d(TAG, "Saving product to Firestore: " + product.toString());
+        product.put("brand", editBrand.getText().toString().trim());
+        product.put("modelCode", editModelCode.getText().toString().trim());
+        product.put("sellerName", editSellerName.getText().toString().trim());
 
-        // Firestore'a kaydet
+        product.put("averageRating", 0.0f); // Başlangıç değeri
+        product.put("totalReviews", 0);     // Başlangıç değeri
+
+        product.put("color", editColor.getText().toString().trim());
+        product.put("sizes", parseListFromString(editSizes.getText().toString().trim()));
+        product.put("tags", parseListFromString(editTags.getText().toString().trim()));
+
+        String discountPriceStr = editDiscountPrice.getText().toString().trim();
+        product.put("discountPrice", !TextUtils.isEmpty(discountPriceStr) ? Double.parseDouble(discountPriceStr) : 0.0);
+
+        product.put("isFeatured", switchIsFeatured.isChecked());
+        product.put("warrantyInfo", editWarrantyInfo.getText().toString().trim());
+        product.put("shippingInfo", editShippingInfo.getText().toString().trim());
+        product.put("returnPolicy", editReturnPolicy.getText().toString().trim());
+        product.put("specifications", parseSpecifications(editSpecifications.getText().toString().trim()));
+
+        Log.d(TAG, "Saving product: " + product.get("name") + ", ImageBase64 length: " + (imageBase64 != null ? imageBase64.length() : "null"));
+
         db.collection("products")
                 .add(product)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "Product saved successfully with ID: " + documentReference.getId());
-                    showLoading(false);
-                    Toast.makeText(this, "Ürün başarıyla eklendi!", Toast.LENGTH_SHORT).show();
-
-                    // Formu temizle
+                    Log.d(TAG, "Product added successfully with ID: " + documentReference.getId());
+                    Toast.makeText(this, "Ürün başarıyla eklendi!", Toast.LENGTH_LONG).show();
                     clearForm();
+                    showLoading(false);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error saving product", e);
+                    Log.e(TAG, "Error adding product", e);
+                    Toast.makeText(this, "Hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     showLoading(false);
-                    Toast.makeText(this, "Ürün kaydedilemedi: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void clearForm() {
-        editName.setText("");
-        editDescription.setText("");
-        editPrice.setText("");
-        editStock.setText("");
-        spinnerCategory.setSelection(0);
-        imageViewProduct.setImageResource(R.drawable.placeholder_image);
-        btnSelectImage.setText("Resim Seç");
         selectedImageUri = null;
-        uploadedImageUrl = null;
+        imageViewProduct.setImageResource(R.drawable.placeholder_image);
+        btnSelectImage.setText(R.string.admin_select_image);
+        editName.setText(""); editDescription.setText(""); editPrice.setText(""); editStock.setText("");
+        editBrand.setText(""); editModelCode.setText(""); editSellerName.setText("");
+        editColor.setText(""); editSizes.setText(""); editTags.setText(""); editDiscountPrice.setText("");
+        editWarrantyInfo.setText(""); editShippingInfo.setText(""); editReturnPolicy.setText("");
+        editSpecifications.setText("");
+        spinnerCategory.setSelection(0);
+        switchIsFeatured.setChecked(false);
+        editName.clearFocus();
+        Log.d(TAG, "Form cleared.");
     }
 
     private void showLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         btnSaveProduct.setEnabled(!isLoading);
         btnSelectImage.setEnabled(!isLoading);
-
-        if (isLoading) {
-            btnSaveProduct.setText("Kaydediliyor...");
-        } else {
-            btnSaveProduct.setText("Ürünü Kaydet");
+        // Diğer input alanlarını da disable/enable yapabilirsiniz
+        for (View v : new View[]{editName, editDescription, editPrice, editStock, editBrand, editModelCode, editSellerName, editColor, editSizes, editTags, editDiscountPrice, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications, spinnerCategory, switchIsFeatured}) {
+            if (v!= null) v.setEnabled(!isLoading);
         }
+        btnSaveProduct.setText(isLoading ? R.string.admin_saving : R.string.admin_save_product);
+        Log.d(TAG, "Loading state: " + isLoading);
     }
 }
