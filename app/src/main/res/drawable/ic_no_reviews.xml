@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/grey_medium"
+    android:alpha="0.6">
+
+    <!-- Document/list background -->
+    <path
+        android:fillColor="@color/grey_light"
+        android:pathData="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+
+    <!-- Empty lines representing missing content -->
+    <path
+        android:fillColor="@color/grey_medium"
+        android:pathData="M8,12h8v1h-8zM8,14h5v1h-5zM8,16h6v1h-6z"
+        android:alpha="0.3"/>
+
+    <!-- Small star outline -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/grey_medium"
+        android:strokeWidth="0.8"
+        android:pathData="M9.5,10l0.5,1.5L11.5,11l-1,-0.8L9.5,10zM9.5,10l-0.5,1.5L7.5,11l1,-0.8L9.5,10z"
+        android:alpha="0.5"/>
+
+</vector>

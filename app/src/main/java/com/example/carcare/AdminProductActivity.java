@@ -40,9 +40,8 @@ public class AdminProductActivity extends AppCompatActivity {
     private static final String TAG = "AdminProductActivity";
 
     private TextInputEditText editName, editDescription, editPrice, editStock, editBrand, editModelCode,
-            editSellerName, editColor, editSizes, editTags,
-            editDiscountPrice, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications;
-    // editRating ve editReviewCount kaldırılmıştı.
+            editSellerName, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications;
+
     private Spinner spinnerCategory;
     private SwitchCompat switchIsFeatured;
     private ImageView imageViewProduct;
@@ -82,10 +81,6 @@ public class AdminProductActivity extends AppCompatActivity {
         editBrand = findViewById(R.id.edit_product_brand);
         editModelCode = findViewById(R.id.edit_product_model_code);
         editSellerName = findViewById(R.id.edit_product_seller_name);
-        editColor = findViewById(R.id.edit_product_color);
-        editSizes = findViewById(R.id.edit_product_sizes);
-        editTags = findViewById(R.id.edit_product_tags);
-        editDiscountPrice = findViewById(R.id.edit_product_discount_price);
         switchIsFeatured = findViewById(R.id.switch_is_featured);
         editWarrantyInfo = findViewById(R.id.edit_product_warranty_info);
         editShippingInfo = findViewById(R.id.edit_product_shipping_info);
@@ -220,13 +215,13 @@ public class AdminProductActivity extends AppCompatActivity {
         try {
             Double.parseDouble(editPrice.getText().toString());
             Integer.parseInt(editStock.getText().toString());
-            if (!TextUtils.isEmpty(editDiscountPrice.getText())) Double.parseDouble(editDiscountPrice.getText().toString());
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Sayısal alanlarda geçersiz format.", Toast.LENGTH_SHORT).show();
-            // Hatalı alana odaklanma eklenebilir
-            if (editPrice.getText().toString().isEmpty() || !editPrice.getText().toString().matches("\\d+(\\.\\d+)?")) editPrice.requestFocus();
-            else if (editStock.getText().toString().isEmpty() || !editStock.getText().toString().matches("\\d+")) editStock.requestFocus();
-            else if (!editDiscountPrice.getText().toString().isEmpty() && !editDiscountPrice.getText().toString().matches("\\d+(\\.\\d+)?")) editDiscountPrice.requestFocus();
+            if (editPrice.getText().toString().isEmpty() || !editPrice.getText().toString().matches("\\d+(\\.\\d+)?")) {
+                editPrice.requestFocus();
+            } else if (editStock.getText().toString().isEmpty() || !editStock.getText().toString().matches("\\d+")) {
+                editStock.requestFocus();
+            }
             return false;
         }
         Log.d(TAG, "Input validation successful.");
@@ -269,13 +264,6 @@ public class AdminProductActivity extends AppCompatActivity {
         product.put("averageRating", 0.0f); // Başlangıç değeri
         product.put("totalReviews", 0);     // Başlangıç değeri
 
-        product.put("color", editColor.getText().toString().trim());
-        product.put("sizes", parseListFromString(editSizes.getText().toString().trim()));
-        product.put("tags", parseListFromString(editTags.getText().toString().trim()));
-
-        String discountPriceStr = editDiscountPrice.getText().toString().trim();
-        product.put("discountPrice", !TextUtils.isEmpty(discountPriceStr) ? Double.parseDouble(discountPriceStr) : 0.0);
-
         product.put("isFeatured", switchIsFeatured.isChecked());
         product.put("warrantyInfo", editWarrantyInfo.getText().toString().trim());
         product.put("shippingInfo", editShippingInfo.getText().toString().trim());
@@ -305,7 +293,6 @@ public class AdminProductActivity extends AppCompatActivity {
         btnSelectImage.setText(R.string.admin_select_image);
         editName.setText(""); editDescription.setText(""); editPrice.setText(""); editStock.setText("");
         editBrand.setText(""); editModelCode.setText(""); editSellerName.setText("");
-        editColor.setText(""); editSizes.setText(""); editTags.setText(""); editDiscountPrice.setText("");
         editWarrantyInfo.setText(""); editShippingInfo.setText(""); editReturnPolicy.setText("");
         editSpecifications.setText("");
         spinnerCategory.setSelection(0);
@@ -319,7 +306,7 @@ public class AdminProductActivity extends AppCompatActivity {
         btnSaveProduct.setEnabled(!isLoading);
         btnSelectImage.setEnabled(!isLoading);
         // Diğer input alanlarını da disable/enable yapabilirsiniz
-        for (View v : new View[]{editName, editDescription, editPrice, editStock, editBrand, editModelCode, editSellerName, editColor, editSizes, editTags, editDiscountPrice, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications, spinnerCategory, switchIsFeatured}) {
+        for (View v : new View[]{editName, editDescription, editPrice, editStock, editBrand, editModelCode, editSellerName, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications, spinnerCategory, switchIsFeatured}) {
             if (v!= null) v.setEnabled(!isLoading);
         }
         btnSaveProduct.setText(isLoading ? R.string.admin_saving : R.string.admin_save_product);

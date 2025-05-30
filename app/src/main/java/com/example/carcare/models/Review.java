@@ -1,14 +1,18 @@
 package com.example.carcare.models;
 
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Review {
-    private String id; // Firestore tarafından otomatik atanacak
+    @Exclude
+    private String id; // Firestore document ID - Exclude ile işaretlendi
+
     private String userId;
     private String userName; // Kullanıcının görünen adı
     private float rating; // 1.0 - 5.0 arası
     private String comment;
+
     @ServerTimestamp
     private Date timestamp;
 
@@ -24,7 +28,10 @@ public class Review {
     }
 
     // --- Getter ve Setterlar ---
+    @Exclude
     public String getId() { return id; }
+
+    @Exclude
     public void setId(String id) { this.id = id; }
 
     public String getUserId() { return userId; }

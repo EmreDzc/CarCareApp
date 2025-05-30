@@ -1,5 +1,6 @@
 package com.example.carcare;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.carcare.activities.CheckoutActivity;
 import com.example.carcare.adapters.ReviewAdapter;
 import com.example.carcare.models.Product;
 import com.example.carcare.models.Review;
@@ -50,29 +52,31 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView productImage;
     private TextView productName, productPrice, productDescription, productBrand,
             productModelCode, productSeller,
-            productColorText, productStockStatus, toolbarTitle, productDiscountPrice,
+            productStockStatus, toolbarTitle, productDiscountPrice,
             productWarrantyInfo, productShippingInfo, productReturnPolicy;
 
+    // Ürünün ana rating ve yorum sayısı gösterimi
     private RatingBar productRatingMain;
     private TextView productReviewCountMain;
 
-    private Button addToCartButton;
+    private Button addToCartButton, buyNowButton;
     private ImageButton backButton, favoriteButton;
     private ProgressBar progressBar;
-    private LinearLayout productSpecificationsLayout, productColorsLayout, productSizesLayout;
-    private ChipGroup chipGroupSizes, chipGroupTags;
+    private LinearLayout productSpecificationsLayout;
+    private ChipGroup  chipGroupTags;
     private Toolbar toolbar;
 
     private TextView titleDescription, titleSpecifications, titleShippingInfo;
     private View dividerAfterDescription, dividerAfterSpecs, dividerBeforeReviews;
 
+    // Yorum gönderme ve listeleme UI elemanları
     private RatingBar ratingBarSubmit;
     private TextInputEditText editTextReviewComment;
     private Button btnSubmitReview;
     private RecyclerView recyclerViewReviews;
     private ReviewAdapter reviewAdapter;
     private List<Review> reviewList; // Bu aktivitenin ana review listesi
-    private TextView textReviewsTitle, textNoReviews;
+    private TextView textReviewsTitle, textNoReviews; // Yorumlar başlığı ve "yorum yok" mesajı
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -113,13 +117,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         productDescription = findViewById(R.id.product_detail_description);
         productSeller = findViewById(R.id.product_detail_seller);
 
+        // Ürünün ana rating ve yorum sayısı
         productRatingMain = findViewById(R.id.product_detail_rating_main);
         productReviewCountMain = findViewById(R.id.product_detail_review_count_main);
 
-        productColorsLayout = findViewById(R.id.product_colors_layout);
-        productColorText = findViewById(R.id.product_detail_color);
-        productSizesLayout = findViewById(R.id.product_sizes_layout);
-        chipGroupSizes = findViewById(R.id.chip_group_sizes);
         productStockStatus = findViewById(R.id.product_detail_stock_status);
         productSpecificationsLayout = findViewById(R.id.product_specifications_layout);
         productWarrantyInfo = findViewById(R.id.product_detail_warranty_info);
@@ -132,13 +133,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         titleShippingInfo = findViewById(R.id.title_shipping_info);
         dividerAfterDescription = findViewById(R.id.divider_after_description);
         dividerAfterSpecs = findViewById(R.id.divider_after_specs);
-        dividerBeforeReviews = findViewById(R.id.divider_before_reviews);
+        dividerBeforeReviews = findViewById(R.id.divider_before_reviews); // Yorumlardan önceki ayırıcı
 
         addToCartButton = findViewById(R.id.btn_add_to_cart_detail);
-        backButton = findViewById(R.id.btn_back);
+        buyNowButton = findViewById(R.id.btn_buy_now_detail);
+        buyNowButton = findViewById(R.id.btn_buy_now_detail);
         favoriteButton = findViewById(R.id.btn_favorite_detail);
         progressBar = findViewById(R.id.progress_bar_detail);
 
+        // Yorum UI elemanları
         ratingBarSubmit = findViewById(R.id.rating_bar_submit);
         editTextReviewComment = findViewById(R.id.edit_text_review_comment);
         btnSubmitReview = findViewById(R.id.btn_submit_review);
@@ -146,30 +149,109 @@ public class ProductDetailActivity extends AppCompatActivity {
         textReviewsTitle = findViewById(R.id.text_reviews_title);
         textNoReviews = findViewById(R.id.text_no_reviews);
 
-        reviewList = new ArrayList<>(); // Aktivitenin listesini initialize et
-        reviewAdapter = new ReviewAdapter(this, reviewList); // Adapter'a bu listeyi (başlangıçta boş) ver
-        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewReviews.setAdapter(reviewAdapter);
-        recyclerViewReviews.setNestedScrollingEnabled(false);
+        reviewList = new ArrayList<>();
+        Log.d(TAG, "reviewList initialized with size: " + reviewList.size());
+
+        if (recyclerViewReviews != null) {
+            reviewAdapter = new ReviewAdapter(this, reviewList);
+
+            // *** YENİ: Yatay LinearLayoutManager Ayarlama ***
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerViewReviews.setLayoutManager(layoutManager);
+
+            recyclerViewReviews.setAdapter(reviewAdapter);
+            recyclerViewReviews.setNestedScrollingEnabled(false); // ScrollView içinde düzgün çalışması için
+
+            // *** İSTEĞE BAĞLI: SnapHelper ekleme (her seferinde bir öğeyi ortalar) ***
+            // SnapHelper snapHelper = new PagerSnapHelper();
+            // snapHelper.attachToRecyclerView(recyclerViewReviews);
+
+            Log.d(TAG, "RecyclerView and adapter initialized successfully with HORIZONTAL layout.");
+            Log.d(TAG, "Initial adapter item count: " + reviewAdapter.getItemCount());
+        } else {
+            Log.e(TAG, "recyclerViewReviews is NULL! Check R.id.recycler_view_reviews in layout");
+        }
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewReviews.setLayoutManager(layoutManager);
+
+        // Null check'ler
+        if (textReviewsTitle == null) Log.e(TAG, "textReviewsTitle is NULL!");
+        if (textNoReviews == null) Log.e(TAG, "textNoReviews is NULL!");
+        if (ratingBarSubmit == null) Log.e(TAG, "ratingBarSubmit is NULL!");
+        if (btnSubmitReview == null) Log.e(TAG, "btnSubmitReview is NULL!");
+
         Log.d(TAG, "Views initialized.");
     }
 
     private void setupListeners() {
-        backButton.setOnClickListener(v -> finish());
-        addToCartButton.setOnClickListener(v -> {
-            if (currentProduct != null) {
-                Cart.getInstance().addItem(currentProduct, this);
-                Toast.makeText(this, currentProduct.getName() + " sepete eklendi", Toast.LENGTH_SHORT).show();
-            }
+        // Back Button tanımlaması - bu satırı ekleyin
+        backButton = findViewById(R.id.btn_back);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
+
+        // Sepete Ekle Butonu
+        if (addToCartButton != null) {
+            addToCartButton.setOnClickListener(v -> {
+                if (currentProduct != null) {
+                    Cart.getInstance().addItem(currentProduct, this);
+                    Toast.makeText(this, currentProduct.getName() + " sepete eklendi", Toast.LENGTH_SHORT).show();
+                    // İsteğe bağlı: Sepet ikonundaki sayacı güncelle
+                } else {
+                    Toast.makeText(this, "Ürün bilgisi yüklenemedi.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Şimdi Al Butonu - Bu kısmı güncelleyin
+        if (buyNowButton != null) {
+            buyNowButton.setOnClickListener(v -> {
+                if (currentProduct != null) {
+                    // Kullanıcı giriş kontrolü
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user == null) {
+                        Toast.makeText(this, "Satın almak için lütfen giriş yapın", Toast.LENGTH_LONG).show();
+                        // İsteğe bağlı: Login sayfasına yönlendir
+                        // Intent loginIntent = new Intent(this, LoginActivity.class);
+                        // startActivity(loginIntent);
+                        return;
+                    }
+
+                    // Stok kontrolü
+                    if (currentProduct.getStock() <= 0) {
+                        Toast.makeText(this, "Bu ürün şu anda stokta yok", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Sepeti temizle ve sadece bu ürünü ekle
+                    Cart.getInstance().clearCartWithoutToast(this);
+                    Cart.getInstance().addItem(currentProduct, this);
+
+                    // CheckoutActivity'e git
+                    Intent intent = new Intent(ProductDetailActivity.this, CheckoutActivity.class);
+                    intent.putExtra("DIRECT_BUY", true); // Direkt satın alma olduğunu belirt
+                    intent.putExtra("PRODUCT_ID", currentProduct.getId()); // Ürün ID'sini geç
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Ürün bilgisi yüklenemedi.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        favoriteButton.setOnClickListener(v -> {
+            if (currentProduct != null) toggleFavorite(currentProduct);
         });
-        favoriteButton.setOnClickListener(v -> { if (currentProduct != null) toggleFavorite(currentProduct); });
-        btnSubmitReview.setOnClickListener(v -> submitReview());
+
+        if (btnSubmitReview != null) {
+            btnSubmitReview.setOnClickListener(v -> submitReview());
+        }
         Log.d(TAG, "Listeners setup.");
     }
 
     private void loadProductDetails() {
         Log.d(TAG, "Loading product details for ID: " + productId);
-        showLoading(true);
+        showLoading(true); // Yüklemeyi başlat
         db.collection("products").document(productId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -180,18 +262,22 @@ public class ProductDetailActivity extends AppCompatActivity {
                             currentProduct.setId(documentSnapshot.getId());
                             updateUI(currentProduct);
                             checkFavoriteStatus(currentProduct);
-                            loadReviews();
+                            loadReviews(); // Yorumları yükle
                         } else {
                             showError("Ürün bilgileri dönüştürülemedi.");
-                            showLoading(false);
+                            showLoading(false); // Hata durumunda gizle
                         }
                     } else {
                         showError("Ürün bulunamadı.");
-                        showLoading(false);
+                        showLoading(false); // Hata durumunda gizle
+                    }
+
+                    if (currentProduct != null) { // Sadece ürün başarıyla yüklendiyse spinner'ı kaldır.
+
                     }
                 })
                 .addOnFailureListener(e -> {
-                    showLoading(false);
+                    showLoading(false); // Her türlü hatada gizle
                     Log.e(TAG, "Ürün yükleme hatası", e);
                     showError("Hata: " + e.getMessage());
                 });
@@ -213,22 +299,17 @@ public class ProductDetailActivity extends AppCompatActivity {
             productDiscountPrice.setVisibility(View.VISIBLE);
         } else {
             productPrice.setText(currencyFormat.format(product.getPrice()));
-            productPrice.setPaintFlags(productPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-            productPrice.setTextColor(ContextCompat.getColor(this, R.color.orange_primary));
+            productPrice.setPaintFlags(productPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)); // Üstü çizili bayrağını kaldır
+            productPrice.setTextColor(ContextCompat.getColor(this, R.color.orange_primary)); // Varsayılan fiyat rengi
             productDiscountPrice.setVisibility(View.GONE);
         }
 
+        // Ürünün ana rating ve yorum sayısını güncelle
         if (productRatingMain != null) { productRatingMain.setRating(product.getAverageRating()); }
         if (productReviewCountMain != null) { productReviewCountMain.setText(String.format(Locale.getDefault(), "(%d)", product.getTotalReviews()));}
 
+
         updateTextViewVisibility(productSeller, product.getSellerName(), "Satıcı: ");
-
-        if (!TextUtils.isEmpty(product.getColor())) {
-            productColorsLayout.setVisibility(View.VISIBLE);
-            productColorText.setText(product.getColor());
-        } else { productColorsLayout.setVisibility(View.GONE); }
-
-        updateChipGroup(chipGroupSizes, product.getSizes(), productSizesLayout);
 
         if (product.getStock() > 0) {
             productStockStatus.setText(String.format(Locale.getDefault(), "Stokta: %d adet", product.getStock()));
@@ -273,60 +354,122 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
+        if (TextUtils.isEmpty(productId)) {
+            Log.e(TAG, "loadReviews: Product ID is empty.");
+            showLoading(false);
+            return;
+        }
         Log.d(TAG, "Loading reviews for product ID: " + productId);
+
+
         db.collection("products").document(productId).collection("reviews")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(20) // İsteğe bağlı: Çok fazla yorum varsa sayfalama veya limit ekleyin
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<Review> loadedReviews = new ArrayList<>(); // Her zaman yeni bir liste oluştur
+                    List<Review> loadedReviews = new ArrayList<>();
+                    Log.d(TAG, "Firestore review query success. Document count: " +
+                            (queryDocumentSnapshots != null ? queryDocumentSnapshots.size() : "null"));
+
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            Review review = doc.toObject(Review.class);
-                            if (review != null) {
-                                review.setId(doc.getId());
-                                loadedReviews.add(review);
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            try {
+                                Review review = doc.toObject(Review.class);
+                                if (review != null) {
+                                    review.setId(doc.getId());
+                                    loadedReviews.add(review);
+                                } else {
+                                    Log.w(TAG, "Parsed review object is null for document: " + doc.getId());
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error parsing review document: " + doc.getId(), e);
                             }
                         }
                     }
-                    Log.d(TAG, "Reviews loaded from Firestore: " + loadedReviews.size());
+                    Log.d(TAG, "Total reviews parsed into loadedReviews: " + loadedReviews.size());
 
-                    // Aktivitenin ana reviewList'ini bu yeni yüklenenlerle güncelle
+                    if (this.reviewList == null) this.reviewList = new ArrayList<>();
                     this.reviewList.clear();
                     this.reviewList.addAll(loadedReviews);
+                    Log.d(TAG, "Activity's this.reviewList updated with size: " + this.reviewList.size());
 
-                    // Adapter'ı güncelle (adapter içindeki liste de güncellenmiş olacak)
-                    reviewAdapter.updateReviews(this.reviewList);
+                    if (reviewAdapter != null) {
+                        Log.d(TAG, "Calling reviewAdapter.updateReviews with loadedReviews list of size " + loadedReviews.size());
+                        reviewAdapter.updateReviews(loadedReviews);
+                        Log.d(TAG, "After adapter update - getItemCount: " + reviewAdapter.getItemCount());
+                    } else {
+                        Log.e(TAG, "ReviewAdapter is null! Cannot update reviews.");
+                    }
 
-                    // UI görünürlüğünü güncelle (aktivitedeki güncel reviewList'e göre)
                     updateReviewsUIVisibility();
-
-                    showLoading(false); // Tüm yüklemeler (ürün + yorumlar) bitti
+                    showLoading(false); // Yorumlar BAŞARIYLA yüklendikten sonra ProgressBar'ı kapat
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading reviews", e);
-                    Toast.makeText(this, "Değerlendirmeler yüklenemedi.", Toast.LENGTH_SHORT).show();
-                    // Hata durumunda da UI'ı güncelle
-                    this.reviewList.clear(); // Hata varsa listeyi boşalt
-                    reviewAdapter.updateReviews(this.reviewList);
+                    Toast.makeText(this, "Değerlendirmeler yüklenemedi: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+
+                    if (reviewAdapter != null) {
+                        reviewAdapter.updateReviews(new ArrayList<>()); // Hata durumunda boş liste ile güncelle
+                    }
                     updateReviewsUIVisibility();
-                    showLoading(false);
+                    showLoading(false); // Yorum yükleme HATASINDA ProgressBar'ı kapat
                 });
     }
 
-    private void updateReviewsUIVisibility() {
-        // Bu metod aktivitedeki `this.reviewList`'i kontrol etmeli
-        Log.d(TAG, "updateReviewsUIVisibility - Current reviewList size: " + (this.reviewList != null ? this.reviewList.size() : "null"));
-        if (this.reviewList == null || this.reviewList.isEmpty()) {
-            textNoReviews.setVisibility(View.VISIBLE);
-            recyclerViewReviews.setVisibility(View.GONE);
-            textReviewsTitle.setVisibility(View.GONE);
+
+    private void updateReviewsHeader() {
+        // Bu metod, yorumlar bölümünün başlığını (textReviewsTitle) günceller.
+        // Örneğin: "Ürün Değerlendirmeleri ⭐ 4.5 • 10 Değerlendirme"
+        if (currentProduct != null && textReviewsTitle != null) {
+            String headerText;
+            if (currentProduct.getTotalReviews() > 0) {
+                headerText = String.format(Locale.getDefault(),
+                        "Ürün Değerlendirmeleri ⭐ %.1f • %d Değerlendirme",
+                        currentProduct.getAverageRating(),
+                        currentProduct.getTotalReviews());
+            } else {
+                headerText = "Ürün Değerlendirmeleri"; // Henüz yorum yoksa
+            }
+            textReviewsTitle.setText(headerText);
+            Log.d(TAG, "Review header updated: " + headerText);
         } else {
-            textNoReviews.setVisibility(View.GONE);
-            recyclerViewReviews.setVisibility(View.VISIBLE);
-            textReviewsTitle.setVisibility(View.VISIBLE);
+            Log.w(TAG, "Cannot update review header, currentProduct or textReviewsTitle is null.");
         }
-        if (dividerBeforeReviews != null) dividerBeforeReviews.setVisibility(View.VISIBLE);
+    }
+
+    private void updateReviewsUIVisibility() {
+        // Bu metod, yorum listesinin (RecyclerView), "yorum yok" mesajının (textNoReviews)
+        // ve yorumlar başlığının (textReviewsTitle) görünürlüğünü ayarlar.
+        int adapterItemCount = (reviewAdapter != null) ? reviewAdapter.getItemCount() : 0;
+        Log.d(TAG, "updateReviewsUIVisibility - Adapter item count: " + adapterItemCount);
+
+        boolean hasReviews = adapterItemCount > 0;
+
+        if (textReviewsTitle != null) {
+            // Başlık her zaman görünebilir veya sadece yorum varsa görünebilir.
+            // Tasarıma göre yorum yoksa başlığı da gizleyebilirsiniz.
+            // Şimdilik, yorum yoksa bile "Ürün Değerlendirmeleri" başlığı kalsın diyeceğiz
+            // ama içeriği updateReviewsHeader ile güncellenecek.
+            textReviewsTitle.setVisibility(View.VISIBLE); // Başlık hep görünsün
+            updateReviewsHeader(); // Başlığın içeriğini güncelle (yorum sayısı vb.)
+        }
+
+        if (textNoReviews != null) {
+            textNoReviews.setVisibility(hasReviews ? View.GONE : View.VISIBLE);
+            Log.d(TAG, "textNoReviews visibility: " + (hasReviews ? "GONE" : "VISIBLE"));
+        }
+
+        if (recyclerViewReviews != null) {
+            recyclerViewReviews.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
+            Log.d(TAG, "recyclerViewReviews visibility: " + (hasReviews ? "VISIBLE" : "GONE"));
+        }
+
+        // Yorumlardan önceki ayırıcı çizgi
+        if(dividerBeforeReviews != null) {
+            // Yorum alanı her zaman görüneceği için (yorum olsa da olmasa da "yorum yok" mesajı vs.)
+            // ayırıcı çizgi de hep görünebilir.
+            dividerBeforeReviews.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -334,36 +477,72 @@ public class ProductDetailActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = auth.getCurrentUser();
         if (firebaseUser == null) {
             Toast.makeText(this, "Değerlendirme yapmak için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            // İsteğe bağlı: Giriş ekranına yönlendirme
             return;
         }
+
+        if (ratingBarSubmit == null || editTextReviewComment == null) {
+            Log.e(TAG, "Review submission UI elements are null.");
+            Toast.makeText(this, "Bir hata oluştu, lütfen tekrar deneyin.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         float ratingValue = ratingBarSubmit.getRating();
-        if (ratingValue == 0) {
+        if (ratingValue == 0) { // Hiç puan verilmemişse
             Toast.makeText(this, "Lütfen ürüne puan verin (1-5 yıldız).", Toast.LENGTH_SHORT).show();
             return;
         }
-        String comment = editTextReviewComment.getText() != null ? editTextReviewComment.getText().toString().trim() : "";
-        showLoading(true);
-        Log.d(TAG, "Loading state: " + true); // Log eklendi
+
+        String comment = editTextReviewComment.getText() != null ?
+                editTextReviewComment.getText().toString().trim() : "";
+        // Yorum zorunlu değilse bu kontrolü kaldırabilirsiniz.
+        // if (TextUtils.isEmpty(comment)) {
+        //     Toast.makeText(this, "Lütfen yorumunuzu yazın.", Toast.LENGTH_SHORT).show();
+        //     return;
+        // }
+
+        showLoading(true); // Yorum gönderilirken progressBar göster
+
         String userId = firebaseUser.getUid();
         String userName = firebaseUser.getDisplayName();
-        if (TextUtils.isEmpty(userName)) {
+        if (TextUtils.isEmpty(userName)) { // Kullanıcı adı yoksa e-postadan türet
             String email = firebaseUser.getEmail();
-            userName = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Anonim Kullanıcı";
+            userName = email != null && email.contains("@") ?
+                    email.substring(0, email.indexOf('@')) : "Anonim Kullanıcı";
         }
-        Review newReview = new Review(userId, userName, ratingValue, comment);
-        Log.d(TAG, "Submitting review: User=" + userName + ", Rating=" + ratingValue + ", Comment=" + comment);
+
+        Map<String, Object> reviewData = new HashMap<>();
+        reviewData.put("userId", userId);
+        reviewData.put("userName", userName);
+        reviewData.put("rating", ratingValue); // float olarak
+        reviewData.put("comment", comment);
+        reviewData.put("timestamp", FieldValue.serverTimestamp()); // Sunucu zaman damgası
+
+        Log.d(TAG, "Submitting review: User=" + userName + ", Rating=" + ratingValue +
+                ", Comment=" + comment + " for ProductID: " + productId);
+
         db.collection("products").document(productId).collection("reviews")
-                .add(newReview)
+                .add(reviewData)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "Review added successfully: " + documentReference.getId());
+                    Log.d(TAG, "Review added successfully with ID: " + documentReference.getId());
+
+                    // Formu temizle
                     ratingBarSubmit.setRating(0);
-                    if (editTextReviewComment.getText() != null) editTextReviewComment.getText().clear();
-                    updateProductRatingStats(); // Bu metod loadReviews ve showLoading(false) çağıracak
+                    if (editTextReviewComment.getText() != null) {
+                        editTextReviewComment.getText().clear();
+                    }
+                    Toast.makeText(this, "Değerlendirmeniz başarıyla gönderildi!",
+                            Toast.LENGTH_SHORT).show();
+
+                    // Ürünün genel rating istatistiklerini güncelle
+                    updateProductRatingStats();
+                    // showLoading(false) burada değil, updateProductRatingStats -> updateProductDocument -> loadReviews sonrası
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error submitting review", e);
-                    Toast.makeText(ProductDetailActivity.this, "Değerlendirme gönderilemedi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    showLoading(false);
+                    Toast.makeText(this, "Değerlendirme gönderilemedi: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                    showLoading(false); // Hata durumunda progressBar'ı kapat
                 });
     }
 
@@ -374,61 +553,79 @@ public class ProductDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots == null) {
                         Log.e(TAG, "queryDocumentSnapshots is null while updating rating stats.");
-                        updateProductDocument(0, 0.0f);
+                        updateProductDocument(0, 0.0f); // Hata veya boş durum
                         return;
                     }
+
                     double totalRatingSum = 0;
-                    int reviewCount = queryDocumentSnapshots.size(); // Bu doğru, toplam döküman sayısı
+                    int reviewCount = queryDocumentSnapshots.size(); // Toplam yorum sayısı
                     Log.d(TAG, "Fetched " + reviewCount + " reviews for stat calculation.");
 
                     if (reviewCount == 0) {
-                        Log.d(TAG, "No reviews found, resetting stats to 0.");
+                        Log.d(TAG, "No reviews found for product, resetting stats to 0.");
                         updateProductDocument(0, 0.0f);
                         return;
                     }
 
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Review r = doc.toObject(Review.class);
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        Review r = doc.toObject(Review.class); // Review modeline parse et
                         if (r != null) {
                             totalRatingSum += r.getRating();
+                        } else {
+                            // Firestore'dan gelen rating double olabilir, doğrudan da alınabilir
+                            Object ratingObj = doc.get("rating");
+                            if (ratingObj instanceof Number) {
+                                totalRatingSum += ((Number) ratingObj).doubleValue();
+                            }
                         }
                     }
-                    float averageRating = (float) (totalRatingSum / reviewCount);
-                    averageRating = Math.round(averageRating * 10.0f) / 10.0f;
+
+                    float averageRating = (reviewCount > 0) ? (float) (totalRatingSum / reviewCount) : 0.0f;
+                    averageRating = Math.round(averageRating * 10.0f) / 10.0f; // Tek ondalık basamağa yuvarla
+
                     Log.d(TAG, "Calculated stats: TotalReviews=" + reviewCount + ", AverageRating=" + averageRating);
                     updateProductDocument(reviewCount, averageRating);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching reviews for stat update", e);
-                    showLoading(false); // Hata durumunda loading'i kapat
+                    // Hata durumunda bile UI'ı bir şekilde sonlandırmak gerekebilir.
+                    showLoading(false); // Eğer submitReview'dan geliyorsa loading'i kapat
                 });
     }
 
     private void updateProductDocument(int totalReviews, float averageRating) {
-        Log.d(TAG, "Updating product document: TotalReviews=" + totalReviews + ", AverageRating=" + averageRating);
+        Log.d(TAG, "Updating product document: ProductID=" + productId +
+                ", TotalReviews=" + totalReviews + ", AverageRating=" + averageRating);
         Map<String, Object> updates = new HashMap<>();
         updates.put("totalReviews", totalReviews);
         updates.put("averageRating", averageRating);
-        updates.put("updatedAt", FieldValue.serverTimestamp());
+        updates.put("updatedAt", FieldValue.serverTimestamp()); // Son güncellenme zamanı
+
         db.collection("products").document(productId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Product rating stats updated successfully in Firestore.");
-                    if (currentProduct != null) { // currentProduct'ı da güncelle
+                    Log.d(TAG, "Product rating stats updated successfully in Firestore for ProductID: " + productId);
+                    if (currentProduct != null) { // Aktivitedeki currentProduct nesnesini de güncelle
                         currentProduct.setTotalReviews(totalReviews);
                         currentProduct.setAverageRating(averageRating);
-                        // updateUI(currentProduct); // UI'ı burada güncellemek yerine loadReviews tetikleyecek
+
+                        // Ürünün ana rating ve yorum sayısını UI'da direkt güncelle
+                        if (productRatingMain != null) productRatingMain.setRating(currentProduct.getAverageRating());
+                        if (productReviewCountMain != null) productReviewCountMain.setText(String.format(Locale.getDefault(), "(%d)", currentProduct.getTotalReviews()));
                     }
-                    loadReviews(); // En son yorumları ve güncel ürün bilgisini (UI'da) yükle
+                    // Yorum listesini ve yorum başlığını yenilemek için loadReviews çağır.
+                    // Bu, yeni eklenen yorumun da listede görünmesini sağlar.
+                    loadReviews();
+                    showLoading(false); // Tüm işlemler bittiğinde progressBar'ı kapat
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error updating product document with new stats", e);
-                    showLoading(false);
+                    Log.e(TAG, "Error updating product document with new stats for ProductID: " + productId, e);
+                    showLoading(false); // Hata durumunda progressBar'ı kapat
                 });
     }
 
-    // Diğer yardımcı metodlar (updateTextViewVisibility, updateSectionVisibility, updateChipGroup, toggleFavorite, checkFavoriteStatus, showLoading, showError) aynı kalacak
-    // ... (Bu metodları bir önceki yanıttan kopyalayabilirsiniz)
+
+    // --- Diğer Yardımcı Metodlar (Zaten Projenizde Mevcut) ---
     private void updateTextViewVisibility(TextView textView, String text, String prefix) {
         if (textView == null) return;
         if (!TextUtils.isEmpty(text)) {
@@ -460,64 +657,81 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (item == null || item.trim().isEmpty()) continue;
                 Chip chip = new Chip(this);
                 chip.setText(item.trim());
-                chip.setChipBackgroundColorResource(R.color.grey_light);
-                chip.setTextColor(ContextCompat.getColor(this, R.color.grey_dark));
+                chip.setChipBackgroundColorResource(R.color.grey_light); // Renk resource'larınızdan
+                chip.setTextColor(ContextCompat.getColor(this, R.color.grey_dark)); // Renk resource'larınızdan
                 chipGroup.addView(chip);
             }
         }
     }
     private void toggleFavorite(Product product) {
-        if (product == null) return;
+        if (product == null || TextUtils.isEmpty(product.getId())) {
+            Log.w(TAG, "toggleFavorite: Product or product ID is null.");
+            return;
+        }
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) { Toast.makeText(this, "Lütfen önce giriş yapın", Toast.LENGTH_SHORT).show(); return; }
+
         String userId = user.getUid();
         String prodId = product.getId();
-        if (TextUtils.isEmpty(prodId)) { Toast.makeText(this, "Ürün ID bulunamadı", Toast.LENGTH_SHORT).show(); return; }
 
         db.collection("users").document(userId).collection("favorites").document(prodId).get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    Map<String, Object> favoriteData = new HashMap<>();
-                    if (documentSnapshot.exists()) {
+                    if (documentSnapshot.exists()) { // Favorilerde varsa kaldır
                         db.collection("users").document(userId).collection("favorites").document(prodId).delete()
                                 .addOnSuccessListener(aVoid -> {
                                     favoriteButton.setImageResource(R.drawable.ic_favorite_border);
                                     Toast.makeText(this, (product.getName() != null ? product.getName() : "Ürün") + " favorilerden çıkarıldı", Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
+                                })
+                                .addOnFailureListener(e -> Log.e(TAG, "Error removing favorite", e));
+                    } else { // Favorilerde yoksa ekle
+                        Map<String, Object> favoriteData = new HashMap<>();
                         favoriteData.put("productId", prodId);
                         if (product.getName() != null) favoriteData.put("name", product.getName());
                         favoriteData.put("price", product.getDiscountPrice() > 0 ? product.getDiscountPrice() : product.getPrice());
                         if (product.getImageBase64() != null) favoriteData.put("imageBase64", product.getImageBase64());
                         favoriteData.put("addedAt", FieldValue.serverTimestamp());
+
                         db.collection("users").document(userId).collection("favorites").document(prodId).set(favoriteData)
                                 .addOnSuccessListener(aVoid -> {
-                                    favoriteButton.setImageResource(R.drawable.ic_favorite);
+                                    favoriteButton.setImageResource(R.drawable.ic_favorite); // Dolu kalp
                                     Toast.makeText(this, (product.getName() != null ? product.getName() : "Ürün") + " favorilere eklendi", Toast.LENGTH_SHORT).show();
-                                });
+                                })
+                                .addOnFailureListener(e -> Log.e(TAG, "Error adding favorite", e));
                     }
-                }).addOnFailureListener(e -> Log.e(TAG, "Error toggling favorite: " + e.getMessage()));
+                }).addOnFailureListener(e -> Log.e(TAG, "Error checking favorite before toggle: " + e.getMessage()));
     }
     private void checkFavoriteStatus(Product product) {
-        if (product == null) return;
+        if (product == null || TextUtils.isEmpty(product.getId())) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_border); // Varsayılan
+            return;
+        }
         FirebaseUser user = auth.getCurrentUser();
-        if (user == null || TextUtils.isEmpty(product.getId())) {
-            favoriteButton.setImageResource(R.drawable.ic_favorite_border); return;
+        if (user == null) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_border); // Kullanıcı yoksa boş kalp
+            return;
         }
         db.collection("users").document(user.getUid()).collection("favorites").document(product.getId()).get()
-                .addOnSuccessListener(documentSnapshot -> favoriteButton.setImageResource(documentSnapshot.exists() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border))
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        favoriteButton.setImageResource(R.drawable.ic_favorite); // Favorilerdeyse dolu kalp
+                    } else {
+                        favoriteButton.setImageResource(R.drawable.ic_favorite_border); // Değilse boş kalp
+                    }
+                })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error checking favorite status: " + e.getMessage());
-                    favoriteButton.setImageResource(R.drawable.ic_favorite_border);
+                    favoriteButton.setImageResource(R.drawable.ic_favorite_border); // Hata durumunda boş kalp
                 });
     }
     private void showLoading(boolean isLoading) {
         if (progressBar != null) {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         }
-        Log.d(TAG, "Loading state: " + isLoading);
+        Log.d(TAG, "Loading state set to: " + isLoading);
     }
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         Log.e(TAG, "Error displayed: " + message);
     }
+    // updateProductRating metodu artık updateProductRatingStats ve updateProductDocument içinde ele alınıyor.
 }

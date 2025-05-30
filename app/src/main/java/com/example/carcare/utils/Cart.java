@@ -61,6 +61,36 @@ public class Cart {
         }
     }
 
+    public void clearCartWithoutToast(Context context) {
+        // Yerel listeyi temizle
+        cartItems.clear();
+
+        // Firebase'den temizle (kullanıcı giriş yapmışsa)
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            db.collection("users").document(user.getUid())
+                    .collection("cart")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        // Tüm belgeleri sil - DocumentSnapshot kullan
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            document.getReference().delete();
+                        }
+                        // Toast mesajı yok
+                    });
+        } else {
+            // Kullanıcı giriş yapmamışsa yerel verileri temizle
+            context.getSharedPreferences("CartPrefs", Context.MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .apply();
+            // Toast mesajı yok
+        }
+
+        // Değişikliği dinleyicilere bildir
+        notifyListeners();
+    }
+
     public void addItem(Product product, Context context) {
         // Ürünü yerel listeye ekle
         cartItems.add(product);

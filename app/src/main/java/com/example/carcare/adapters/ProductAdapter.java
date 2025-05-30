@@ -45,7 +45,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<Product> productListFull; // Filtreleme için orijinal liste
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private TextView cartBadgeText; // StoreActivity'den gelen sepet rozeti
+    private TextView cartBadgeText;
 
     public ProductAdapter(Context context, List<Product> productList, TextView cartBadge) {
         this.context = context;
@@ -67,22 +67,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         if (productList == null || position < 0 || position >= productList.size()) {
             Log.e(TAG, "Invalid position or productList is null/empty. Position: " + position);
-            return; // Erken çıkış
+            return;
         }
         Product product = productList.get(position);
         if (product == null) {
             Log.e(TAG, "Product at position " + position + " is null.");
-            // Varsayılan bir görünüm ayarla veya sadece logla
             holder.productName.setText("Ürün Yüklenemedi");
             holder.productPrice.setText("");
             holder.ratingBarStars.setRating(0);
             holder.textNumericAvgRating.setVisibility(View.GONE);
             holder.textReviewCount.setVisibility(View.GONE);
-            holder.productImage.setImageResource(R.drawable.placeholder_image); // Veya bir hata resmi
+            holder.productImage.setImageResource(R.drawable.placeholder_image);
             return;
         }
 
-        // Marka
         if (!TextUtils.isEmpty(product.getBrand())) {
             holder.productBrand.setText(product.getBrand());
             holder.productBrand.setVisibility(View.VISIBLE);
@@ -92,11 +90,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         holder.productName.setText(product.getName() != null ? product.getName() : "İsimsiz Ürün");
 
-        // Fiyat (Locale'e göre formatlama)
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("tr", "TR")); // Örnek: Türkçe için
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("tr", "TR"));
         if (product.getDiscountPrice() > 0 && product.getDiscountPrice() < product.getPrice()) {
-            // İndirimli fiyatı göster, normal fiyatı üstü çizili yapabilirsiniz (ayrı TextView ile)
             holder.productPrice.setText(currencyFormat.format(product.getDiscountPrice()));
+            // Orijinal fiyatı da göstermek isterseniz:
             // holder.originalPriceTextView.setText(currencyFormat.format(product.getPrice()));
             // holder.originalPriceTextView.setPaintFlags(holder.originalPriceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             // holder.originalPriceTextView.setVisibility(View.VISIBLE);
@@ -130,17 +127,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.textReviewCount.setText(String.format(Locale.getDefault(), "(%d)", product.getTotalReviews()));
             holder.textNumericAvgRating.setVisibility(View.VISIBLE);
             holder.textReviewCount.setVisibility(View.VISIBLE);
-            holder.layoutRatingInfo.setVisibility(View.VISIBLE); // Tüm rating grubunu göster
+            holder.layoutRatingInfo.setVisibility(View.VISIBLE);
         } else {
             // Hiç değerlendirme yoksa, sayısal puanı ve yorum sayısını gizle.
             // Yıldızlar 0 olarak zaten ayarlandı (product.getAverageRating() 0 olacağı için).
             holder.textNumericAvgRating.setVisibility(View.GONE);
             holder.textReviewCount.setVisibility(View.GONE);
-            // İsteğe bağlı: layoutRatingInfo'yu da gizleyebilirsiniz, ama yıldızlar hep görünsün istiyorsanız açık kalsın.
-            // Eğer yıldızlar da gizlenecekse:
-            // holder.layoutRatingInfo.setVisibility(View.GONE);
-            // Ama "Merhaba" ekran görüntüsünde boş yıldızlar vardı, o yüzden layout açık kalabilir.
-            // Sadece yıldızların görünmesi için RatingBar hep VISIBLE olmalı.
+            // layoutRatingInfo'yu gizlemeyin, böylece 0 yıldız görünür (tasarımınıza göre).
+            // Eğer yıldızlar da gizlenecekse: holder.layoutRatingInfo.setVisibility(View.GONE);
+            // Mevcut item_product.xml'de bu elemanlar zaten gone olduğu için,
+            // sadece totalReviews > 0 ise VISIBLE yapılması yeterli. RatingBar hep visible kalabilir.
         }
 
 
@@ -162,7 +158,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         } else {
             this.productList.clear();
             this.productList.addAll(newList);
-            this.productListFull.clear(); // Filtreleme için tam listeyi de güncelle
+            this.productListFull.clear();
             this.productListFull.addAll(newList);
         }
         notifyDataSetChanged();
@@ -175,9 +171,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         } else {
             String filterPattern = text.toLowerCase(Locale.getDefault()).trim();
             for (Product product : productListFull) {
-                if (product != null) { // Null check
+                if (product != null) {
                     boolean nameMatch = product.getName() != null && product.getName().toLowerCase(Locale.getDefault()).contains(filterPattern);
-                    // Diğer filtreleme alanları eklenebilir (marka, kategori vb.)
                     // boolean brandMatch = product.getBrand() != null && product.getBrand().toLowerCase(Locale.getDefault()).contains(filterPattern);
                     if (nameMatch /* || brandMatch */) {
                         filteredList.add(product);
@@ -241,7 +236,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         db.collection("users").document(userId).collection("favorites").document(productId)
                                 .set(favoriteMap)
                                 .addOnSuccessListener(aVoid -> {
-                                    favoriteBtn.setImageResource(R.drawable.ic_favorite); // Dolu kalp
+                                    favoriteBtn.setImageResource(R.drawable.ic_favorite);
                                     Toast.makeText(context, (product.getName() != null ? product.getName() : "Ürün") + " favorilere eklendi", Toast.LENGTH_SHORT).show();
                                 });
                     }
@@ -283,21 +278,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         RatingBar ratingBarStars;
         Button addToCartButton;
         ImageButton favoriteButton;
-        LinearLayout layoutRatingInfo; // Rating bilgilerini içeren genel layout
+        LinearLayout layoutRatingInfo;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
-            productName = itemView.findViewById(R.id.product_name_card); // ID güncellendi
-            productPrice = itemView.findViewById(R.id.product_price_card); // ID güncellendi
-            productBrand = itemView.findViewById(R.id.product_brand_card); // ID güncellendi
+            productName = itemView.findViewById(R.id.product_name_card);
+            productPrice = itemView.findViewById(R.id.product_price_card);
+            productBrand = itemView.findViewById(R.id.product_brand_card);
 
-            layoutRatingInfo = itemView.findViewById(R.id.layout_rating_info_card); // ID güncellendi
-            textNumericAvgRating = itemView.findViewById(R.id.text_numeric_avg_rating_card); // ID güncellendi
-            ratingBarStars = itemView.findViewById(R.id.rating_bar_stars_card); // ID güncellendi
-            textReviewCount = itemView.findViewById(R.id.text_review_count_card); // ID güncellendi
+            layoutRatingInfo = itemView.findViewById(R.id.layout_rating_info_card);
+            textNumericAvgRating = itemView.findViewById(R.id.text_numeric_avg_rating_card);
+            ratingBarStars = itemView.findViewById(R.id.rating_bar_stars_card);
+            textReviewCount = itemView.findViewById(R.id.text_review_count_card);
 
-            addToCartButton = itemView.findViewById(R.id.btn_add_to_cart_card); // ID güncellendi
+            addToCartButton = itemView.findViewById(R.id.btn_add_to_cart_card);
             favoriteButton = itemView.findViewById(R.id.btn_favorite);
         }
     }

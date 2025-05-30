@@ -223,6 +223,7 @@ public class StoreActivity extends AppCompatActivity {
         }
     }
 
+    // StoreActivity.java içinde bulunan parseProductFromDocument metodu (zaten doğru)
     private Product parseProductFromDocument(QueryDocumentSnapshot document) {
         if (document == null) return null;
         try {
@@ -231,10 +232,16 @@ public class StoreActivity extends AppCompatActivity {
             String description = document.getString("description");
             String imageBase64 = document.getString("imageBase64");
             String category = document.getString("category");
+            String brand = document.getString("brand");
 
             double price = 0;
             if (document.get("price") instanceof Number) {
                 price = document.getDouble("price");
+            }
+
+            double discountPrice = 0;
+            if (document.get("discountPrice") instanceof Number) {
+                discountPrice = document.getDouble("discountPrice");
             }
 
             long stock = 0;
@@ -242,14 +249,34 @@ public class StoreActivity extends AppCompatActivity {
                 stock = document.getLong("stock");
             }
 
+            // Rating bilgilerini al
+            float averageRating = 0.0f;
+            if (document.get("averageRating") instanceof Number) {
+                averageRating = document.getDouble("averageRating").floatValue();
+            }
+
+            int totalReviews = 0;
+            if (document.get("totalReviews") instanceof Number) {
+                totalReviews = document.getLong("totalReviews").intValue();
+            }
+
             Product product = new Product();
             product.setId(id);
             product.setName(name);
             product.setDescription(description);
             product.setPrice(price);
+            product.setDiscountPrice(discountPrice);
             product.setImageBase64(imageBase64);
             product.setCategory(category);
+            product.setBrand(brand);
             product.setStock((int) stock);
+            product.setAverageRating(averageRating); // Rating bilgisini set et
+            product.setTotalReviews(totalReviews);   // Review sayısını set et
+
+            // Diğer alanları da parse edebilirsiniz (modelCode, sellerName vb.)
+            // product.setModelCode(document.getString("modelCode"));
+            // ...
+
             return product;
         } catch (Exception e) {
             Log.e(TAG, "Ürün parse edilirken hata: " + document.getId(), e);

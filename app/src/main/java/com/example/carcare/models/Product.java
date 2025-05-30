@@ -15,16 +15,12 @@ public class Product {
     private String description;
     private double price;
     private String imageBase64;
-    private String category;
+    private String category; // Araç parçası kategorisi (örn: Fren Sistemi, Motor Yağı, Aksesuar)
     private int stock;
 
-    private String brand;
-    private String modelCode;
+    private String brand; // Marka (örn: Bosch, Mobil, Sonax)
+    private String modelCode; // Ürünün spesifik model/parça numarası
     private String sellerName;
-    // private float rating; // BU ALANI KULLANMIYORUZ, averageRating ALANI VAR
-    // private int reviewCount; // BU ALANI KULLANMIYORUZ, totalReviews ALANI VAR
-    private String color;
-    private List<String> sizes = new ArrayList<>();
     private Map<String, String> specifications;
     private List<String> tags = new ArrayList<>();
     private double discountPrice;
@@ -33,8 +29,8 @@ public class Product {
     private String shippingInfo;
     private String returnPolicy;
 
-    private float averageRating; // Ortalama kullanıcı puanı
-    private int totalReviews;    // Toplam değerlendirme sayısı
+    private float averageRating;
+    private int totalReviews;
 
     @ServerTimestamp private Date createdAt;
     @ServerTimestamp private Date updatedAt;
@@ -42,15 +38,10 @@ public class Product {
     @Exclude private String cartItemId;
 
     public Product() {
-        // Firebase için boş constructor
-        this.sizes = new ArrayList<>();
         this.tags = new ArrayList<>();
-        this.averageRating = 0.0f; // Varsayılan değer
-        this.totalReviews = 0;     // Varsayılan değer
+        this.averageRating = 0.0f;
+        this.totalReviews = 0;
     }
-
-    // Constructor'ı güncelleyebilirsiniz veya sadece setter'ları kullanabilirsiniz.
-    // Eğer constructor kullanıyorsanız, averageRating ve totalReviews'ı da ekleyin.
 
     // --- Getter ve Setter'lar ---
     public String getId() { return id; }
@@ -73,13 +64,9 @@ public class Product {
     public void setModelCode(String modelCode) { this.modelCode = modelCode; }
     public String getSellerName() { return sellerName; }
     public void setSellerName(String sellerName) { this.sellerName = sellerName; }
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-    public List<String> getSizes() { return sizes == null ? new ArrayList<>() : sizes; } // Null check
-    public void setSizes(List<String> sizes) { this.sizes = sizes; }
     public Map<String, String> getSpecifications() { return specifications; }
     public void setSpecifications(Map<String, String> specifications) { this.specifications = specifications; }
-    public List<String> getTags() { return tags == null ? new ArrayList<>() : tags; } // Null check
+    public List<String> getTags() { return tags == null ? new ArrayList<>() : tags; }
     public void setTags(List<String> tags) { this.tags = tags; }
     public double getDiscountPrice() { return discountPrice; }
     public void setDiscountPrice(double discountPrice) { this.discountPrice = discountPrice; }
@@ -95,12 +82,10 @@ public class Product {
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
-
     public float getAverageRating() { return averageRating; }
     public void setAverageRating(float averageRating) { this.averageRating = averageRating; }
     public int getTotalReviews() { return totalReviews; }
     public void setTotalReviews(int totalReviews) { this.totalReviews = totalReviews; }
-
     @Exclude public String getCartItemId() { return cartItemId; }
     @Exclude public void setCartItemId(String cartItemId) { this.cartItemId = cartItemId; }
 }

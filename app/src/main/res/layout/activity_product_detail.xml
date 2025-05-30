@@ -8,6 +8,7 @@
     android:background="#FFFFFF"
     tools:context=".ProductDetailActivity">
 
+    <!-- ... (AppBarLayout ve NestedScrollView içeriği aynı kalacak) ... -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -30,13 +31,15 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingBottom="80dp"> <!-- BottomAppBar için boşluk -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- ... (ImageView, TextViews, RatingBar, vs. aynı kalacak) ... -->
             <ImageView android:id="@+id/product_detail_image" android:layout_width="match_parent" android:layout_height="280dp" android:scaleType="fitCenter" android:src="@drawable/placeholder_image" android:background="#F5F5F5" android:layout_marginBottom="16dp"/>
 
             <TextView android:id="@+id/product_detail_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Apple" android:textColor="@color/blue_primary" android:textSize="14sp" android:textStyle="bold" android:visibility="gone"/>
@@ -50,24 +53,44 @@
 
             <TextView android:id="@+id/product_detail_seller" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Satıcı: MIX TEKNOLOJI" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:visibility="gone"/>
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="bottom">
-                <TextView android:id="@+id/product_detail_discount_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="7.500,00 TL" android:textColor="@color/orange_primary" android:textSize="24sp" android:textStyle="bold" android:visibility="gone"/>
-                <TextView android:id="@+id/product_detail_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="8.119,00 TL" android:textColor="@color/orange_primary" android:textSize="24sp" android:textStyle="bold" android:layout_marginStart="8dp"/>
+            <!-- Fiyat ve Kargo Bedava Metni - YENİ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
+
+                <!-- Fiyat ve Kargo Bedava Dikey LinearLayout -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="start|center_vertical">
+
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="bottom">
+                        <TextView android:id="@+id/product_detail_discount_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="499,29 TL" android:textColor="@color/orange_primary" android:textSize="20sp" android:textStyle="bold" android:visibility="gone"/>
+                        <TextView android:id="@+id/product_detail_price" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="499,29 TL" android:textColor="@color/orange_primary" android:textSize="20sp" android:textStyle="bold" android:layout_marginStart="0dp"/> <!-- indirim varsa bu üstü çizili olacak, marginStart kaldırıldı -->
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/text_free_shipping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kargo Bedava"
+                        android:textColor="@color/green_dark"
+                        android:textSize="13sp"
+                        android:layout_marginTop="2dp"
+                        android:visibility="gone"/> <!-- Kargo bedava ise görünür yapın -->
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout android:id="@+id/product_colors_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical" android:visibility="gone">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Renk: " android:textStyle="bold" android:textSize="14sp"/>
-                <TextView android:id="@+id/product_detail_color" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Beyaz" android:textSize="14sp"/>
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/product_sizes_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp" android:gravity="center_vertical" android:visibility="gone">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Beden: " android:textStyle="bold" android:textSize="14sp"/>
-                <com.google.android.material.chip.ChipGroup android:id="@+id/chip_group_sizes" android:layout_width="wrap_content" android:layout_height="wrap_content" app:singleLine="true"/>
-            </LinearLayout>
 
             <TextView android:id="@+id/product_detail_stock_status" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Stokta var" android:textSize="14sp" android:layout_marginTop="8dp"/>
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp"/>
 
+            <!-- ... (Açıklama, Özellikler, Değerlendirmeler aynı kalacak) ... -->
             <TextView android:id="@+id/title_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ürün Açıklaması" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:visibility="gone"/>
             <TextView android:id="@+id/product_detail_description" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Uzun ürün açıklaması..." android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:visibility="gone"/>
             <View android:id="@+id/divider_after_description" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:visibility="gone"/>
@@ -83,8 +106,36 @@
 
             <com.google.android.material.chip.ChipGroup android:id="@+id/chip_group_tags" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" app:chipSpacingHorizontal="8dp" android:visibility="gone"/>
 
-            <!-- Değerlendirme Bölümleri -->
             <View android:id="@+id/divider_before_reviews" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="24dp" android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/text_reviews_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Değerlendirmeler"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_review"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/text_no_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bu ürün için henüz değerlendirme yapılmamış."
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -130,35 +181,6 @@
                 android:textColor="@color/white"
                 android:layout_marginBottom="24dp"/>
 
-            <TextView
-                android:id="@+id/text_reviews_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Değerlendirmeler"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_reviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_review"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/text_no_reviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bu ürün için henüz değerlendirme yapılmamış."
-                android:gravity="center"
-                android:layout_marginTop="16dp"
-                android:textSize="14sp"
-                android:visibility="gone"/>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -171,19 +193,81 @@
         app:fabCradleRoundedCornerRadius="0dp"
         app:fabCradleVerticalOffset="0dp"
         android:backgroundTint="#FFFFFF"
-        app:hideOnScroll="true">
-        <Button
-            android:id="@+id/btn_add_to_cart_detail"
+        app:hideOnScroll="false"> <!-- Butonların görünür kalması için true'dan false'a değiştirilebilir -->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="Sepete Ekle"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="@color/orange_primary"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical">
+
+            <!-- Soldaki Fiyat ve Kargo Bilgisi (BottomAppBar içinde) -->
+            <!-- Bu kısım ya burada ya da yukarıdaki NestedScrollView içinde olmalı, tasarımınıza göre seçin -->
+            <!-- Şimdilik yukarıdaki NestedScrollView içinde bıraktık, burayı yorum satırı yapıyorum.
+                 Eğer altta sabit kalmasını isterseniz bu yorumu kaldırın ve yukarıdakini silin/gizleyin.
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:orientation="vertical"
+                android:gravity="center_vertical|start">
+
+                <TextView
+                    android:id="@+id/bottom_bar_product_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="499,29 TL"
+                    android:textColor="@color/orange_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/bottom_bar_free_shipping"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kargo Bedava"
+                    android:textColor="@color/green_dark"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+           -->
+
+            <!-- Şimdi Al Butonu -->
+            <Button
+                android:id="@+id/btn_buy_now_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Şimdi Al"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#FFC107"
+            app:cornerRadius="8dp"
+            android:layout_marginEnd="8dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"/>
+
+            <!-- Sepete Ekle Butonu -->
+            <Button
+                android:id="@+id/btn_add_to_cart_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sepete Ekle"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="@color/orange_primary"
+            app:cornerRadius="8dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+        </LinearLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>
+
     <ProgressBar android:id="@+id/progress_bar_detail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

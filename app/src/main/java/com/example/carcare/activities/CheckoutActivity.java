@@ -67,6 +67,24 @@ public class CheckoutActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
+        // Direkt satın alma kontrolü
+        boolean isDirectBuy = getIntent().getBooleanExtra("DIRECT_BUY", false);
+        String productId = getIntent().getStringExtra("PRODUCT_ID");
+
+        if (isDirectBuy && productId != null) {
+            Log.d(TAG, "Direkt satın alma modu aktif, Product ID: " + productId);
+        }
+
+        // Sepet boş kontrolü
+        if (Cart.getInstance().getItems().isEmpty()) {
+            Toast.makeText(this, "Sepetiniz boş. Mağazaya yönlendiriliyorsunuz.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, StoreActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         initializeViews();
         setupOrderSummary();
         setupEventListeners();
@@ -140,32 +158,45 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private boolean validateForm() {
         boolean valid = true;
+
         if (TextUtils.isEmpty(inputFullName.getText())) {
-            inputFullName.setError("Tam ad gerekli."); valid = false;
+            inputFullName.setError("Tam ad gerekli.");
+            valid = false;
         }
         if (TextUtils.isEmpty(inputAddress.getText())) {
-            inputAddress.setError("Adres gerekli."); valid = false;
+            inputAddress.setError("Adres gerekli.");
+            valid = false;
         }
         if (TextUtils.isEmpty(inputEmail.getText()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail.getText()).matches()) {
-            inputEmail.setError("Geçerli e-posta gerekli."); valid = false;
+            inputEmail.setError("Geçerli e-posta gerekli.");
+            valid = false;
         }
 
         if (paymentRadioGroup.getCheckedRadioButtonId() == R.id.radioCreditCard) {
             if (TextUtils.isEmpty(inputCardNumber.getText()) || inputCardNumber.getText().length() < 13) {
-                inputCardNumber.setError("Geçerli kart numarası gerekli."); valid = false;
+                inputCardNumber.setError("Geçerli kart numarası gerekli.");
+                valid = false;
             }
             if (TextUtils.isEmpty(inputExpiry.getText()) || !inputExpiry.getText().toString().matches("\\d{2}/\\d{2}")) {
-                inputExpiry.setError("AA/YY formatında geçerli son kullanma tarihi gerekli."); valid = false;
+                inputExpiry.setError("AA/YY formatında geçerli son kullanma tarihi gerekli.");
+                valid = false;
             }
             if (TextUtils.isEmpty(inputCVC.getText()) || inputCVC.getText().length() < 3) {
-                inputCVC.setError("Geçerli CVC gerekli."); valid = false;
+                inputCVC.setError("Geçerli CVC gerekli.");
+                valid = false;
             }
         }
 
+        // Sepet kontrolü - Bu kısmı güncelledik
         if (Cart.getInstance().getItems().isEmpty()) {
-            Toast.makeText(this, "Sepetiniz boş!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sepetiniz boş! Mağazaya yönlendiriliyorsunuz.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, StoreActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
             valid = false;
         }
+
         return valid;
     }
 
