@@ -9,14 +9,22 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.carcare.models.NearbyPlace;
+// UserVehicleService importu zaten vardı, doğru.
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,102 +34,112 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date; // Kritik uyarılar için eklendi
+import java.util.HashMap; // Kritik uyarılar için eklendi
+import java.util.IllegalFormatException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-public class CarActivity extends AppCompatActivity {
+interface CriticalDataAlertListener {
+    void onHighEngineTemperature(double temperature, double threshold);
+    void onLowFuelLevel(double fuelLevel, double threshold);
+    void onNewDtcDetected(List<SimpleOBD2Manager.VehicleData.DTC> newDtcs, List<SimpleOBD2Manager.VehicleData.DTC> allDtcs);
+}
+
+public class CarActivity extends AppCompatActivity implements CriticalDataAlertListener { // Listener implement edildi
     private static final String TAG = "CarActivity";
+
     private static final int REQUEST_BLUETOOTH_PERMISSION = 1001;
 
-    // UI Elements - GÜNCELLENMIŞ İSİMLER
+    // UI Elements
     private TextView tvWelcomeUser, tvCarName, tvCarYear;
-
-    // Ana veriler
     private TextView tvSpeedValue, tvRpmValue, tvEngineTempValue, tvFuelValue;
-
-    // Motor performans verileri
-    private TextView tvEngineLoadValue, tvThrottleValue;
+    private TextView tvEngineLoadValue; // tvThrottleValue kaldırıldı
     private TextView tvIntakeAirTempValue, tvMafValue;
-
-    // Butonlar
     private MaterialButton btnOpenSite, btnTrafficFineInquiry, btnMotorVehicleFineInquiry;
     private MaterialButton btnCarDetails, btnRefuel;
     private FloatingActionButton fabConnectOBD;
 
+    // DTC UI Elements
+    private CardView cardDtcStatus;
+    private ImageView imgDtcIcon;
+    private TextView tvDtcStatusMessage;
+    private MaterialButton btnShowDtcDetails;
+
     // Bluetooth ve OBD2 nesneleri
     private BluetoothManager bluetoothManager;
     private SimpleOBD2Manager obd2Manager;
-    private boolean isConnected = false;
+    private boolean isObdConnected = false;
+
+    // Firebase Servisleri
+    private UserVehicleService userVehicleService;
+    private String lastProcessedVin = null;
+
+    // Kritik Durum Bildirimleri için
+    private NotificationActivity.FirebaseNotificationManager firebaseNotificationManager;
+    private Map<String, Long> lastCriticalAlertTimestamps = new HashMap<>();
+    private static final long CRITICAL_ALERT_COOLDOWN_MS = 20 * 60 * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
-        // Toolbar'ı action bar olarak ayarla
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // UI elemanlarını initialize et
         initializeViews();
-
-        // Alt navigasyonu ayarla
         setupBottomNavigation();
-
-        // Kullanıcı bilgilerini Firebase'den yükle
         loadUserAndCarData();
 
-        // Bluetooth ve OBD2 nesnelerini oluştur veya al
-        setupBluetoothAndOBD();
+        firebaseNotificationManager = new NotificationActivity.FirebaseNotificationManager(); // Initialize FNM
 
-        // Veri güncelleme dinleyicisini ayarla
-        setupDataUpdateListener();
+        setupBluetoothAndOBD(); // Bu metod obd2Manager'ı initialize eder
+        if (obd2Manager != null) {
+            obd2Manager.setCriticalDataAlertListener(this); // Listener'ı burada ata
+        }
+        setupDataUpdateListener(); // Data listener'ı da burada ayarla
 
-        // Bluetooth izinlerini kontrol et
         checkBluetoothPermissions();
-
-        // Varsayılan değerleri göster
         showDefaultValues();
-
-        // Buton tıklama olaylarını ayarla
         setupButtonListeners();
-
-        // Bağlantı durumunu kontrol et ve arayüzü güncelle
         updateConnectionStatus();
-        // Bakım hatırlatmalarını planla
         setupMaintenanceScheduler();
-
-// Hoş geldiniz mesajını kontrol et
         setupWelcomeNotification();
+
+        userVehicleService = new UserVehicleService();
     }
 
     private void initializeViews() {
-        // Kullanıcı ve araç bilgileri
         tvWelcomeUser = findViewById(R.id.tvWelcomeUser);
         tvCarName = findViewById(R.id.tvCarName);
         tvCarYear = findViewById(R.id.tvCarYear);
 
-        // Ana veriler - YENİ İSİMLER
         tvSpeedValue = findViewById(R.id.tvSpeedValue);
         tvRpmValue = findViewById(R.id.tvRpmValue);
         tvEngineTempValue = findViewById(R.id.tvEngineTempValue);
         tvFuelValue = findViewById(R.id.tvFuelValue);
 
-        // Motor performans verileri - YENİ
         tvEngineLoadValue = findViewById(R.id.tvEngineLoadValue);
-        tvThrottleValue = findViewById(R.id.tvThrottleValue);
+        // tvThrottleValue = findViewById(R.id.tvThrottleValue); // Bu satır silindi
         tvIntakeAirTempValue = findViewById(R.id.tvIntakeAirTempValue);
         tvMafValue = findViewById(R.id.tvMafValue);
 
-        // Butonları bağla
         btnOpenSite = findViewById(R.id.btnOpenSite);
         btnTrafficFineInquiry = findViewById(R.id.btnTrafficFineInquiry);
         btnMotorVehicleFineInquiry = findViewById(R.id.btnMotorVehicleFineInquiry);
         btnCarDetails = findViewById(R.id.btnCarDetails);
         btnRefuel = findViewById(R.id.btnRefuel);
 
-        // FloatingActionButton'u bağla
         fabConnectOBD = findViewById(R.id.fabConnectOBD);
         fabConnectOBD.setOnClickListener(v -> connectToOBD());
+
+        cardDtcStatus = findViewById(R.id.cardDtcStatus);
+        imgDtcIcon = findViewById(R.id.imgDtcIcon);
+        tvDtcStatusMessage = findViewById(R.id.tvDtcStatusMessage);
+        btnShowDtcDetails = findViewById(R.id.btnShowDtcDetails);
 
         Log.d(TAG, "UI elemanları başarıyla bağlandı");
     }
@@ -131,137 +149,152 @@ public class CarActivity extends AppCompatActivity {
         nav.setSelectedItemId(R.id.nav_dashboard);
         nav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_dashboard) {
-                return true;
-            } else if (id == R.id.nav_store) {
-                startActivity(new Intent(this, StoreActivity.class));
-            } else if (id == R.id.nav_map) {
-                startActivity(new Intent(this, MapsActivity.class));
-            } else if (id == R.id.nav_notifications) {
-                startActivity(new Intent(this, NotificationActivity.class));
-            } else if (id == R.id.nav_settings) {
-                startActivity(new Intent(this, SettingsActivity.class));
-            }
+            if (id == R.id.nav_dashboard) return true;
+            else if (id == R.id.nav_store) startActivity(new Intent(this, StoreActivity.class));
+            else if (id == R.id.nav_map) startActivity(new Intent(this, MapsActivity.class));
+            else if (id == R.id.nav_notifications) startActivity(new Intent(this, NotificationActivity.class));
+            else if (id == R.id.nav_settings) startActivity(new Intent(this, SettingsActivity.class));
             overridePendingTransition(0, 0);
             return true;
         });
     }
 
     private void setupBluetoothAndOBD() {
-        // Bluetooth ve OBD2 nesnelerini oluştur veya global'dan al
         if (CarCareApplication.getBluetoothManager() == null) {
             bluetoothManager = new BluetoothManager(this);
             CarCareApplication.setBluetoothManager(bluetoothManager);
-            Log.d(TAG, "Yeni BluetoothManager oluşturuldu");
         } else {
             bluetoothManager = CarCareApplication.getBluetoothManager();
-            Log.d(TAG, "Mevcut BluetoothManager kullanılıyor");
         }
 
         if (CarCareApplication.getObd2Manager() == null) {
             obd2Manager = new SimpleOBD2Manager(this, bluetoothManager);
             CarCareApplication.setObd2Manager(obd2Manager);
-            Log.d(TAG, "Yeni OBD2Manager oluşturuldu");
         } else {
             obd2Manager = CarCareApplication.getObd2Manager();
-            Log.d(TAG, "Mevcut OBD2Manager kullanılıyor");
         }
+        // Listener atamasını onCreate içinde, bu metodun çağrısından sonra yapıyoruz.
+    }
+
+    private void showVehicleDetailsDialog() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "Please log in to see vehicle details.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore.getInstance().collection("users").document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String vehicleVin = documentSnapshot.getString(UserVehicleService.FIELD_VEHICLE_VIN);
+                        Map<String, Object> vinDetails = null;
+                        if (documentSnapshot.contains(UserVehicleService.MAP_VIN_DETAILS)) {
+                            vinDetails = (Map<String, Object>) documentSnapshot.get(UserVehicleService.MAP_VIN_DETAILS);
+                            Log.d(TAG, "showVehicleDetailsDialog - vinDetails from Firestore: " + vinDetails);
+                        } else {
+                            Log.w(TAG, "showVehicleDetailsDialog - User document does not contain vinDetails map.");
+                        }
+
+
+                        if (vehicleVin == null && (vinDetails == null || vinDetails.isEmpty())) {
+                            Toast.makeText(CarActivity.this, "No vehicle details found. Please connect to OBD2 to retrieve VIN.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CarActivity.this);
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.dialog_vehicle_details, null);
+                        builder.setView(dialogView);
+
+                        TextView tvDialogVin = dialogView.findViewById(R.id.tvDialogVin);
+                        TextView tvDialogMake = dialogView.findViewById(R.id.tvDialogMake);
+                        TextView tvDialogModelYear = dialogView.findViewById(R.id.tvDialogModelYear);
+                        TextView tvDialogManufacturer = dialogView.findViewById(R.id.tvDialogManufacturer);
+                        TextView tvDialogVehicleType = dialogView.findViewById(R.id.tvDialogVehicleType);
+                        MaterialButton btnDialogClose = dialogView.findViewById(R.id.btnDialogClose);
+
+                        tvDialogVin.setText(vehicleVin != null ? vehicleVin : "N/A");
+
+                        if (vinDetails != null) {
+                            tvDialogMake.setText(vinDetails.get(UserVehicleService.FIELD_DETAIL_MAKE) != null ? (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MAKE) : "N/A");
+                            tvDialogModelYear.setText(vinDetails.get(UserVehicleService.FIELD_DETAIL_YEAR) != null ? (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_YEAR) : "N/A");
+                            tvDialogManufacturer.setText(vinDetails.get(UserVehicleService.FIELD_DETAIL_MANUFACTURER) != null ? (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MANUFACTURER) : "N/A");
+                            tvDialogVehicleType.setText(vinDetails.get(UserVehicleService.FIELD_DETAIL_VEHICLE_TYPE) != null ? (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_VEHICLE_TYPE) : "N/A");
+                        } else {
+                            tvDialogMake.setText("N/A");
+                            tvDialogModelYear.setText("N/A");
+                            tvDialogManufacturer.setText("N/A");
+                            tvDialogVehicleType.setText("N/A");
+                        }
+
+                        final AlertDialog dialog = builder.create();
+                        btnDialogClose.setOnClickListener(v -> dialog.dismiss());
+                        dialog.show();
+
+                    } else {
+                        Toast.makeText(CarActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching vehicle details from Firestore", e);
+                    Toast.makeText(CarActivity.this, "Error fetching details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void setupDataUpdateListener() {
-        // Veri güncelleme dinleyicisini ayarla
-        obd2Manager.setDataUpdateListener(new SimpleOBD2Manager.DataUpdateListener() {
-            @Override
-            public void onDataUpdate(SimpleOBD2Manager.VehicleData data) {
-                Log.d(TAG, "Veri güncellendi - Hız: " + data.getSpeed() + ", RPM: " + data.getRpm());
-                updateUI(data);
-            }
+        if (obd2Manager != null) {
+            obd2Manager.setDataUpdateListener(new SimpleOBD2Manager.DataUpdateListener() {
+                @Override
+                public void onDataUpdate(SimpleOBD2Manager.VehicleData data) {
+                    CarActivity.this.updateUI(data);
+                }
 
-            @Override
-            public void onConnectionLost() {
-                // Bağlantı kesildiğinde yapılacak işlemler
-                runOnUiThread(() -> {
-                    isConnected = false;
-                    CarCareApplication.setObd2Connected(false);
-                    fabConnectOBD.setImageResource(android.R.drawable.ic_menu_add); // Bağlan ikonu
-                    showDefaultValues(); // Varsayılan değerleri göster
-                    Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "OBD2 bağlantısı kesildi");
-                });
-            }
-        });
+                @Override
+                public void onConnectionLost() {
+                    runOnUiThread(() -> {
+                        CarCareApplication.setObd2Connected(false);
+                        updateConnectionStatus();
+                        showDefaultValues();
+                        Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "OBD2 bağlantısı kesildi (onConnectionLost callback)");
+                        lastProcessedVin = null;
+                        if (lastCriticalAlertTimestamps != null) lastCriticalAlertTimestamps.clear();
+                    });
+                }
+            });
+        } else {
+            Log.e(TAG, "setupDataUpdateListener: obd2Manager null!");
+        }
     }
 
     private void setupButtonListeners() {
-        // SCHEDULE MAINTENANCE - TÜVTÜRK
-        btnOpenSite.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.tuvturk.com.tr"));
-            startActivity(intent);
-        });
-
-        // TRAFFIC FINE INQUIRY - GİB Dijital
-        btnTrafficFineInquiry.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dijital.gib.gov.tr/hizliOdemeler/MTVTPCOdeme"));
-            startActivity(intent);
-        });
-
-        // MOTOR VEHICLE FINE INQUIRY - GİB Dijital (aynı link)
-        btnMotorVehicleFineInquiry.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dijital.gib.gov.tr/hizliOdemeler/MTVTPCOdeme"));
-            startActivity(intent);
-        });
-
-        btnCarDetails.setOnClickListener(v -> {
-            Toast.makeText(this, "Car details feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        // YENİ - Yakıt istasyonu bulucu
+        btnOpenSite.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.tuvturk.com.tr"))));
+        btnTrafficFineInquiry.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://dijital.gib.gov.tr/hizliOdemeler/MTVTPCOdeme"))));
+        btnMotorVehicleFineInquiry.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://dijital.gib.gov.tr/hizliOdemeler/MTVTPCOdeme"))));
+        btnCarDetails.setOnClickListener(v -> showVehicleDetailsDialog());
         btnRefuel.setOnClickListener(v -> {
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("geo:0,0?q=gas+station+near+me"));
-            mapIntent.setPackage("com.google.android.apps.maps");
-            try {
-                startActivity(mapIntent);
-                Log.d(TAG, "Google Maps ile yakıt istasyonu aranıyor");
-            } catch (Exception e) {
-                // Google Maps yoksa web'de ara
-                Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://www.google.com/maps/search/gas+station+near+me"));
-                startActivity(webIntent);
-                Log.d(TAG, "Web'de yakıt istasyonu aranıyor");
-            }
+            Intent intentToMaps = new Intent(CarActivity.this, MapsActivity.class);
+            intentToMaps.putExtra("TARGET_PLACE_TYPE", NearbyPlace.Type.GAS);
+            startActivity(intentToMaps);
         });
     }
 
     private void setupMaintenanceScheduler() {
-        MaintenanceScheduler scheduler = new MaintenanceScheduler(this);
-        scheduler.scheduleAllMaintenance();
-        Log.d(TAG, "Tüm bakım hatırlatmaları planlandı");
+        new MaintenanceScheduler(this).scheduleAllMaintenance();
     }
 
     private void setupWelcomeNotification() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String lastUserId = prefs.getString("last_user_id", "");
-
-            if (!currentUser.getUid().equals(lastUserId)) {
-                // Yeni kullanıcı - hoş geldiniz mesajı gönder
-                NotificationActivity.FirebaseNotificationManager notifManager =
-                        new NotificationActivity.FirebaseNotificationManager();
-
-                notifManager.addWelcomeNotification(new NotificationActivity.FirebaseNotificationManager.SimpleCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "Hoş geldiniz mesajı gönderildi");
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.e(TAG, "Hoş geldiniz mesajı gönderilemedi", e);
-                    }
-                });
-
+            if (!currentUser.getUid().equals(prefs.getString("last_user_id", ""))) {
+                if (firebaseNotificationManager != null) {
+                    firebaseNotificationManager.addWelcomeNotification(new NotificationActivity.FirebaseNotificationManager.SimpleCallback() {
+                        @Override public void onSuccess() { Log.d(TAG, "Hoş geldiniz mesajı gönderildi"); }
+                        @Override public void onFailure(Exception e) { Log.e(TAG, "Hoş geldiniz mesajı gönderilemedi", e); }
+                    });
+                }
                 prefs.edit().putString("last_user_id", currentUser.getUid()).apply();
             }
         }
@@ -270,108 +303,268 @@ public class CarActivity extends AppCompatActivity {
     private void loadUserAndCarData() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            // Kullanıcı adını göster
-            String displayName = currentUser.getDisplayName();
-            if (displayName != null && !displayName.isEmpty()) {
-                tvWelcomeUser.setText(displayName);
-            } else {
-                tvWelcomeUser.setText("Car Owner");
-            }
+            String userId = currentUser.getUid();
 
-            // Araç bilgilerini Firestore'dan yükle
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users").document(currentUser.getUid())
+            FirebaseFirestore.getInstance().collection("users").document(userId)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            // Kullanıcı belgesinden araç bilgilerini al
-                            String carName = documentSnapshot.getString("carName");
-                            String carYear = documentSnapshot.getString("carYear");
+                            String fullName = documentSnapshot.getString("fullName");
 
-                            // Eğer bilgiler varsa, UI'ı güncelle
-                            if (carName != null && !carName.isEmpty()) {
-                                tvCarName.setText(carName);
+                            if (fullName != null && !fullName.isEmpty()) {
+                                tvWelcomeUser.setText(fullName);
+                            } else {
+                                String displayName = currentUser.getDisplayName();
+                                if (displayName != null && !displayName.isEmpty()) {
+                                    tvWelcomeUser.setText(displayName);
+                                } else {
+                                    String email = currentUser.getEmail();
+                                    tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
+                                }
                             }
 
-                            if (carYear != null && !carYear.isEmpty()) {
-                                tvCarYear.setText(carYear + " Model");
+                            if (documentSnapshot.contains(UserVehicleService.MAP_VIN_DETAILS)) {
+                                Map<String, Object> vinDetails = (Map<String, Object>) documentSnapshot.get(UserVehicleService.MAP_VIN_DETAILS);
+                                if (vinDetails != null && !vinDetails.isEmpty()) {
+                                    updateCarInfoUIFromVinDetails(vinDetails);
+                                    String make = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MAKE);
+                                    String model = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MODEL);
+                                    if((make == null || make.isEmpty()) && (model == null || model.isEmpty())){
+                                        setCarNameFromFirestore(documentSnapshot.getString("carName"));
+                                    }
+                                    String yearFromVin = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_YEAR);
+                                    if(yearFromVin == null || yearFromVin.isEmpty()){
+                                        setCarYearFromFirestore(documentSnapshot.getString("carYear"));
+                                    }
+                                    return;
+                                }
                             }
+                            setCarNameFromFirestore(documentSnapshot.getString("carName"));
+                            setCarYearFromFirestore(documentSnapshot.getString("carYear"));
+
+                        } else {
+                            Log.w(TAG, "Kullanıcı dokümanı Firestore'da bulunamadı: " + userId);
+                            String displayName = currentUser.getDisplayName();
+                            if (displayName != null && !displayName.isEmpty()) {
+                                tvWelcomeUser.setText(displayName);
+                            } else {
+                                String email = currentUser.getEmail();
+                                tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
+                            }
+                            setDefaultCarInfo();
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // Hata durumunda varsayılan değerler kullan
-                        tvCarName.setText("Opel Astra");
-                        tvCarYear.setText("2017 Model");
-                        Log.e(TAG, "Firestore'dan veri yüklenirken hata", e);
+                        Log.e(TAG, "Firestore'dan kullanıcı/araç verisi yüklenirken hata", e);
+                        String displayName = currentUser.getDisplayName();
+                        if (displayName != null && !displayName.isEmpty()) {
+                            tvWelcomeUser.setText(displayName);
+                        } else {
+                            String email = currentUser.getEmail();
+                            tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
+                        }
+                        setDefaultCarInfo();
                     });
         } else {
-            // Kullanıcı giriş yapmamışsa, varsayılan değerler
             tvWelcomeUser.setText("Guest");
-            tvCarName.setText("Opel Astra");
-            tvCarYear.setText("2017 Model");
+            setDefaultCarInfo();
         }
     }
 
+    private void setCarNameFromFirestore(String carName){
+        if (carName != null && !carName.isEmpty()) {
+            tvCarName.setText(carName);
+        } else {
+            tvCarName.setText("My Car");
+        }
+    }
+    private void setCarYearFromFirestore(String carYear){
+        if (carYear != null && !carYear.isEmpty()) {
+            tvCarYear.setText(carYear + " Model");
+        } else {
+            tvCarYear.setText("Not Specified");
+        }
+    }
+
+    private void setDefaultCarInfo() {
+        tvCarName.setText("My Car");
+        tvCarYear.setText("Not Specified");
+    }
+
+
     private void showDefaultValues() {
-        // Varsayılan değerleri göster
+        Log.d(TAG, "Varsayılan değerler gösteriliyor...");
         SimpleOBD2Manager.VehicleData defaultData = new SimpleOBD2Manager.VehicleData();
+        defaultData.clearDiagnosticTroubleCodes();
+        defaultData.clearVin();
         updateUI(defaultData);
-        Log.d(TAG, "Varsayılan değerler gösteriliyor");
+        Log.d(TAG, "Varsayılan değerler başarıyla gösterildi.");
     }
 
     private void updateUI(SimpleOBD2Manager.VehicleData data) {
-        // UI'ı güncelle (ana thread üzerinde)
         runOnUiThread(() -> {
+            if (data == null) {
+                Log.w(TAG, "updateUI: Gelen VehicleData null. Varsayılanlar gösteriliyor.");
+                showDefaultValues();
+                return;
+            }
+
+            StringBuilder logMessage = new StringBuilder("UI güncellendi - ");
             try {
-                // ANA VERILER (Her zaman gelecek)
-                tvSpeedValue.setText(String.format("%.0f", data.getSpeed()));
-                tvRpmValue.setText(String.format("%.0f", data.getRpm()));
-                tvEngineTempValue.setText(String.format("%.0f", data.getEngineTemp()));
+                tvSpeedValue.setText(String.format("%.0f", data.getSpeed() != null ? data.getSpeed() : 0.0));
+                logMessage.append("Hız: ").append(data.getSpeed() != null ? String.format("%.0f", data.getSpeed()) : "N/A").append(", ");
+                tvRpmValue.setText(String.format("%.0f", data.getRpm() != null ? data.getRpm() : 0.0));
+                logMessage.append("RPM: ").append(data.getRpm() != null ? String.format("%.0f", data.getRpm()) : "N/A").append(", ");
+                tvEngineTempValue.setText(data.getEngineTemp() != null ? String.format("%.0f°C", data.getEngineTemp()) : "N/A");
+                logMessage.append("Sıcaklık: ").append(data.getEngineTemp() != null ? String.format("%.0f°C", data.getEngineTemp()) : "N/A").append(", ");
+                tvFuelValue.setText(data.getFuelLevel() != null && data.getFuelLevel() >= 0 ? String.format("%.0f%%", data.getFuelLevel()) : "N/A");
+                logMessage.append("Yakıt: ").append(data.getFuelLevel() != null && data.getFuelLevel() >= 0 ? String.format("%.0f%%", data.getFuelLevel()) : "N/A").append(", ");
+                tvEngineLoadValue.setText(data.getEngineLoad() != null ? String.format("%.0f%%", data.getEngineLoad()) : "N/A");
+                logMessage.append("Yük: ").append(data.getEngineLoad() != null ? String.format("%.0f%%", data.getEngineLoad()) : "N/A").append(", ");
+                // tvThrottleValue.setText satırı silindi
+                // logMessage.append("Gaz: ...) satırı silindi
+                tvIntakeAirTempValue.setText(data.getIntakeTemp() != null ? String.format("%.0f°C", data.getIntakeTemp()) : "N/A");
+                logMessage.append("EmmeSıc: ").append(data.getIntakeTemp() != null ? String.format("%.0f°C", data.getIntakeTemp()) : "N/A").append(", ");
+                tvMafValue.setText(data.getMafAirFlow() != null && data.getMafAirFlow() >= 0 ? String.format("%.1f g/s", data.getMafAirFlow()) : "N/A");
+                logMessage.append("MAF: ").append(data.getMafAirFlow() != null && data.getMafAirFlow() >= 0 ? String.format("%.1f g/s", data.getMafAirFlow()) : "N/A").append(", ");
 
-                // YAKIT SEVİYESİ (Gelmeyebilir)
-                if (data.getFuelLevel() != null && data.getFuelLevel() > 0) {
-                    tvFuelValue.setText(String.format("%.0f%%", data.getFuelLevel()));
-                } else {
-                    tvFuelValue.setText("N/A");
+                updateDTCDisplay(data.getDiagnosticTroubleCodes());
+                logMessage.append("DTC: ").append(data.getDiagnosticTroubleCodes() != null ? data.getDiagnosticTroubleCodes().size() : "null").append(", ");
+
+                String currentVinFromOBD = data.getVin();
+                logMessage.append("VIN: ").append(currentVinFromOBD != null ? currentVinFromOBD : "N/A");
+
+                if (userVehicleService != null && currentVinFromOBD != null && !currentVinFromOBD.isEmpty() && !currentVinFromOBD.equals(lastProcessedVin)) {
+                    Log.d(TAG, "OBD'den yeni/farklı VIN alındı, işleniyor: " + currentVinFromOBD);
+                    userVehicleService.updateProfileWithVin(currentVinFromOBD, new UserVehicleService.VinUpdateCallback() {
+                        @Override
+                        public void onSuccess(String vin, boolean newVinRegistered, Map<String, Object> vehicleDetails) {
+                            lastProcessedVin = vin;
+                            String toastMsg = (newVinRegistered ? "Yeni araç VIN & detaylar kaydedildi: " : "Araç VIN doğrulandı, detaylar güncel: ") + vin;
+                            if (vehicleDetails != null && !vehicleDetails.isEmpty()) {
+                                toastMsg += "\n" + vehicleDetails.get(UserVehicleService.FIELD_DETAIL_MAKE) + " " + vehicleDetails.get(UserVehicleService.FIELD_DETAIL_MODEL);
+                                updateCarInfoUIFromVinDetails(vehicleDetails);
+                            } else if (newVinRegistered) {
+                                toastMsg += " (Detaylar alınamadı)";
+                            }
+                            Toast.makeText(CarActivity.this, toastMsg, Toast.LENGTH_LONG).show();
+                        }
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(CarActivity.this, "VIN & detaylar işlenirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        @Override
+                        public void onVinAlreadyCurrent(String vin, Map<String, Object> existingDetails) {
+                            lastProcessedVin = vin;
+                            Log.d(TAG, "VIN zaten Firestore'da güncel: " + vin);
+                            if (existingDetails != null && !existingDetails.isEmpty()) {
+                                updateCarInfoUIFromVinDetails(existingDetails);
+                            } else {
+                                Log.w(TAG, "VIN güncel ama Firestore'da detaylar eksik/yok.");
+                            }
+                        }
+                    });
+                } else if (currentVinFromOBD != null && currentVinFromOBD.equals(lastProcessedVin)) {
+                    // Log.v(TAG, "VIN (" + currentVinFromOBD + ") zaten bu oturumda işlenmişti.");
                 }
 
-                // MOTOR PERFORMANS VERİLERİ
-                tvEngineLoadValue.setText(String.format("%.0f%%", data.getEngineLoad()));
-                tvThrottleValue.setText(String.format("%.0f%%", data.getThrottlePosition()));
-
-                // HAVA SICAKLIĞI VE AKIŞI (Gelmeyebilir)
-                if (data.getIntakeTemp() != null && data.getIntakeTemp() > -30) {
-                    tvIntakeAirTempValue.setText(String.format("%.0f°C", data.getIntakeTemp()));
-                } else {
-                    tvIntakeAirTempValue.setText("N/A");
-                }
-
-                if (data.getMafAirFlow() != null && data.getMafAirFlow() > 0) {
-                    tvMafValue.setText(String.format("%.1f g/s", data.getMafAirFlow()));
-                } else {
-                    tvMafValue.setText("N/A");
-                }
-
-                Log.d(TAG, "UI güncellendi - Hız: " + data.getSpeed() +
-                        " km/h, RPM: " + data.getRpm() +
-                        ", Sıcaklık: " + data.getEngineTemp() + "°C" +
-                        ", Motor Yükü: " + data.getEngineLoad() + "%" +
-                        ", Gaz Pedalı: " + data.getThrottlePosition() + "%");
-
+            } catch (IllegalFormatException ife) {
+                Log.e(TAG, "UI güncellenirken formatlama hatası.", ife);
             } catch (Exception e) {
-                Log.e(TAG, "UI güncellenirken hata", e);
+                Log.e(TAG, "UI güncellenirken genel hata.", e);
+            }
+            Log.d(TAG, logMessage.toString());
+        });
+    }
+
+
+    private void updateCarInfoUIFromVinDetails(Map<String, Object> vinDetails) {
+        if (vinDetails == null || vinDetails.isEmpty() || tvCarName == null || tvCarYear == null) {
+            Log.w(TAG, "updateCarInfoUIFromVinDetails: Detaylar boş veya UI elemanları null.");
+            return;
+        }
+        runOnUiThread(() -> {
+            String make = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MAKE);
+            String model = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MODEL);
+            String year = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_YEAR);
+
+            StringBuilder carNameBuilder = new StringBuilder();
+            if (make != null && !make.isEmpty()) carNameBuilder.append(make.toUpperCase());
+            if (model != null && !model.isEmpty()) {
+                if (carNameBuilder.length() > 0) carNameBuilder.append(" ");
+                carNameBuilder.append(model);
+            }
+
+            if (carNameBuilder.length() > 0) {
+                tvCarName.setText(carNameBuilder.toString());
+                Log.i(TAG, "Araç adı VIN detaylarından güncellendi: " + carNameBuilder.toString());
+            }
+
+            if (year != null && !year.isEmpty()) {
+                tvCarYear.setText(year + " Model");
+                Log.i(TAG, "Araç yılı VIN detaylarından güncellendi: " + year);
             }
         });
     }
 
-    private void updateConnectionStatus() {
-        isConnected = CarCareApplication.isObd2Connected();
-        if (isConnected) {
-            fabConnectOBD.setImageResource(android.R.drawable.ic_menu_close_clear_cancel); // Kapat ikonu
-            Log.d(TAG, "Bağlantı durumu: Bağlı");
+    private void updateDTCDisplay(List<SimpleOBD2Manager.VehicleData.DTC> dtcs) {
+        int positiveColor = ContextCompat.getColor(this, R.color.primary);
+        int negativeColor = ContextCompat.getColor(this, R.color.negative_status_color);
+
+        if (dtcs == null || dtcs.isEmpty()) {
+            tvDtcStatusMessage.setText("No Active Diagnostic Trouble Codes Found.");
+            tvDtcStatusMessage.setTextColor(positiveColor);
+            if (imgDtcIcon != null) imgDtcIcon.setColorFilter(positiveColor);
+            if (btnShowDtcDetails != null) {
+                btnShowDtcDetails.setVisibility(View.GONE);
+                btnShowDtcDetails.setOnClickListener(null);
+            }
         } else {
-            fabConnectOBD.setImageResource(android.R.drawable.ic_menu_add); // Bağlan ikonu
-            Log.d(TAG, "Bağlantı durumu: Bağlı değil");
+            String message = dtcs.size() + (dtcs.size() == 1 ? " Diagnostic Trouble Code detected." : " Diagnostic Trouble Codes detected.");
+            tvDtcStatusMessage.setText(message);
+            tvDtcStatusMessage.setTextColor(negativeColor);
+            if (imgDtcIcon != null) imgDtcIcon.setColorFilter(negativeColor);
+            if (btnShowDtcDetails != null) {
+                btnShowDtcDetails.setVisibility(View.VISIBLE);
+                btnShowDtcDetails.setText("View Details");
+                btnShowDtcDetails.setOnClickListener(v -> showDtcDetailsDialog(dtcs));
+            }
+        }
+    }
+
+    private void showDtcDetailsDialog(List<SimpleOBD2Manager.VehicleData.DTC> dtcs) {
+        if (dtcs == null || dtcs.isEmpty()) {
+            Toast.makeText(this, "No trouble codes to display.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Detected Diagnostic Trouble Codes");
+        StringBuilder message = new StringBuilder();
+        for (SimpleOBD2Manager.VehicleData.DTC dtc : dtcs) {
+            message.append("<b>").append(dtc.code).append(":</b><br>").append(dtc.description);
+            if (!dtc.isUserUnderstandable) {
+                message.append("<br><small><i>(This is a technical description. Check service manual or consult a professional.)</i></small>");
+            }
+            message.append("<br><br>");
+        }
+        builder.setMessage(Html.fromHtml(message.toString().trim(), Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.FROM_HTML_MODE_LEGACY : 0));
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Clear Codes (Experimental)", (dialog, which) -> {
+            Toast.makeText(CarActivity.this, "Clear DTCs feature will be added soon.", Toast.LENGTH_LONG).show();
+            dialog.dismiss();
+        });
+        builder.create().show();
+    }
+
+    private void updateConnectionStatus() {
+        isObdConnected = CarCareApplication.isObd2Connected();
+        if (fabConnectOBD != null) {
+            fabConnectOBD.setImageResource(isObdConnected ? android.R.drawable.ic_menu_close_clear_cancel : android.R.drawable.ic_menu_add);
+        }
+        Log.d(TAG, "Bağlantı durumu UI güncellendi: " + (isObdConnected ? "Bağlı" : "Bağlı değil"));
+        if (!isObdConnected) {
+            lastProcessedVin = null;
+            if (lastCriticalAlertTimestamps != null) lastCriticalAlertTimestamps.clear();
         }
     }
 
@@ -379,25 +572,16 @@ public class CarActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-
                 ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.BLUETOOTH_CONNECT,
-                                Manifest.permission.BLUETOOTH_SCAN
-                        },
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
                         REQUEST_BLUETOOTH_PERMISSION);
             }
         } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
                 ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.BLUETOOTH,
-                                Manifest.permission.BLUETOOTH_ADMIN,
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                        },
+                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION},
                         REQUEST_BLUETOOTH_PERMISSION);
             }
         }
@@ -406,173 +590,127 @@ public class CarActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == REQUEST_BLUETOOTH_PERMISSION) {
             boolean allGranted = true;
-
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
                     allGranted = false;
                     break;
                 }
             }
-
             if (!allGranted) {
-                Toast.makeText(this, "OBD2 bağlantısı için Bluetooth izinleri gerekli", Toast.LENGTH_LONG).show();
-                Log.w(TAG, "Bluetooth izinleri verilmedi");
-            } else {
-                Log.d(TAG, "Bluetooth izinleri verildi");
+                Toast.makeText(this, "OBD2 bağlantısı için Bluetooth izinleri gerekli.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void connectToOBD() {
-        Log.d(TAG, "OBD bağlantısı başlatılıyor...");
-
-        if (isConnected) {
-            // Bağlantıyı kes
-            Log.d(TAG, "Mevcut bağlantı kesiliyor...");
-            obd2Manager.stopReading();
-            bluetoothManager.disconnect();
-            isConnected = false;
+        Log.d(TAG, "connectToOBD çağrıldı.");
+        if (CarCareApplication.isObd2Connected()) {
+            if (obd2Manager != null) obd2Manager.stopReading();
+            if (bluetoothManager != null) bluetoothManager.disconnect();
             CarCareApplication.setObd2Connected(false);
-            fabConnectOBD.setImageResource(android.R.drawable.ic_menu_add);
+            updateConnectionStatus();
             showDefaultValues();
-            Toast.makeText(this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "OBD2 bağlantısı kesildi.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Bluetooth açık mı kontrol et
+        if (bluetoothManager == null || obd2Manager == null) {
+            Log.e(TAG, "BluetoothManager veya OBD2Manager başlatılmamış!");
+            Toast.makeText(this, "Bluetooth servisi hatası.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!bluetoothManager.isBluetoothEnabled()) {
-            Toast.makeText(this, "Lütfen Bluetooth'u açın", Toast.LENGTH_SHORT).show();
-            Log.w(TAG, "Bluetooth kapalı");
+            Toast.makeText(this, "Lütfen Bluetooth'u açın.", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Bluetooth izinlerini kontrol et
         if (!bluetoothManager.hasBluetoothPermissions()) {
             checkBluetoothPermissions();
             return;
         }
 
-        // Eşleştirilmiş cihazları al
         Set<BluetoothDevice> pairedDevices = bluetoothManager.getPairedDevices();
-
         if (pairedDevices == null || pairedDevices.isEmpty()) {
-            Toast.makeText(this, "Eşleştirilmiş OBD2 cihazı bulunamadı", Toast.LENGTH_LONG).show();
-            Log.w(TAG, "Eşleştirilmiş cihaz bulunamadı");
+            Toast.makeText(this, "Eşleştirilmiş OBD2 cihazı bulunamadı.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Log.d(TAG, "Eşleştirilmiş cihaz sayısı: " + pairedDevices.size());
-
-        // Eşleştirilmiş cihazları listele (Dialog ile)
-        String[] deviceNames = new String[pairedDevices.size()];
-        String[] deviceAddresses = new String[pairedDevices.size()];
-
-        int i = 0;
+        List<String> deviceNamesList = new ArrayList<>();
+        List<String> deviceAddressesList = new ArrayList<>();
         for (BluetoothDevice device : pairedDevices) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Bluetooth bağlantı izni gerekiyor", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Toast.makeText(this, "Bluetooth bağlantı izni eksik.", Toast.LENGTH_SHORT).show();
+                return;
             }
-            deviceNames[i] = device.getName() + " (" + device.getAddress() + ")";
-            deviceAddresses[i] = device.getAddress();
-            Log.d(TAG, "Cihaz " + i + ": " + deviceNames[i]);
-            i++;
+            deviceNamesList.add((device.getName() != null ? device.getName() : "Unknown Device") + " (" + device.getAddress() + ")");
+            deviceAddressesList.add(device.getAddress());
+        }
+        final String[] deviceNames = deviceNamesList.toArray(new String[0]);
+        final String[] deviceAddresses = deviceAddressesList.toArray(new String[0]);
+
+        new AlertDialog.Builder(this)
+                .setTitle("OBD2 Cihazını Seçin")
+                .setItems(deviceNames, (dialog, which) -> {
+                    String deviceAddress = deviceAddresses[which];
+                    Toast.makeText(this, "Bağlanılıyor: " + deviceNames[which], Toast.LENGTH_SHORT).show();
+                    bluetoothManager.connectToDevice(deviceAddress, new BluetoothManager.ConnectionCallback() {
+                        @Override
+                        public void onConnectionSuccessful() {
+                            CarCareApplication.setObd2Connected(true);
+                            runOnUiThread(() -> {
+                                updateConnectionStatus();
+                                Toast.makeText(CarActivity.this, "OBD2 cihazına bağlandı!", Toast.LENGTH_SHORT).show();
+                                if (obd2Manager != null) obd2Manager.startReading();
+                            });
+                        }
+                        @Override
+                        public void onConnectionFailed(String reason) {
+                            CarCareApplication.setObd2Connected(false);
+                            runOnUiThread(() -> {
+                                updateConnectionStatus();
+                                Toast.makeText(CarActivity.this, "Bağlantı hatası: " + reason, Toast.LENGTH_LONG).show();
+                            });
+                        }
+                    });
+                })
+                .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume çağrıldı.");
+        if (CarCareApplication.getBluetoothManager() != null) {
+            bluetoothManager = CarCareApplication.getBluetoothManager();
+        } else {
+            bluetoothManager = new BluetoothManager(this);
+            CarCareApplication.setBluetoothManager(bluetoothManager);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("OBD2 Cihazını Seçin");
-
-        builder.setItems(deviceNames, (dialog, which) -> {
-            String deviceAddress = deviceAddresses[which];
-            Log.d(TAG, "Seçilen cihaz: " + deviceAddress);
-
-            // Seçilen cihaza bağlan
-            bluetoothManager.connectToDevice(deviceAddress, new BluetoothManager.ConnectionCallback() {
-                @Override
-                public void onConnectionSuccessful() {
-                    Log.d(TAG, "Bluetooth bağlantısı başarılı, OBD2 okumaya başlanıyor...");
-                    // Bağlantı başarılı, OBD2 okumaya başla
-                    obd2Manager.startReading();
-                    isConnected = true;
-                    CarCareApplication.setObd2Connected(true);
-                    runOnUiThread(() -> {
-                        fabConnectOBD.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
-                        Toast.makeText(CarActivity.this, "OBD2 cihazına bağlandı", Toast.LENGTH_SHORT).show();
-                    });
-                }
-
-                @Override
-                public void onConnectionFailed(String reason) {
-                    Log.e(TAG, "Bağlantı hatası: " + reason);
-                    runOnUiThread(() -> {
-                        Toast.makeText(CarActivity.this, "Bağlantı hatası: " + reason, Toast.LENGTH_LONG).show();
-                    });
-                }
-            });
-        });
-
-        builder.show();
+        if (CarCareApplication.getObd2Manager() != null) {
+            obd2Manager = CarCareApplication.getObd2Manager();
+        } else {
+            obd2Manager = new SimpleOBD2Manager(this, bluetoothManager);
+            CarCareApplication.setObd2Manager(obd2Manager);
+        }
+        if (obd2Manager != null) {
+            obd2Manager.setCriticalDataAlertListener(this);
+        }
+        setupDataUpdateListener();
+        updateConnectionStatus();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy çağrıldı");
-        // SADECE uygulamadan tamamen çıkılırken bağlantıyı kes
-        // Normal aktivite geçişlerinde kesme!
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause çağrıldı");
-        // onPause'da hiçbir şey yapma - bağlantıyı korumak için
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume çağrıldı");
-
-        // Global manager'ları al
-        if (CarCareApplication.getBluetoothManager() != null) {
-            bluetoothManager = CarCareApplication.getBluetoothManager();
-            Log.d(TAG, "BluetoothManager geri yüklendi");
-        }
-
-        if (CarCareApplication.getObd2Manager() != null) {
-            obd2Manager = CarCareApplication.getObd2Manager();
-            Log.d(TAG, "OBD2Manager geri yüklendi");
-
-            // Listener'ı yeniden ayarla
-            obd2Manager.setDataUpdateListener(new SimpleOBD2Manager.DataUpdateListener() {
-                @Override
-                public void onDataUpdate(SimpleOBD2Manager.VehicleData data) {
-                    Log.d(TAG, "Veri güncellendi (onResume'dan) - Hız: " + data.getSpeed());
-                    updateUI(data);
-                }
-
-                @Override
-                public void onConnectionLost() {
-                    runOnUiThread(() -> {
-                        isConnected = false;
-                        CarCareApplication.setObd2Connected(false);
-                        fabConnectOBD.setImageResource(android.R.drawable.ic_menu_add);
-                        showDefaultValues();
-                        Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Bağlantı kesildi (onResume'dan)");
-                    });
-                }
-            });
-        }
-
-        // Bağlantı durumunu kontrol et ve arayüzü güncelle
-        updateConnectionStatus();
     }
 
     @Override
@@ -585,5 +723,93 @@ public class CarActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop çağrıldı");
+    }
+
+    // --- CriticalDataAlertListener Implementasyonu ---
+    @Override
+    public void onHighEngineTemperature(double temperature, double threshold) {
+        String alertType = "HIGH_ENGINE_TEMP";
+        if (canSendCriticalAlert(alertType)) {
+            String title = "🚨 High Engine Temperature!";
+            String message = String.format("Engine temperature: %.0f°C (Threshold: %.0f°C). Please check your vehicle!", temperature, threshold);
+
+            sendAndSaveCriticalAlert(title, message, 201);
+            updateLastCriticalAlertTimestamp(alertType);
+            Log.i(TAG, "High engine temperature notification sent: " + temperature);
+        }
+    }
+
+    @Override
+    public void onLowFuelLevel(double fuelLevel, double threshold) {
+        String alertType = "LOW_FUEL_LEVEL";
+        if (canSendCriticalAlert(alertType)) {
+            String title = "⛽ Low Fuel Level!";
+            String message = String.format("Fuel level: %%%.0f (Threshold: %%%.0f). Please refuel!", fuelLevel, threshold);
+
+            sendAndSaveCriticalAlert(title, message, 202);
+            updateLastCriticalAlertTimestamp(alertType);
+            Log.i(TAG, "Low fuel level notification sent: " + fuelLevel);
+        }
+    }
+
+    @Override
+    public void onNewDtcDetected(List<SimpleOBD2Manager.VehicleData.DTC> newDtcs, List<SimpleOBD2Manager.VehicleData.DTC> allDtcs) {
+        String alertType = "NEW_DTC_DETECTED";
+        if (canSendCriticalAlert(alertType)) {
+            String title = "🛠️ New Trouble Code Detected!";
+            StringBuilder messageBuilder = new StringBuilder("New trouble code(s) found in your vehicle:\n");
+
+            for (SimpleOBD2Manager.VehicleData.DTC dtc : newDtcs) {
+                messageBuilder.append(dtc.code).append(": ").append(dtc.description).append("\n");
+            }
+            sendAndSaveCriticalAlert(title, messageBuilder.toString().trim(), 203);
+            updateLastCriticalAlertTimestamp(alertType);
+            Log.i(TAG, "New DTC notification sent. New codes: " + newDtcs.size());
+        }
+    }
+
+    private boolean canSendCriticalAlert(String alertType) {
+        long currentTime = System.currentTimeMillis();
+        if (lastCriticalAlertTimestamps == null) {
+            lastCriticalAlertTimestamps = new HashMap<>();
+        }
+        long lastTime = lastCriticalAlertTimestamps.getOrDefault(alertType, 0L);
+        if (currentTime - lastTime > CRITICAL_ALERT_COOLDOWN_MS) {
+            return true;
+        }
+        Log.d(TAG, alertType + " için kritik uyarı cooldown süresinde.");
+        return false;
+    }
+
+    private void updateLastCriticalAlertTimestamp(String alertType) {
+        if (lastCriticalAlertTimestamps == null) {
+            lastCriticalAlertTimestamps = new HashMap<>();
+        }
+        lastCriticalAlertTimestamps.put(alertType, System.currentTimeMillis());
+    }
+
+    private void sendAndSaveCriticalAlert(String title, String message, int notificationId) {
+        NotificationHelper.showNotification(getApplicationContext(), title, message, notificationId);
+
+        if (firebaseNotificationManager != null) {
+            NotificationActivity.NotificationData notificationData = new NotificationActivity.NotificationData();
+            notificationData.setTitle(title);
+            notificationData.setMessage(message);
+            notificationData.setTimestamp(new Date());
+
+            firebaseNotificationManager.addCustomNotification(notificationData, new NotificationActivity.FirebaseNotificationManager.SimpleCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.i(TAG, "Kritik uyarı Firestore'a başarıyla kaydedildi: " + title);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e(TAG, "Kritik uyarı Firestore'a kaydedilemedi: " + title, e);
+                }
+            });
+        } else {
+            Log.e(TAG, "firebaseNotificationManager null, kritik uyarı Firestore'a kaydedilemedi.");
+        }
     }
 }

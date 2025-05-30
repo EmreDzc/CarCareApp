@@ -258,7 +258,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="90"
+                            android:text="N/A"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                             android:textStyle="bold" />
 
@@ -271,7 +271,7 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-            <!-- Engine Performance Card -->
+            <!-- Engine Performance Card (İkonlar olmadan, 3 sütunlu daha düzenli görünüm) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,18 +286,20 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <!-- Başlık Bölümü -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:contentDescription="Engine Icon"
                             android:src="@drawable/ic_settings"
-                            app:tint="?attr/colorPrimary" />
+                        app:tint="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -308,113 +310,89 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
+                    <!-- Veri Bölümü: 3 Sütun (İkonsuz) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:weightSum="3">
 
-                        <!-- Engine Load -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Engine Load"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                            android:gravity="center_horizontal"
+                            android:paddingVertical="8dp"
+                            android:paddingHorizontal="4dp">
 
                             <TextView
                                 android:id="@+id/tvEngineLoadValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="35%"
+                                android:text="N/A"
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Engine Load"
+                                android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
                         </LinearLayout>
 
-                        <!-- Throttle Position -->
+                        {/* Sütun 2: Intake Air Temp */}
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Throttle Position"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
-
-                            <TextView
-                                android:id="@+id/tvThrottleValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="15%"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <!-- Intake Air Temperature -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Intake Air Temp"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                            android:gravity="center_horizontal"
+                            android:paddingVertical="8dp"
+                            android:paddingHorizontal="4dp">
 
                             <TextView
                                 android:id="@+id/tvIntakeAirTempValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="25°C"
+                                android:text="N/A"
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Intake Air °C"
+                                android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
                         </LinearLayout>
 
-                        <!-- Mass Air Flow -->
+                        {/* Sütun 3: MAF Air Flow */}
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Air Flow (MAF)"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                            android:gravity="center_horizontal"
+                            android:paddingVertical="8dp"
+                            android:paddingHorizontal="4dp">
 
                             <TextView
                                 android:id="@+id/tvMafValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="12.5 g/s"
+                                android:text="N/A"
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Air Flow (g/s)"
+                                android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -481,7 +459,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="75%"
+                                android:text="N/A"
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                                 android:textStyle="bold" />
 
@@ -507,6 +485,66 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Diagnostic Trouble Codes Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDtcStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imgDtcIcon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="Arıza Durumu İkonu"
+                            android:src="@drawable/ic_warning"
+                            app:tint="?attr/colorPrimary" /> <!-- Başlangıçta bir renk verelim -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Fault Status"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvDtcStatusMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Arıza kodları kontrol ediliyor..."
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:gravity="center_horizontal"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnShowDtcDetails"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:text="Detayları Gör"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
             <!-- Quick Services -->
             <TextView
                 android:layout_width="wrap_content"

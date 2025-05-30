@@ -3,49 +3,52 @@ package com.example.carcare;
 import java.util.Calendar;
 
 public enum MaintenanceType {
-    MOTOR_OIL("Motor Yağı ve Filtre Değişimi Hatırlatması",
-            "Lütfen motor yağınızı ve filtrenizi değiştirmeyi unutmayın!",
-            Calendar.FEBRUARY, 1, 1, 10),
+    MOTOR_OIL("Engine Oil & Filter Change Reminder",
+            "Please remember to change your engine oil and filter!",
+            Calendar.FEBRUARY, 1, 1, 10), // Notification ID: 10
 
-    AIR_FILTER("Hava Filtresi Değişimi Hatırlatması",
-            "Lütfen hava filtrenizi değiştirmeyi unutmayın!",
-            Calendar.MARCH, 1, 2, 11),
+    AIR_FILTER("Air Filter Change Reminder",
+            "Please remember to change your air filter!",
+            Calendar.MARCH, 1, 2, 11), // Notification ID: 11
 
-    FUEL_FILTER("Yakıt Filtresi Değişimi Hatırlatması",
-            "Lütfen yakıt filtrenizi değiştirmeyi unutmayın!",
-            Calendar.APRIL, 1, 4, 12),
+    FUEL_FILTER("Fuel Filter Change Reminder",
+            "Please remember to change your fuel filter!",
+            Calendar.APRIL, 1, 4, 12), // Notification ID: 12
 
-    BRAKE_SYSTEM("Fren Sistemi Kontrolü Hatırlatması",
-            "Lütfen fren sisteminizi kontrol etmeyi unutmayın!",
-            Calendar.MAY, 1, 2, 13),
+    BRAKE_SYSTEM("Brake System Check Reminder",
+            "Please remember to check your brake system!",
+            Calendar.MAY, 1, 2, 13), // Notification ID: 13
 
-    SPARK_PLUG("Bujilerin Değişimi Hatırlatması",
-            "Lütfen bujilerinizi değiştirmeyi unutmayın!",
-            Calendar.JUNE, 1, 3, 14),
+    SPARK_PLUG("Spark Plugs Replacement Reminder",
+            "Please remember to replace your spark plugs!",
+            Calendar.JUNE, 1, 3, 14), // Notification ID: 14
 
-    SUMMER_MAINTENANCE("Yaz Bakımı Hatırlatması",
-            "Lütfen klima bakımı, lastik kontrolü ve diğer yazlık bakımlarınızı yapmayı unutmayın!",
-            Calendar.JUNE, 1, 1, 6),
+    SUMMER_MAINTENANCE("Summer Maintenance Reminder",
+            "Please remember your summer maintenance: A/C check, tire inspection, etc.!",
+            Calendar.JUNE, 1, 1, 6), // Notification ID: 6
 
-    WINTER_MAINTENANCE("Kış Bakımı Hatırlatması",
-            "Lütfen kış lastiği değişimi, antifriz kontrolü ve diğer kışlık bakımlarınızı gerçekleştirin!",
-            Calendar.DECEMBER, 1, 1, 5),
+    WINTER_MAINTENANCE("Winter Maintenance Reminder",
+            "Please perform your winter maintenance: winter tires, antifreeze check, etc.!",
+            Calendar.DECEMBER, 1, 1, 5), // Notification ID: 5
 
-    TRAFFIC_INSURANCE("Zorunlu Trafik Sigortası Yenileme",
-            "Lütfen zorunlu trafik sigortanızı yenilemeyi unutmayın!",
-            Calendar.JANUARY, 1, 1, 4),
+    TRAFFIC_INSURANCE("Mandatory Traffic Insurance Renewal",
+            "Please remember to renew your mandatory traffic insurance!",
+            Calendar.JANUARY, 1, 1, 4), // Notification ID: 4
 
-    MAIN_MAINTENANCE("TÜVTÜRK Araç Bakım Hatırlatması",
-            "Aracınızın bakımını yapmayı unutmayın! Lütfen TÜVTÜRK kontrolünüzü gerçekleştirin.",
-            Calendar.JANUARY, 1, 2, 1),
+    // "TÜVTÜRK" Türkiye'ye özgü bir kurum olduğu için genel bir ifade kullandım.
+    // Hedef kitlenize göre "Vehicle Inspection Reminder" veya "MOT Reminder" (UK) gibi ifadeler kullanabilirsiniz.
+    MAIN_MAINTENANCE("Vehicle Inspection Reminder(TÜVTÜRK)",
+            "Don't forget your vehicle's inspection(TÜVTÜRK)! Please ensure it's up to date.",
+            Calendar.JANUARY, 1, 2, 1), // Notification ID: 1
 
-    TRAFFIC_FINE_JANUARY("Trafik Cezası Hatırlatması",
-            "Trafik cezası sorgulamanızı yapmayı unutmayın!",
-            Calendar.JANUARY, 1, 1, 3),
+    // Trafik cezası sorgulaması da ülkeye göre değişir. Genel bir ifade kullandım.
+    TRAFFIC_FINE_JANUARY("Traffic Fine Check Reminder (January)",
+            "Don't forget to check for any outstanding traffic fines!",
+            Calendar.JANUARY, 1, 1, 3), // Notification ID: 3
 
-    TRAFFIC_FINE_JULY("Trafik Cezası Hatırlatması",
-            "Trafik cezası sorgulamanızı yapmayı unutmayın!",
-            Calendar.JULY, 1, 1, 3);
+    TRAFFIC_FINE_JULY("Traffic Fine Check Reminder (July)",
+            "Don't forget to check for any outstanding traffic fines!",
+            Calendar.JULY, 1, 1, 3); // Notification ID: 3 (Aynı ID, farklı zamanlama)
 
     private final String title;
     private final String message;

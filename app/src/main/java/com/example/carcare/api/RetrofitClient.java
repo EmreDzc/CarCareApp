@@ -1,19 +1,35 @@
+// com/example/carcare/api/RetrofitClient.java
 package com.example.carcare.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "https://maps.googleapis.com/maps/api/";
-    private static Retrofit retrofit = null;
+    // Google Places API için
+    private static final String GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/place/";
+    private static Retrofit googlePlacesRetrofit = null;
 
-    public static Retrofit getClient() {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+    // NHTSA vPIC API için
+    private static final String NHTSA_VPIC_BASE_URL = "https://vpic.nhtsa.dot.gov/api/";
+    private static Retrofit nhtsaRetrofit = null;
+
+    public static Retrofit getGooglePlacesClient() {
+        if (googlePlacesRetrofit == null) {
+            googlePlacesRetrofit = new Retrofit.Builder()
+                    .baseUrl(GOOGLE_PLACES_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit;
+        return googlePlacesRetrofit;
+    }
+
+    public static Retrofit getNhtsaClient() {
+        if (nhtsaRetrofit == null) {
+            nhtsaRetrofit = new Retrofit.Builder()
+                    .baseUrl(NHTSA_VPIC_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return nhtsaRetrofit;
     }
 }

@@ -66,7 +66,7 @@ public class NearbyPlacesService {
      */
     private void findRealNearbyPlaces(LatLng location, String placeType, NearbyPlacesCallback callback) {
         // Places API ile Retrofit kullanımı
-        GooglePlacesApi apiService = RetrofitClient.getClient().create(GooglePlacesApi.class);
+        GooglePlacesApi apiService = RetrofitClient.getGooglePlacesClient().create(GooglePlacesApi.class);
         String locationString = location.latitude + "," + location.longitude;
         int radius = (int)(SEARCH_RADIUS_KM * 1000); // km to meters
 

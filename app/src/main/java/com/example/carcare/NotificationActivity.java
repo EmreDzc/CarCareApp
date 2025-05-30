@@ -256,13 +256,12 @@ public class NotificationActivity extends AppCompatActivity {
         // Hoş geldiniz bildirimi ekleme metodu
         public void addWelcomeNotification(final SimpleCallback callback) {
             if (currentUser == null) {
-                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                callback.onFailure(new Exception("User not logged in")); // İngilizce hata mesajı
                 return;
             }
-
             NotificationData notification = new NotificationData();
-            notification.setTitle("CarCare+");
-            notification.setMessage("CarCare+ uygulamamıza hoş geldiniz. Keyifli kullanımlar dileriz.");
+            notification.setTitle("Welcome to CarCare+"); // YENİ
+            notification.setMessage("Welcome to our CarCare+ app. We wish you a pleasant experience."); // YENİ
             notification.setTimestamp(new Date());
 
             db.collection("users")
@@ -271,6 +270,27 @@ public class NotificationActivity extends AppCompatActivity {
                     .add(notification)
                     .addOnSuccessListener(documentReference -> callback.onSuccess())
                     .addOnFailureListener(callback::onFailure);
+        }
+
+        public void addCustomNotification(NotificationData notification, final SimpleCallback callback) {
+            if (currentUser == null) {
+                if (callback != null) callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                return;
+            }
+            if (notification.getTimestamp() == null) { // Timestamp yoksa şimdi ayarla
+                notification.setTimestamp(new Date());
+            }
+
+            db.collection("users")
+                    .document(userId)
+                    .collection("notifications")
+                    .add(notification)
+                    .addOnSuccessListener(documentReference -> {
+                        if (callback != null) callback.onSuccess();
+                    })
+                    .addOnFailureListener(e -> {
+                        if (callback != null) callback.onFailure(e);
+                    });
         }
 
         // Tüm bildirimleri listeleme (timestamp'e göre)

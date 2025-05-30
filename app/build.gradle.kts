@@ -58,6 +58,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0") // Sürümü güncelledim, kontrol et.
     implementation(libs.places) // com.google.android.libraries.places:places:X.Y.Z
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Firebase Bağımlılıkları (libs.xyz formatını koruyarak)
     implementation(platform("com.google.firebase:firebase-bom:33.0.0")) // Firebase BOM ekle, sürümleri yönetir.
     implementation(libs.firebase.auth)
