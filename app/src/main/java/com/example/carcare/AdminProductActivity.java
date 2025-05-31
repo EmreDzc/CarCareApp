@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -63,8 +64,9 @@ public class AdminProductActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         initViews();
-        setupImagePicker(); // Bu metod imagePickerLauncher'ı initialize ediyor
-        setupClickListeners(); // Bu metod selectImage'i kullanıyor
+        setupCategorySpinner(); // Bu satırı ekleyin
+        setupImagePicker();
+        setupClickListeners();
     }
 
     private void initViews() {
@@ -246,31 +248,79 @@ public class AdminProductActivity extends AppCompatActivity {
         return new ArrayList<>(Arrays.asList(input.split("\\s*,\\s*")));
     }
 
+    private void setupCategorySpinner() {
+        // Görünen isimler (Türkçe)
+        String[] displayNames = {
+                "Motor Yağları",
+                "Filtreler",
+                "Fren Parçaları",
+                "Lastikler",
+                "Aküler",
+                "Temizlik Ürünleri",
+                "Araçlar ve Takımlar",
+                "Aksesuar",
+                "Aydınlatma",
+                "Elektronik"
+        };
+
+        // Veritabanına kaydedilecek kodlar
+        String[] categoryValues = {
+                "motor_oil",
+                "filters",
+                "brake_parts",
+                "tires",
+                "batteries",
+                "cleaning",
+                "tools",
+                "accessories",
+                "lights",
+                "electronics"
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, displayNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
+    }
+
+    private String getCategoryValue(int selectedPosition) {
+        String[] categoryValues = {
+                "motor_oil", "filters", "brake_parts", "tires", "batteries",
+                "cleaning", "tools", "accessories", "lights", "electronics"
+        };
+
+        if (selectedPosition >= 0 && selectedPosition < categoryValues.length) {
+            return categoryValues[selectedPosition];
+        }
+        return "accessories"; // Varsayılan
+    }
+
     private void saveProductToFirestore(String imageBase64) {
         Map<String, Object> product = new HashMap<>();
         product.put("name", editName.getText().toString().trim());
         product.put("description", editDescription.getText().toString().trim());
         product.put("price", Double.parseDouble(editPrice.getText().toString().trim()));
         product.put("stock", Integer.parseInt(editStock.getText().toString().trim()));
-        product.put("category", spinnerCategory.getSelectedItem().toString());
-        product.put("imageBase64", imageBase64 != null ? imageBase64 : ""); // Null check
+
+        // Kategori için kod değerini kullan
+        product.put("category", getCategoryValue(spinnerCategory.getSelectedItemPosition()));
+
+        product.put("imageBase64", imageBase64 != null ? imageBase64 : "");
         product.put("createdAt", FieldValue.serverTimestamp());
         product.put("updatedAt", FieldValue.serverTimestamp());
 
         product.put("brand", editBrand.getText().toString().trim());
         product.put("modelCode", editModelCode.getText().toString().trim());
         product.put("sellerName", editSellerName.getText().toString().trim());
-
-        product.put("averageRating", 0.0f); // Başlangıç değeri
-        product.put("totalReviews", 0);     // Başlangıç değeri
-
+        product.put("averageRating", 0.0f);
+        product.put("totalReviews", 0);
         product.put("isFeatured", switchIsFeatured.isChecked());
         product.put("warrantyInfo", editWarrantyInfo.getText().toString().trim());
         product.put("shippingInfo", editShippingInfo.getText().toString().trim());
         product.put("returnPolicy", editReturnPolicy.getText().toString().trim());
         product.put("specifications", parseSpecifications(editSpecifications.getText().toString().trim()));
 
-        Log.d(TAG, "Saving product: " + product.get("name") + ", ImageBase64 length: " + (imageBase64 != null ? imageBase64.length() : "null"));
+        Log.d(TAG, "Saving product with category: " + getCategoryValue(spinnerCategory.getSelectedItemPosition()));
 
         db.collection("products")
                 .add(product)

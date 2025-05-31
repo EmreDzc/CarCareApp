@@ -5,21 +5,24 @@
 
     <string-array name="sort_options">
         <item>Relevance</item>
-        <item>Ascending Price</item>
-        <item>Descending Price</item>
-        <item>A-Z</item>
-        <item>Z-A</item>
+        <item>Artan Fiyat</item>
+        <item>Azalan Fiyat</item>
+        <item>En Yeni</item>
+        <item>En Çok Satan</item>
+        <item>En Yüksek Puan</item>
     </string-array>
 
     <string-array name="product_categories">
-        <item>Motor Yağı</item>
-        <item>Fren Balata</item>
-        <item>Lastik</item>
-        <item>Akü</item>
-        <item>Filtre</item>
-        <item>Temizlik</item>
-        <item>Aksesuar</item>
-        <item>Diğer</item>
+        <item>motor_oil</item>
+        <item>filters</item>
+        <item>brake_parts</item>
+        <item>tires</item>
+        <item>batteries</item>
+        <item>cleaning</item>
+        <item>tools</item>
+        <item>accessories</item>
+        <item>lights</item>
+        <item>electronics</item>
     </string-array>
 
     <!-- AdminProductActivity için yeni alanlar -->

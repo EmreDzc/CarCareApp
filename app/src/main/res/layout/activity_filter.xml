@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Başlık ve Hide Filters Butonu -->
+    <!-- Üst Başlık -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,17 +29,16 @@
     <Button
         android:id="@+id/btn_hide_filters"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:text="Hide Filters"
         android:drawableStart="@drawable/ic_filter"
         android:drawablePadding="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="#F5F5F5"
         android:textColor="#000000"
-        android:gravity="center"
-        android:onClick="onHideFiltersClick"/>
+        android:gravity="center"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -52,7 +51,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Başlık ve Temizle Butonu -->
+            <!-- Filters Başlığı ve Clear All -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +75,7 @@
                     android:layout_alignParentEnd="true"/>
             </RelativeLayout>
 
-            <!-- Arama Filtresi -->
+            <!-- Arama -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +87,7 @@
             <EditText
                 android:id="@+id/search_filter"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:hint="Search products..."
                 android:padding="12dp"
                 android:background="@drawable/bg_rounded_edittext"
@@ -109,46 +108,74 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="16dp">
 
-                <CheckBox android:id="@+id/category_oil"
+                <CheckBox
+                    android:id="@+id/category_motor_oil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Motor Yağları"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_filters"
+                <CheckBox
+                    android:id="@+id/category_filters"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Filtreler"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_tires"
+                <CheckBox
+                    android:id="@+id/category_brake_parts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fren Parçaları"
+                    android:padding="8dp"/>
+
+                <CheckBox
+                    android:id="@+id/category_tires"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Lastikler"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_batteries"
+                <CheckBox
+                    android:id="@+id/category_batteries"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Aküler"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_cleaning"
+                <CheckBox
+                    android:id="@+id/category_cleaning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Temizlik Ürünleri"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_repair"
+                <CheckBox
+                    android:id="@+id/category_tools"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tamir Kitleri"
+                    android:text="Araçlar ve Takımlar"
                     android:padding="8dp"/>
 
-                <CheckBox android:id="@+id/category_accessories"
+                <CheckBox
+                    android:id="@+id/category_accessories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Aksesuar"
+                    android:padding="8dp"/>
+
+                <CheckBox
+                    android:id="@+id/category_lights"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aydınlatma"
+                    android:padding="8dp"/>
+
+                <CheckBox
+                    android:id="@+id/category_electronics"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Elektronik"
                     android:padding="8dp"/>
             </LinearLayout>
 
@@ -170,7 +197,7 @@
                 <EditText
                     android:id="@+id/min_price"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:hint="Min"
                     android:inputType="numberDecimal"
@@ -188,7 +215,7 @@
                 <EditText
                     android:id="@+id/max_price"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:hint="Max"
                     android:inputType="numberDecimal"
@@ -208,23 +235,23 @@
             <Spinner
                 android:id="@+id/sort_by_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:padding="12dp"
                 android:background="@drawable/bg_rounded_edittext"
-                android:layout_marginBottom="24dp"
-                android:entries="@array/sort_options"/>
+                android:layout_marginBottom="24dp"/>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Uygula Butonu -->
+    <!-- Apply Filters Butonu -->
     <Button
         android:id="@+id/btn_apply_filters"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:text="Apply Filters"
         android:textColor="#FFFFFF"
         android:backgroundTint="#4285F4"
-        android:padding="12dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:layout_margin="16dp"/>
 
 </LinearLayout>
