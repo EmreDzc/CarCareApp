@@ -15,6 +15,7 @@ import com.example.carcare.LoginActivity;
 import com.example.carcare.MapsActivity;
 import com.example.carcare.NotificationActivity;
 import com.example.carcare.OrderHistoryActivity;
+import com.example.carcare.ProfilePage.address.AddressActivity;
 import com.example.carcare.R;
 import com.example.carcare.StoreActivity;
 import com.example.carcare.WishlistActivity;
@@ -89,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupCardClickListeners() {
-        // Hesap Ayarları - DÜZELTME
+        // Hesap Ayarları
         MaterialCardView cardAccountSettings = findViewById(R.id.card_account_settings);
         cardAccountSettings.setOnClickListener(v -> {
             Log.d(TAG, "Hesap Ayarları kartına tıklandı");
@@ -115,13 +116,21 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Adreslerim
+        // Adreslerim - DÜZELTME: AddressActivity'yi başlat
         MaterialCardView cardAddresses = findViewById(R.id.card_addresses);
         cardAddresses.setOnClickListener(v -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
-                // Geçici olarak toast göster - AddressActivity henüz hazır değil
-                Toast.makeText(ProfileActivity.this, "Adresler sayfası yakında eklenecek", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Adreslerim kartına tıklandı");
+                try {
+                    // Artık Toast yerine AddressActivity'yi başlatıyoruz
+                    Intent intent = new Intent(ProfileActivity.this, AddressActivity.class);
+                    startActivity(intent);
+                    Log.d(TAG, "AddressActivity başlatıldı");
+                } catch (Exception e) {
+                    Log.e(TAG, "AddressActivity başlatılamadı", e);
+                    Toast.makeText(this, "Adresler sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(ProfileActivity.this, "Adresleri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
             }
@@ -139,23 +148,34 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Kayıtlı Kartlarım
+        // Kayıtlı Kartlarım - DÜZELTME: SavedCardsActivity'yi başlat (veya geçici olarak Toast)
         MaterialCardView cardSavedCards = findViewById(R.id.card_saved_cards);
         cardSavedCards.setOnClickListener(v -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
-                // Geçici olarak toast göster - SavedCardsActivity henüz hazır değil
-                Toast.makeText(ProfileActivity.this, "Kayıtlı kartlar sayfası yakında eklenecek", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Kayıtlı Kartlarım kartına tıklandı");
+                try {
+                    // SavedCardsActivity hazır olduğunda bu satırı aktif edin:
+                    Intent intent = new Intent(ProfileActivity.this, SavedCardsActivity.class);
+                    startActivity(intent);
+                    Log.d(TAG, "SavedCardsActivity başlatıldı");
+
+                    // Şimdilik (SavedCardsActivity hazır değilse) Toast mesajı:
+                    // Toast.makeText(ProfileActivity.this, "Kayıtlı kartlar sayfası yakında eklenecek", Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    Log.e(TAG, "SavedCardsActivity başlatılamadı", e);
+                    Toast.makeText(this, "Kayıtlı kartlar sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(ProfileActivity.this, "Kayıtlı kartları görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Çıkış Yap - Direkt logout (eski methodunuz gibi)
+        // Çıkış Yap
         MaterialCardView cardLogout = findViewById(R.id.card_logout);
         cardLogout.setOnClickListener(v -> performLogout());
     }
-
     private void performLogout() {
         // Eski logout metodunuzun aynısı
         FirebaseAuth.getInstance().signOut();

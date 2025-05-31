@@ -1,150 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_color">
+    android:background="@color/background_color_light_grey"
+    tools:context=".ProfilePage.SavedCardsActivity">
 
-    <!-- Header -->
-    <RelativeLayout
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_saved_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/white"
-        android:elevation="2dp">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Geri" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_saved_cards"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/orange_primary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="Kayıtlı Kartlarım"
+            app:titleTextColor="@android:color/white"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Kart Listesi -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_saved_cards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appbar_saved_cards"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:visibility="gone"/> <!-- Başlangıçta gizli, kart varsa görünür -->
+
+    <!-- Kart Yoksa Gösterilecek Bölüm -->
+    <LinearLayout
+        android:id="@+id/layout_no_cards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:padding="24dp"
+        android:visibility="visible"> <!-- Başlangıçta görünür -->
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_masterpass_logo"
+            app:tint="@color/grey_medium_dark"
+            android:layout_marginBottom="24dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Kayıtlı Kartlarım"
-            android:textColor="?attr/colorOnBackground"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="Kayıtlı kartın bulunmamaktadır"
+            android:textSize="18sp"
+            android:textColor="@color/text_color_primary"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
 
-        <ImageButton
-            android:id="@+id/btn_add_card"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_add"
-            android:contentDescription="Kart Ekle" />
-    </RelativeLayout>
-
-    <!-- Ana İçerik -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <!-- Kart Listesi -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_cards"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:clipToPadding="false" />
-
-        <!-- Boş Durum -->
-        <LinearLayout
-            android:id="@+id/layout_empty_state"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="visible">
-
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/ic_credit_card"
-                android:layout_marginBottom="24dp"
-                android:alpha="0.5"
-                app:tint="@color/grey_medium" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Henüz kart eklemediniz"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/grey_medium"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hızlı ödeme için kartınızı kaydedin"
-                android:textSize="14sp"
-                android:textColor="@color/grey_medium"
-                android:textAlignment="center"
-                android:layout_marginBottom="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_first_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="İlk Kartımı Ekle"
-                app:backgroundTint="@color/blue_primary"
-                android:textColor="@color/white"
-                app:cornerRadius="8dp" />
-        </LinearLayout>
-
-        <!-- Yükleniyor -->
-        <ProgressBar
-            android:id="@+id/progress_bar"
+        <Button
+            android:id="@+id/btn_add_new_card_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-    </FrameLayout>
+            android:text="Yeni Kart Ekle"
+            android:backgroundTint="@color/orange_primary"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="12dp"/>
 
-    <!-- Güvenlik Bilgisi -->
-    <com.google.android.material.card.MaterialCardView
+    </LinearLayout>
+
+    <!-- Masterpass Bilgisi ve Yeni Kart Ekle Butonu (Liste Doluyken) -->
+    <LinearLayout
+        android:id="@+id/layout_masterpass_and_add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@color/security_info_bg">
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_masterpass_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Masterpass'e kayıtlı kullanım süresi geçmiş veya geçersiz kartlar kullanılamamaktadır."
+            android:textSize="12sp"
+            android:textColor="@color/grey_dark"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"/> <!-- Sadece liste doluyken ve uyarı gerekiyorsa göster -->
+
+        <Button
+            android:id="@+id/btn_add_new_card_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:text="Yeni Kart Ekle"
+            android:backgroundTint="@color/orange_primary"
+            android:textColor="@android:color/white"
+            android:paddingVertical="12dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"/> <!-- Sadece liste doluyken göster -->
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_security"
-                app:tint="@color/security_info_text"
-                android:layout_marginEnd="12dp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Kart bilgileriniz 256-bit SSL ile şifrelenerek güvenli bir şekilde saklanır."
-                android:textSize="12sp"
-                android:textColor="@color/security_info_text"
-                android:lineSpacingExtra="2dp" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_masterpass_logo"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="8dp"/>
 
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kartlarını burada güvenle saklayabilirsin."
+            android:textSize="12sp"
+            android:textColor="@color/grey_medium_dark"/>
+
+    </LinearLayout>
+</RelativeLayout>

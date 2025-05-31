@@ -113,7 +113,7 @@
 
         <!-- Adresler Sayfası-->
         <activity
-            android:name=".ProfilePage.AddressActivity"
+            android:name=".ProfilePage.address.AddressActivity"
             android:exported="false"
             android:theme="@style/Theme.CarCare" />
 
@@ -122,6 +122,16 @@
             android:name=".ProfilePage.SavedCardsActivity"
             android:exported="false"
             android:theme="@style/Theme.CarCare" />
+        <activity
+            android:name=".ProfilePage.address.AddEditAddressActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <activity
+            android:name=".ProfilePage.AddEditCardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
 
 
     </application>

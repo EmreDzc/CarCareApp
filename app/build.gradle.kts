@@ -87,10 +87,11 @@ dependencies {
     // Arka Plan İşlemleri
     implementation(libs.work.runtime) // androidx.work:work-runtime:X.Y.Z
 
-    // Diğer (Guava'yı Android için kullanmak yerine AndroidX eşdeğerlerini düşün)
-    // Guava'nın tam Android sürümünü kullandığından emin ol (30.1.1-android iyi)
-    // implementation("com.google.guava:guava:30.1.1-android") // Eğer gerçekten gerekliyse kalsın.
-    // Çoğu durumda AndroidX veya Kotlin standart kütüphanesi yeterli olabilir.
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+
+
+
 
     // Test Bağımlılıkları
     testImplementation(libs.junit)

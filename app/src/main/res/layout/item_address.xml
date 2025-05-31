@@ -92,43 +92,44 @@
 
         <!-- Alıcı Bilgisi -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layout_recipient_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_person"
+            app:tint="@color/grey_medium"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/tv_recipient_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical">
+            android:layout_weight="1"
+            android:text="Ahmet Yılmaz"
+            android:textSize="12sp"
+            android:textColor="@color/grey_medium" />
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_person"
-                app:tint="@color/grey_medium"
-                android:layout_marginEnd="6dp" />
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_phone"
+            app:tint="@color/grey_medium"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="6dp" />
 
-            <TextView
-                android:id="@+id/tv_recipient_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ahmet Yılmaz"
-                android:textSize="12sp"
-                android:textColor="@color/grey_medium" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_phone"
-                app:tint="@color/grey_medium"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="6dp" />
-
-            <TextView
-                android:id="@+id/tv_recipient_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+90 555 123 45 67"
-                android:textSize="12sp"
-                android:textColor="@color/grey_medium" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_recipient_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+90 555 123 45 67"
+            android:textSize="12sp"
+            android:textColor="@color/grey_medium" />
+    </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

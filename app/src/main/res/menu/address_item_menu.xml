@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_edit_address"
+        android:title="Düzenle" />
+    <item
+        android:id="@+id/action_delete_address"
+        android:title="Sil" />
+    <!-- Opsiyonel: Varsayılan Yap
+    <item
+        android:id="@+id/action_set_default_address"
+        android:title="Varsayılan Yap" />
+     -->
+</menu>
