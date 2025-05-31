@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -15,8 +14,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
 
     <!-- For Android 12 and higher -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
@@ -44,9 +41,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
@@ -74,7 +68,7 @@
 
         <activity android:name=".CarActivity"/>
         <activity android:name=".StoreActivity" />
-        <activity android:name=".FilterActivity"    />
+        <activity android:name=".FilterActivity" />
 
         <activity android:name=".activities.CartActivity" />
         <activity android:name=".activities.CheckoutActivity" />
@@ -100,6 +94,32 @@
 
         <activity
             android:name=".SearchActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <!-- ===== YENİ EKLENEN SETTINGS SAYFALARI ===== -->
+
+        <!-- Ana Settings Sayfası -->
+        <activity
+            android:name=".ProfilePage.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <!-- Hesap Ayarları Sayfası -->
+        <activity
+            android:name=".ProfilePage.AccountSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <!-- Adresler Sayfası-->
+        <activity
+            android:name=".ProfilePage.AddressActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CarCare" />
+
+        <!-- Kayıtlı Kartlar Sayfası-->
+        <activity
+            android:name=".ProfilePage.SavedCardsActivity"
             android:exported="false"
             android:theme="@style/Theme.CarCare" />
 

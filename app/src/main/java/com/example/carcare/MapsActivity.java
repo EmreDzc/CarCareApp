@@ -16,8 +16,6 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -28,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.adapters.NearbyPlacesAdapter;
 import com.example.carcare.models.NearbyPlace;
 import com.example.carcare.services.NearbyPlacesService;
@@ -170,7 +169,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_settings) {
-                startActivity(new Intent(MapsActivity.this, SettingsActivity.class));
+                startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             }

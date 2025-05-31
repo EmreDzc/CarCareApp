@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.activities.CartActivity;
 import com.example.carcare.adapters.ProductAdapter;
 import com.example.carcare.models.Product;
@@ -35,7 +36,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class StoreActivity extends AppCompatActivity {
@@ -228,7 +228,7 @@ public class StoreActivity extends AppCompatActivity {
                     return false; // İşlemi iptal et, sayfada kal
                 }
             } else if (id == R.id.nav_settings) {
-                intent = new Intent(this, SettingsActivity.class);
+                intent = new Intent(this, ProfileActivity.class);
             }
 
             if (intent != null) {

@@ -23,6 +23,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.models.NearbyPlace;
 // UserVehicleService importu zaten vardı, doğru.
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -153,7 +154,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             else if (id == R.id.nav_store) startActivity(new Intent(this, StoreActivity.class));
             else if (id == R.id.nav_map) startActivity(new Intent(this, MapsActivity.class));
             else if (id == R.id.nav_notifications) startActivity(new Intent(this, NotificationActivity.class));
-            else if (id == R.id.nav_settings) startActivity(new Intent(this, SettingsActivity.class));
+            else if (id == R.id.nav_settings) startActivity(new Intent(this, ProfileActivity.class));
             overridePendingTransition(0, 0);
             return true;
         });

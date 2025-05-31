@@ -1,5 +1,6 @@
 package com.example.carcare;
 
+import com.example.carcare.ProfilePage.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import android.content.Intent;
@@ -61,7 +62,7 @@ public class NotificationActivity extends AppCompatActivity {
             } else if (id == R.id.nav_notifications) {
                 return true;
             } else if (id == R.id.nav_settings) {
-                startActivity(new Intent(NotificationActivity.this, SettingsActivity.class));
+                startActivity(new Intent(NotificationActivity.this, ProfileActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             }
