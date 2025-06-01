@@ -1,110 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@drawable/dialog_rounded_background">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vehicle Details"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        android:layout_marginBottom="16dp"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="normal"
+        android:layout_marginBottom="20dp"
         android:layout_gravity="center_horizontal"/>
 
+    <!-- VIN -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="12dp">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="VIN:"
-            android:textStyle="bold"/>
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="normal"/>
         <TextView
             android:id="@+id/tvDialogVin"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="normal"
             android:text="N/A"/>
     </LinearLayout>
 
+    <!-- Make -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="12dp">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Make:"
-            android:textStyle="bold"/>
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="normal"/>
         <TextView
             android:id="@+id/tvDialogMake"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="normal"
             android:text="N/A"/>
     </LinearLayout>
 
+    <!-- Model Year -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="12dp">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Model Year:"
-            android:textStyle="bold"/>
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="normal"/>
         <TextView
             android:id="@+id/tvDialogModelYear"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="normal"
             android:text="N/A"/>
     </LinearLayout>
 
+    <!-- Manufacturer -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="12dp">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Manufacturer:"
-            android:textStyle="bold"/>
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="normal"
+            android:textSize="14sp"/>
         <TextView
             android:id="@+id/tvDialogManufacturer"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="normal"
             android:text="N/A"/>
     </LinearLayout>
 
+    <!-- Vehicle Type -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="20dp">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Vehicle Type:"
-            android:textStyle="bold"/>
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="normal"/>
         <TextView
             android:id="@+id/tvDialogVehicleType"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="normal"
             android:text="N/A"/>
     </LinearLayout>
 
@@ -113,6 +148,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Close"
-        android:layout_gravity="end"/>
+        app:backgroundTint="?attr/colorOnSurface"
+        android:textColor="?attr/colorSurface"
+        android:textStyle="normal"
+        app:cornerRadius="8dp"
+        android:layout_gravity="end"
+        style="@style/Widget.MaterialComponents.Button" />
 
 </LinearLayout>

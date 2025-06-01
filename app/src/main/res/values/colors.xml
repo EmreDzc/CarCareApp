@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Temel renkler -->
+    <!-- Temel renkler (Mevcutları koruyalım, gerekirse buradan seçeriz) -->
     <color name="primary">#6750A4</color>
     <color name="primary_variant">#4F378B</color>
     <color name="secondary">#E8DEF8</color>
     <color name="secondary_variant">#D0BCFF</color>
 
     <!-- Arka plan renkleri -->
-    <color name="background">#FFFBFE</color>
-    <color name="surface">#FFFBFE</color>
+    <!-- Referans görsele daha yakın bir arka plan için -->
+    <color name="background_app">#F5F7FA</color> <!-- Yeni eklenen - Referans görsele daha yakın -->
+    <color name="background">#FFFBFE</color> <!-- Mevcut - Belki background_app kullanılır -->
+    <color name="surface">#FFFFFF</color> <!-- Kartlar ve ana yüzeyler için beyaz -->
     <color name="surface_variant">#E7E0EC</color>
 
     <!-- Metin renkleri -->
     <color name="on_primary">#FFFFFF</color>
     <color name="on_secondary">#1C1B1F</color>
-    <color name="on_background">#1C1B1F</color>
-    <color name="on_surface">#1C1B1F</color>
+    <color name="on_background">#1C1B1F</color> <!-- Ana metinler için koyu renk -->
+    <color name="on_surface">#1C1B1F</color> <!-- Kartlardaki ana metinler için -->
+    <color name="on_surface_variant">#49454F</color> <!-- İkincil metinler için -->
+    <color name="text_primary_dark">#212121</color> <!-- Koyu ana metin -->
+    <color name="text_secondary_dark">#757575</color> <!-- Açık gri ikincil metin -->
+
+
     <color name="positive_status_color">#FF4CAF50</color> <!-- Örnek Yeşil -->
     <color name="negative_status_color">#FFF44336</color> <!-- Örnek Kırmızı -->
     <color name="default_text_color">#FF212121</color>  <!-- Örnek Koyu Gri/Siyah -->
 
     <!-- Kart renkleri -->
-    <color name="card_background">#F7F2FB</color>
-    <color name="card_stroke">#CAC4D0</color>
+    <color name="card_background">#FFFFFF</color> <!-- Kartlar için beyaz -->
+    <color name="card_stroke">#E0E0E0</color> <!-- Kart kenarlığı için açık gri -->
 
     <!-- Dark mode renkleri - bunlar sonraki adımda kullanılacak -->
     <color name="primary_dark">#D0BCFF</color>
@@ -42,13 +49,17 @@
     <!-- Eksik renk tanımları -->
     <color name="white">#FFFFFF</color>
     <color name="gray">#808080</color>
+    <color name="light_gray_background">#F5F5F5</color> <!-- Genel sayfa arka planı için -->
+    <color name="medium_gray_text">#888888</color> <!-- İkincil metinler için -->
+    <color name="dark_text">#1A1A1A</color> <!-- Ana başlıklar ve metinler için -->
+    <color name="icon_tint_primary">#666666</color> <!-- Genel ikon rengi -->
+    <color name="button_outline_stroke_color">#D0D0D0</color>
+
     <color name="warning_red">#FF5252</color>
 
     <color name="colorOrderStatusDelivered">#4CAF50</color> <!-- Yeşil tonu -->
     <color name="colorOrderStatusProcessing">#FF9800</color> <!-- Turuncu tonu -->
     <color name="colorOrderStatusCancelled">#F44336</color> <!-- Kırmızı tonu -->
-
-
 
     <!-- Temel Uygulama Renkleri (Mevcut olabilir, projenize göre düzenleyin) -->
     <color name="teal_200">#FF03DAC5</color>
@@ -67,6 +78,9 @@
     <color name="grey_medium">#9E9E9E</color>    <!-- İkincil metinler, üstü çizili fiyat -->
     <color name="grey_dark">#616161</color>     <!-- Chip metin rengi, bazı başlıklar -->
     <color name="grey_very_dark">#424242</color> <!-- Ana metinler, satıcı adı -->
+    <color name="background_app_gradient_start_v2">#F5F5F5</color> <!-- Açık Gri (Öncekinden biraz daha koyu) -->
+    <color name="background_app_gradient_center_v2">#E0E0E0</color> <!-- Daha Açık Gri (Belirgin bir orta ton) -->
+    <color name="background_app_gradient_end_v2">#FFFFFF</color>   <!-- Tam Beyaz -->
 
     <!-- Durum Renkleri -->
     <color name="green_dark">#388E3C</color>    <!-- "Stokta Var" için -->
@@ -99,6 +113,8 @@
     <color name="background_color_light_grey">#F5F5F5</color> <!-- Açık Gri Arka Plan -->
     <color name="text_color_primary">#212121</color> <!-- Ana Metin Rengi -->
     <color name="green_success">#4CAF50</color>
+    <color name="icon_outline_color">#1A1A1A</color> <!-- Koyu Gri / Neredeyse Siyah -->
+
 
 
     <!-- Mor Tema Renkleri -->
@@ -119,6 +135,4 @@
     <color name="purple_700">#7B1FA2</color>
     <color name="purple_800">#6A1B9A</color>
     <color name="purple_900">#4A148C</color>
-
-
 </resources>

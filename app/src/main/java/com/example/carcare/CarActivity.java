@@ -508,7 +508,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     }
 
     private void updateDTCDisplay(List<SimpleOBD2Manager.VehicleData.DTC> dtcs) {
-        int positiveColor = ContextCompat.getColor(this, R.color.primary);
+        int positiveColor = ContextCompat.getColor(this, R.color.grey_dark);
         int negativeColor = ContextCompat.getColor(this, R.color.negative_status_color);
 
         if (dtcs == null || dtcs.isEmpty()) {
