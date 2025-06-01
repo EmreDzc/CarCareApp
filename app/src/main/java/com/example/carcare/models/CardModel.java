@@ -8,15 +8,16 @@ public class CardModel {
 
     private String cardName;
     private String cardHolderName;
-    private String maskedCardNumber; // Örn: **** **** **** 1234
-    private String lastFourDigits;
+    private String hashedCardNumber; // YENİ: Hashlenmiş kart numarası
+    private String maskedCardNumber; // Görüntüleme için maskelenmiş numara
+    private String lastFourDigits;   // Son 4 hane
     private String expiryMonth;
     private String expiryYear;
     private String cardType; // VISA, MASTERCARD etc.
+    private String hashedCvv; // YENİ: Hashlenmiş CVV (opsiyonel)
     private boolean masterpassOptIn;
     private boolean isDefault;
-    private String bankName; // Yeni alan
-
+    private String bankName;
 
     public CardModel() {}
 
@@ -30,6 +31,10 @@ public class CardModel {
 
     public String getCardHolderName() { return cardHolderName; }
     public void setCardHolderName(String cardHolderName) { this.cardHolderName = cardHolderName; }
+
+    // YENİ: Hashlenmiş kart numarası
+    public String getHashedCardNumber() { return hashedCardNumber; }
+    public void setHashedCardNumber(String hashedCardNumber) { this.hashedCardNumber = hashedCardNumber; }
 
     public String getMaskedCardNumber() { return maskedCardNumber; }
     public void setMaskedCardNumber(String maskedCardNumber) { this.maskedCardNumber = maskedCardNumber; }
@@ -46,17 +51,16 @@ public class CardModel {
     public String getCardType() { return cardType; }
     public void setCardType(String cardType) { this.cardType = cardType; }
 
+    // YENİ: Hashlenmiş CVV
+    public String getHashedCvv() { return hashedCvv; }
+    public void setHashedCvv(String hashedCvv) { this.hashedCvv = hashedCvv; }
+
     public boolean isMasterpassOptIn() { return masterpassOptIn; }
     public void setMasterpassOptIn(boolean masterpassOptIn) { this.masterpassOptIn = masterpassOptIn; }
 
     public boolean isDefault() { return isDefault; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }
 
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
+    public String getBankName() { return bankName; }
+    public void setBankName(String bankName) { this.bankName = bankName; }
 }

@@ -1,22 +1,18 @@
-package com.example.carcare.ProfilePage.address; // Paket adınızı güncelleyin
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+package com.example.carcare.ProfilePage.address;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-// AutoCompleteTextView'leri normal TextInputEditText ile değiştirdik, bu yüzden importu kaldırabilir veya bırakabilirsiniz.
-// import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.carcare.R;
+import com.example.carcare.models.AddressModel;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,25 +24,16 @@ public class AddEditAddressActivity extends AppCompatActivity {
 
     private static final String TAG = "AddEditAddressActivity";
 
-    // Harita ile ilgili değişkenler kaldırıldı
-    // private GoogleMap mMap;
-    // private FusedLocationProviderClient fusedLocationClient;
-    // private LatLng currentSelectedLatLng;
+    private TextInputEditText editTextAddressTitle, editTextProvince, editTextDistrict,
+            editTextNeighborhood, editTextStreet, editTextBuildingNo, editTextFloorNo,
+            editTextDoorNo, editTextAddressDescription, editTextName, editTextSurname,
+            editTextPhone;
 
-    // Form elemanları
-    private TextInputEditText editTextProvince, editTextDistrict, editTextNeighborhood, editTextStreet,
-            editTextBuildingNo, editTextFloorNo, editTextDoorNo,
-            editTextAddressDescription, editTextAddressTitle;
-    private TextInputEditText editTextName, editTextSurname, editTextPhone;
     private Button btnSaveAddress;
-    private TextInputLayout layoutName, layoutSurname, layoutPhone;
-    private View personalInfoTitleView; // Kişisel bilgi başlığını da gizlemek için
-
-    private String addressType; // "delivery" veya "billing"
-    private String addressToEditId; // Düzenleme modu için adres ID'si
 
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth auth;
+    private String addressToEditId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,34 +42,30 @@ public class AddEditAddressActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_add_address);
         setSupportActionBar(toolbar);
-
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
-        // Intent'ten verileri al
-        addressType = getIntent().getStringExtra("address_type");
-        addressToEditId = getIntent().getStringExtra("address_id_to_edit"); // Düzenleme için
-
-        if (addressType == null) {
-            addressType = "delivery"; // Varsayılan
-            Log.w(TAG, "Address type not provided, defaulting to delivery.");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        initializeUI();
-        setupToolbarTitle(); // Başlığı ayarla
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        addressToEditId = getIntent().getStringExtra("address_id_to_edit");
+
+        initializeViews();
 
         if (addressToEditId != null) {
-            // Düzenleme modu, adresi yükle
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Adresi Düzenle");
             loadAddressForEditing();
+        } else {
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Yeni Adres Ekle");
         }
 
         btnSaveAddress.setOnClickListener(v -> saveAddress());
     }
 
-    private void initializeUI() {
+    private void initializeViews() {
         editTextAddressTitle = findViewById(R.id.edit_text_address_title);
         editTextProvince = findViewById(R.id.edit_text_province);
-        // AutoCompleteTextView'leri TextInputEditText ile değiştirdik, ID'leri aynı
         editTextDistrict = findViewById(R.id.edit_text_district);
         editTextNeighborhood = findViewById(R.id.edit_text_neighborhood);
         editTextStreet = findViewById(R.id.edit_text_street);
@@ -90,150 +73,86 @@ public class AddEditAddressActivity extends AppCompatActivity {
         editTextFloorNo = findViewById(R.id.edit_text_floor_no);
         editTextDoorNo = findViewById(R.id.edit_text_door_no);
         editTextAddressDescription = findViewById(R.id.edit_text_address_description);
-
         editTextName = findViewById(R.id.edit_text_name);
         editTextSurname = findViewById(R.id.edit_text_surname);
         editTextPhone = findViewById(R.id.edit_text_phone);
         btnSaveAddress = findViewById(R.id.btn_save_address);
-
-        layoutName = findViewById(R.id.layout_name);
-        layoutSurname = findViewById(R.id.layout_surname);
-        layoutPhone = findViewById(R.id.layout_phone);
-        personalInfoTitleView = findViewById(R.id.text_view_personal_info_title);
-
-        // Adres tipine göre kişisel bilgi alanlarını göster/gizle
-        if ("billing".equalsIgnoreCase(addressType)) {
-            layoutName.setVisibility(View.GONE);
-            layoutSurname.setVisibility(View.GONE);
-            layoutPhone.setVisibility(View.GONE);
-            personalInfoTitleView.setVisibility(View.GONE);
-        } else { // delivery
-            layoutName.setVisibility(View.VISIBLE);
-            layoutSurname.setVisibility(View.VISIBLE);
-            layoutPhone.setVisibility(View.VISIBLE);
-            personalInfoTitleView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void setupToolbarTitle() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            String title;
-            if (addressToEditId != null) { // Düzenleme modu
-                title = addressType.equals("delivery") ? "Teslimat Adresini Düzenle" : "Fatura Adresini Düzenle";
-            } else { // Ekleme modu
-                title = addressType.equals("delivery") ? "Teslimat Adresi Ekle" : "Fatura Adresi Ekle";
-            }
-            getSupportActionBar().setTitle(title);
-        }
     }
 
     private void loadAddressForEditing() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null || addressToEditId == null) return;
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null || addressToEditId == null) return;
 
-        String collectionPath = "users/" + currentUser.getUid() +
-                (addressType.equals("delivery") ? "/deliveryAddresses" : "/billingAddresses");
-
-        db.collection(collectionPath).document(addressToEditId).get()
+        db.collection("users")
+                .document(user.getUid())
+                .collection("deliveryAddresses")
+                .document(addressToEditId)
+                .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        editTextAddressTitle.setText(documentSnapshot.getString("title"));
-                        editTextProvince.setText(documentSnapshot.getString("province"));
-                        editTextDistrict.setText(documentSnapshot.getString("district"));
-                        editTextNeighborhood.setText(documentSnapshot.getString("neighborhood"));
-                        editTextStreet.setText(documentSnapshot.getString("street"));
-                        editTextBuildingNo.setText(documentSnapshot.getString("buildingNo"));
-                        editTextFloorNo.setText(documentSnapshot.getString("floorNo"));
-                        editTextDoorNo.setText(documentSnapshot.getString("doorNo"));
-                        editTextAddressDescription.setText(documentSnapshot.getString("description"));
-
-                        if ("delivery".equalsIgnoreCase(addressType)) {
-                            editTextName.setText(documentSnapshot.getString("recipientName"));
-                            editTextSurname.setText(documentSnapshot.getString("recipientSurname"));
-                            editTextPhone.setText(documentSnapshot.getString("recipientPhone"));
+                        AddressModel address = documentSnapshot.toObject(AddressModel.class);
+                        if (address != null) {
+                            populateFields(address);
                         }
-                    } else {
-                        Toast.makeText(this, "Düzenlenecek adres bulunamadı.", Toast.LENGTH_SHORT).show();
-                        finish();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Adres yüklenirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error loading address for edit", e);
-                    finish();
+                    Log.e(TAG, "Adres yüklenirken hata", e);
+                    Toast.makeText(this, "Adres yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
                 });
     }
 
+    private void populateFields(AddressModel address) {
+        editTextAddressTitle.setText(address.getTitle());
+        editTextProvince.setText(address.getProvince());
+        editTextDistrict.setText(address.getDistrict());
+        editTextNeighborhood.setText(address.getNeighborhood());
+        editTextStreet.setText(address.getStreet());
+        editTextBuildingNo.setText(address.getBuildingNo());
+        editTextFloorNo.setText(address.getFloorNo());
+        editTextDoorNo.setText(address.getDoorNo());
+        editTextAddressDescription.setText(address.getDescription());
+        editTextName.setText(address.getRecipientName());
+        editTextSurname.setText(address.getRecipientSurname());
+        editTextPhone.setText(address.getRecipientPhone());
+    }
 
     private void saveAddress() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
             Toast.makeText(this, "Adres kaydetmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String title = editTextAddressTitle.getText().toString().trim();
-        String province = editTextProvince.getText().toString().trim();
-        String district = editTextDistrict.getText().toString().trim(); // Artık normal EditText
-        String neighborhood = editTextNeighborhood.getText().toString().trim(); // Artık normal EditText
-        String street = editTextStreet.getText().toString().trim();
-        String buildingNo = editTextBuildingNo.getText().toString().trim();
-        String floorNo = editTextFloorNo.getText().toString().trim();
-        String doorNo = editTextDoorNo.getText().toString().trim();
-        String description = editTextAddressDescription.getText().toString().trim();
-
-        String name = "";
-        String surname = "";
-        String phone = "";
-
-        if ("delivery".equalsIgnoreCase(addressType)) {
-            name = editTextName.getText().toString().trim();
-            surname = editTextSurname.getText().toString().trim();
-            phone = editTextPhone.getText().toString().trim();
-
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(surname) || TextUtils.isEmpty(phone)) {
-                Toast.makeText(this, "Lütfen ad, soyad ve telefon bilgilerini girin.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        if (TextUtils.isEmpty(title) || TextUtils.isEmpty(province) || TextUtils.isEmpty(district) ||
-                TextUtils.isEmpty(neighborhood) || TextUtils.isEmpty(street) || TextUtils.isEmpty(buildingNo)) {
-            Toast.makeText(this, "Lütfen adres başlığı ve zorunlu adres alanlarını doldurun.", Toast.LENGTH_LONG).show();
+        if (!validateForm()) {
             return;
         }
 
-        // Harita kaldırıldığı için currentSelectedLatLng kontrolü ve kaydı kaldırıldı.
-
         Map<String, Object> addressData = new HashMap<>();
-        addressData.put("title", title);
-        addressData.put("province", province);
-        addressData.put("district", district);
-        addressData.put("neighborhood", neighborhood);
-        addressData.put("street", street);
-        addressData.put("buildingNo", buildingNo);
-        if (!TextUtils.isEmpty(floorNo)) addressData.put("floorNo", floorNo); // Opsiyonel alanlar
-        if (!TextUtils.isEmpty(doorNo)) addressData.put("doorNo", doorNo);   // Opsiyonel alanlar
-        if (!TextUtils.isEmpty(description)) addressData.put("description", description); // Opsiyonel alanlar
-        addressData.put("addressType", addressType);
+        addressData.put("title", editTextAddressTitle.getText().toString().trim());
+        addressData.put("province", editTextProvince.getText().toString().trim());
+        addressData.put("district", editTextDistrict.getText().toString().trim());
+        addressData.put("neighborhood", editTextNeighborhood.getText().toString().trim());
+        addressData.put("street", editTextStreet.getText().toString().trim());
+        addressData.put("buildingNo", editTextBuildingNo.getText().toString().trim());
+        addressData.put("floorNo", editTextFloorNo.getText().toString().trim());
+        addressData.put("doorNo", editTextDoorNo.getText().toString().trim());
+        addressData.put("description", editTextAddressDescription.getText().toString().trim());
+        addressData.put("recipientName", editTextName.getText().toString().trim());
+        addressData.put("recipientSurname", editTextSurname.getText().toString().trim());
+        addressData.put("recipientPhone", editTextPhone.getText().toString().trim());
+        addressData.put("addressType", "delivery"); // Teslimat adresi
+        addressData.put("isDefaultAddress", false); // Yeni adres varsayılan değil
 
-        if ("delivery".equalsIgnoreCase(addressType)) {
-            addressData.put("recipientName", name);
-            addressData.put("recipientSurname", surname);
-            addressData.put("recipientPhone", phone);
-        }
-        // addressData.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp()); // Zaman damgası
-
-        String collectionPath = "users/" + currentUser.getUid() +
-                (addressType.equals("delivery") ? "/deliveryAddresses" : "/billingAddresses");
+        String collectionPath = "users/" + user.getUid() + "/deliveryAddresses";
 
         if (addressToEditId != null) {
-            // Düzenleme modu: Mevcut dokümanı güncelle
+            // Düzenleme
             db.collection(collectionPath).document(addressToEditId)
-                    .set(addressData) // set() ile üzerine yaz veya merge() ile birleştir
+                    .set(addressData)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(AddEditAddressActivity.this, "Adres başarıyla güncellendi!", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
                         finish();
                     })
                     .addOnFailureListener(e -> {
@@ -241,12 +160,12 @@ public class AddEditAddressActivity extends AppCompatActivity {
                         Log.e(TAG, "Error updating address", e);
                     });
         } else {
-            // Ekleme modu: Yeni doküman oluştur
+            // Yeni ekleme
             db.collection(collectionPath)
-                    .add(addressData) // .add() otomatik ID oluşturur
+                    .add(addressData)
                     .addOnSuccessListener(documentReference -> {
                         Toast.makeText(AddEditAddressActivity.this, "Adres başarıyla kaydedildi!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Address saved with ID: " + documentReference.getId());
+                        setResult(RESULT_OK);
                         finish();
                     })
                     .addOnFailureListener(e -> {
@@ -256,10 +175,61 @@ public class AddEditAddressActivity extends AppCompatActivity {
         }
     }
 
+    private boolean validateForm() {
+        boolean valid = true;
+
+        if (TextUtils.isEmpty(editTextAddressTitle.getText())) {
+            editTextAddressTitle.setError("Adres başlığı gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextProvince.getText())) {
+            editTextProvince.setError("İl gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextDistrict.getText())) {
+            editTextDistrict.setError("İlçe gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextNeighborhood.getText())) {
+            editTextNeighborhood.setError("Mahalle gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextStreet.getText())) {
+            editTextStreet.setError("Cadde/Sokak gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextBuildingNo.getText())) {
+            editTextBuildingNo.setError("Bina numarası gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextName.getText())) {
+            editTextName.setError("Ad gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextSurname.getText())) {
+            editTextSurname.setError("Soyad gerekli");
+            valid = false;
+        }
+
+        if (TextUtils.isEmpty(editTextPhone.getText())) {
+            editTextPhone.setError("Telefon numarası gerekli");
+            valid = false;
+        }
+
+        return valid;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed(); // Geri butonuna basıldığında bir önceki ekrana dön
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

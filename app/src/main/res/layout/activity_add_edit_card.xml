@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_color_light_grey"
-    tools:context=".ProfilePage.AddEditCardActivity">
+    tools:context=".ProfilePage.card.AddEditCardActivity">
 
     <!-- Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
@@ -61,18 +61,20 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_card_number"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:hint="Kart Numarası"
                 app:counterEnabled="true"
-                app:counterMaxLength="19"> <!-- 16 hane + 3 boşluk -->
+                app:counterMaxLength="19">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_card_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="19"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -109,6 +111,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_card_cvv"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_weight="1"

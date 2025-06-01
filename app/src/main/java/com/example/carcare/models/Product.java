@@ -31,6 +31,8 @@ public class Product {
 
     private float averageRating;
     private int totalReviews;
+    private int quantity; // Add this field
+
 
     @ServerTimestamp private Date createdAt;
     @ServerTimestamp private Date updatedAt;
@@ -88,4 +90,12 @@ public class Product {
     public void setTotalReviews(int totalReviews) { this.totalReviews = totalReviews; }
     @Exclude public String getCartItemId() { return cartItemId; }
     @Exclude public void setCartItemId(String cartItemId) { this.cartItemId = cartItemId; }
+
+    public int getQuantity() { // Add this getter
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) { // Add this setter
+        this.quantity = quantity;
+    }
 }

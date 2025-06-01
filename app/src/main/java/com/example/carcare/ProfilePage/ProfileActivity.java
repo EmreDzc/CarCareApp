@@ -16,6 +16,7 @@ import com.example.carcare.MapsActivity;
 import com.example.carcare.NotificationActivity;
 import com.example.carcare.OrderHistoryActivity;
 import com.example.carcare.ProfilePage.address.AddressActivity;
+import com.example.carcare.ProfilePage.card.SavedCardsActivity;
 import com.example.carcare.R;
 import com.example.carcare.StoreActivity;
 import com.example.carcare.WishlistActivity;

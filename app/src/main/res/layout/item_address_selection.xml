@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Radio Button -->
+        <RadioButton
+            android:id="@+id/radio_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:buttonTint="?attr/colorPrimary" />
+
+        <!-- Adres Bilgileri -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Başlık -->
+            <TextView
+                android:id="@+id/text_address_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ev"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Adres Satır 1 -->
+            <TextView
+                android:id="@+id/text_address_line1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Akşemsettin Mah. 2307 Cad. no 14 F blok daire no 15"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_marginBottom="2dp" />
+
+            <!-- Adres Satır 2 -->
+            <TextView
+                android:id="@+id/text_address_line2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mamak / Ankara"
+                android:textSize="12sp"
+                android:textColor="@color/grey_medium"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Alıcı Bilgisi -->
+            <TextView
+                android:id="@+id/text_recipient_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ahmet Yılmaz • 5534402958"
+                android:textSize="12sp"
+                android:textColor="@color/grey_medium"
+                android:drawablePadding="4dp"
+                app:drawableStartCompat="@drawable/ic_person"
+                app:drawableTint="@color/grey_medium" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

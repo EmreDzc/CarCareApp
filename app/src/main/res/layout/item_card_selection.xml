@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Radio Button -->
+        <RadioButton
+            android:id="@+id/radio_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:buttonTint="?attr/colorPrimary" />
+
+        <!-- Kart Bilgileri -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Üst Kısım: Kart Adı ve Logo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/text_card_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="BONUS kartım - 2058"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <ImageView
+                    android:id="@+id/image_card_logo"
+                    android:layout_width="40dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_masterpass_logo"
+                    android:scaleType="fitCenter" />
+
+            </LinearLayout>
+
+            <!-- Kart Numarası -->
+            <TextView
+                android:id="@+id/text_card_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="**** **** **** 2058"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="2dp" />
+
+            <!-- Alt Kısım: Kart Sahibi ve Son Kullanma -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_card_holder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="AHMET YILMAZ"
+                    android:textSize="12sp"
+                    android:textColor="@color/grey_medium" />
+
+                <TextView
+                    android:id="@+id/text_expiry_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12/25"
+                    android:textSize="12sp"
+                    android:textColor="@color/grey_medium"
+                    android:layout_marginStart="16dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
