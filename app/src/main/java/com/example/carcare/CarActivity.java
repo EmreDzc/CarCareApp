@@ -22,12 +22,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import android.text.Html;
+import android.widget.LinearLayout; // Eğer tıklanabilir alanlarınız LinearLayout ise
+import android.os.Build; // Build.VERSION kontrolü için
 
 import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.models.NearbyPlace;
 // UserVehicleService importu zaten vardı, doğru.
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -89,6 +93,9 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     private CarLogosService carLogosService;
     private ImageView imgCarLogo;
 
+    private MaterialCardView cardMetricRpm, cardMetricEngineTemp;
+    private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +119,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         checkBluetoothPermissions();
         showDefaultValues();
         setupButtonListeners();
+        setupMetricClickListeners();
         updateConnectionStatus();
         setupMaintenanceScheduler();
         setupWelcomeNotification();
@@ -136,6 +144,12 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         tvIntakeAirTempValue = findViewById(R.id.tvIntakeAirTempValue);
         tvMafValue = findViewById(R.id.tvMafValue);
 
+        cardMetricRpm = findViewById(R.id.cardMetricRpm);
+        cardMetricEngineTemp = findViewById(R.id.cardMetricEngineTemp);
+        layoutMetricEngineLoad = findViewById(R.id.layoutMetricEngineLoad);
+        layoutMetricIntakeAirTemp = findViewById(R.id.layoutMetricIntakeAirTemp);
+        layoutMetricMaf = findViewById(R.id.layoutMetricMaf);
+
         btnOpenSite = findViewById(R.id.btnOpenSite);
         btnTrafficFineInquiry = findViewById(R.id.btnTrafficFineInquiry);
         btnMotorVehicleFineInquiry = findViewById(R.id.btnMotorVehicleFineInquiry);
@@ -150,6 +164,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         tvDtcStatusMessage = findViewById(R.id.tvDtcStatusMessage);
         btnShowDtcDetails = findViewById(R.id.btnShowDtcDetails);
         imgCarLogo = findViewById(R.id.imgCarLogo);
+
 
 
         Log.d(TAG, "UI elemanları başarıyla bağlandı");
@@ -288,6 +303,76 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             intentToMaps.putExtra("TARGET_PLACE_TYPE", NearbyPlace.Type.GAS);
             startActivity(intentToMaps);
         });
+    }
+
+    private void setupMetricClickListeners() {
+        if (cardMetricRpm != null) {
+            cardMetricRpm.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_rpm_title),
+                    getString(R.string.metric_rpm_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: cardMetricRpm is null!");
+        }
+
+        if (cardMetricEngineTemp != null) {
+            cardMetricEngineTemp.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_engine_temp_title),
+                    getString(R.string.metric_engine_temp_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: cardMetricEngineTemp is null!");
+        }
+
+        if (layoutMetricEngineLoad != null) {
+            layoutMetricEngineLoad.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_engine_load_title),
+                    getString(R.string.metric_engine_load_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: layoutMetricEngineLoad is null!");
+        }
+
+        if (layoutMetricIntakeAirTemp != null) {
+            layoutMetricIntakeAirTemp.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_intake_air_temp_title),
+                    getString(R.string.metric_intake_air_temp_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: layoutMetricIntakeAirTemp is null!");
+        }
+
+        if (layoutMetricMaf != null) {
+            layoutMetricMaf.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_maf_title),
+                    getString(R.string.metric_maf_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: layoutMetricMaf is null!");
+        }
+    }
+
+    private void showMetricInfoDialog(String title, String descriptionHtml) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_metric_info, null);
+        builder.setView(dialogView);
+
+        TextView tvDialogTitle = dialogView.findViewById(R.id.tvDialogMetricTitle);
+        TextView tvDialogDescription = dialogView.findViewById(R.id.tvDialogMetricDescription);
+
+        tvDialogTitle.setText(title);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            tvDialogDescription.setText(Html.fromHtml(descriptionHtml, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            tvDialogDescription.setText(Html.fromHtml(descriptionHtml));
+        }
+
+        builder.setPositiveButton(getString(R.string.dialog_close_button), (dialog, which) -> dialog.dismiss());
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void setupMaintenanceScheduler() {

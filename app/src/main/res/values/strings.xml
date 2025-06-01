@@ -51,4 +51,79 @@
     <string name="admin_image_selected">Resim Seçildi ✓</string>
     <string name="admin_saving">Kaydediliyor...</string>
 
+    <!-- RPM Information -->
+    <string name="metric_rpm_title">Engine Speed (RPM)</string>
+    <string name="metric_rpm_description">
+        <![CDATA[
+        <b>What is it?</b> Revolutions per minute of the engine\'s crankshaft.<br/><br/>
+        <b>Normal Range:</b><br/>
+        Idle: 650 - 900 RPM<br/>
+        Driving: 1500 - 3500 RPM (varies)<br/><br/>
+        <b>Low Abnormal (Idle <600 RPM):</b><br/>
+        Engine may stall, rough idle. (IAC valve, vacuum leak, ignition issue)<br/><br/>
+        <b>High Abnormal (Idle >1100 RPM):</b><br/>
+        Unnecessary high engine speed. (Vacuum leak, IAC valve, TPS issue)<br/><br/>
+        <b>Possible Related DTCs:</b> P0506, P0507, P0300
+        ]]>
+    </string>
+
+    <!-- Engine Temperature Information -->
+    <string name="metric_engine_temp_title">Engine Coolant Temperature</string>
+    <string name="metric_engine_temp_description">
+        <![CDATA[
+        <b>What is it?</b> Temperature of the engine\'s coolant.<br/><br/>
+        <b>Normal Range:</b> 85°C - 105°C (185°F - 221°F)<br/><br/>
+        <b>Low Abnormal (<75°C / 167°F Constantly):</b><br/>
+        Engine not warming up. (Thermostat stuck open)<br/><br/>
+        <b>High Abnormal (>110°C / 230°F - OVERHEATING!):</b><br/>
+        Engine is too hot! <font color=\'#FF0000\'><b>EMERGENCY!</b></font> (Low coolant, fan, thermostat, pump issue)<br/><br/>
+        <b>Possible Related DTCs:</b> P0128, P0117, P0118, P0217
+        ]]>
+    </string>
+
+    <!-- Engine Load Information -->
+    <string name="metric_engine_load_title">Calculated Engine Load</string>
+    <string name="metric_engine_load_description">
+        <![CDATA[
+        <b>What is it?</b> Percentage of current engine power output relative to its maximum potential.<br/><br/>
+        <b>Normal Range:</b> Idle: 10-30%, Driving: 20-70% (can reach 100% on acceleration)<br/><br/>
+        <b>Low Abnormal (Unexpectedly Low on Acceleration):</b><br/>
+        Possible power loss. (Sensor issue, engine performance drop)<br/><br/>
+        <b>High Abnormal (Consistently High During Normal Driving):</b><br/>
+        Engine is strained. (Mechanical issue, insufficient power)<br/><br/>
+        <b>Possible Related DTCs:</b> P0101 (MAF), P0068 (MAP/TPS Correlation)
+        ]]>
+    </string>
+
+    <!-- Intake Air Temperature Information -->
+    <string name="metric_intake_air_temp_title">Intake Air Temperature (IAT)</string>
+    <string name="metric_intake_air_temp_description">
+        <![CDATA[
+        <b>What is it?</b> Temperature of the air entering the engine.<br/><br/>
+        <b>Normal Range:</b> Close to or slightly above ambient temperature.<br/><br/>
+        <b>Low Abnormal (Much Lower Than Ambient/Illogical):</b><br/>
+        Possible sensor failure.<br/><br/>
+        <b>High Abnormal (Consistently Very High):</b><br/>
+        May reduce performance. (Engine bay heat soak, sensor location)<br/><br/>
+        <b>Possible Related DTCs:</b> P0112, P0113
+        ]]>
+    </string>
+
+    <!-- Mass Air Flow (MAF) Information -->
+    <string name="metric_maf_title">Mass Air Flow (MAF)</string>
+    <string name="metric_maf_description">
+        <![CDATA[
+        <b>What is it?</b> Mass of air entering the engine (g/s).<br/><br/>
+        <b>Normal Range:</b> Idle: 2-10 g/s (engine dependent), increases with load.<br/><br/>
+        <b>Low Abnormal (Lower Than Expected):</b><br/>
+        Restricted air intake. (Clogged filter, vacuum leak, MAF issue)<br/><br/>
+        <b>High Abnormal (Higher Than Expected):</b><br/>
+        Rare, usually sensor failure.<br/><br/>
+        <b>Possible Related DTCs:</b> P0101, P0102, P0103
+        ]]>
+    </string>
+
+    <!-- Close Button Text for Dialog -->
+    <string name="dialog_close_button">Close</string>
+
 </resources>
