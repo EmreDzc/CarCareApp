@@ -34,6 +34,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import android.widget.TextView;
+import android.graphics.Bitmap;
+import com.bumptech.glide.Glide;
+import com.example.carcare.services.CarLogosService;
 
 import java.util.ArrayList;
 import java.util.Date; // Kritik uyarılar için eklendi
@@ -83,6 +86,9 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     private Map<String, Long> lastCriticalAlertTimestamps = new HashMap<>();
     private static final long CRITICAL_ALERT_COOLDOWN_MS = 20 * 60 * 1000;
 
+    private CarLogosService carLogosService;
+    private ImageView imgCarLogo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +115,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         updateConnectionStatus();
         setupMaintenanceScheduler();
         setupWelcomeNotification();
+        carLogosService = new CarLogosService();
+        userVehicleService = new UserVehicleService();
 
         userVehicleService = new UserVehicleService();
     }
@@ -141,6 +149,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         imgDtcIcon = findViewById(R.id.imgDtcIcon);
         tvDtcStatusMessage = findViewById(R.id.tvDtcStatusMessage);
         btnShowDtcDetails = findViewById(R.id.btnShowDtcDetails);
+        imgCarLogo = findViewById(R.id.imgCarLogo);
+
 
         Log.d(TAG, "UI elemanları başarıyla bağlandı");
     }
@@ -309,8 +319,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
+                            // Kullanıcı adı ayarlama
                             String fullName = documentSnapshot.getString("fullName");
-
                             if (fullName != null && !fullName.isEmpty()) {
                                 tvWelcomeUser.setText(fullName);
                             } else {
@@ -323,10 +333,18 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 }
                             }
 
+                            // Araç bilgileri ve logo yükleme
+                            String carBrandForLogo = null;
+
+                            // VIN detaylarından marka çıkarma
                             if (documentSnapshot.contains(UserVehicleService.MAP_VIN_DETAILS)) {
                                 Map<String, Object> vinDetails = (Map<String, Object>) documentSnapshot.get(UserVehicleService.MAP_VIN_DETAILS);
                                 if (vinDetails != null && !vinDetails.isEmpty()) {
                                     updateCarInfoUIFromVinDetails(vinDetails);
+                                    carBrandForLogo = CarLogosService.extractBrandFromVinDetails(vinDetails);
+                                    Log.d(TAG, "loadUserAndCarData: VINDetails'den marka çıkarıldı: " + carBrandForLogo);
+
+                                    // VIN'den araç bilgileri eksikse Firestore'dan tamamla
                                     String make = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MAKE);
                                     String model = (String) vinDetails.get(UserVehicleService.FIELD_DETAIL_MODEL);
                                     if((make == null || make.isEmpty()) && (model == null || model.isEmpty())){
@@ -336,14 +354,43 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                     if(yearFromVin == null || yearFromVin.isEmpty()){
                                         setCarYearFromFirestore(documentSnapshot.getString("carYear"));
                                     }
-                                    return;
                                 }
                             }
-                            setCarNameFromFirestore(documentSnapshot.getString("carName"));
-                            setCarYearFromFirestore(documentSnapshot.getString("carYear"));
+
+                            // VIN'den marka bulunamazsa Firestore carName'den dene
+                            if ((carBrandForLogo == null || carBrandForLogo.isEmpty())) {
+                                String firestoreCarName = documentSnapshot.getString("carName");
+                                if (firestoreCarName != null && !firestoreCarName.isEmpty()) {
+                                    if (tvCarName.getText().toString().equalsIgnoreCase("My Car") || tvCarName.getText().toString().isEmpty()){
+                                        setCarNameFromFirestore(firestoreCarName);
+                                    }
+                                    String[] parts = firestoreCarName.split("\\s+");
+                                    if (parts.length > 0) {
+                                        carBrandForLogo = parts[0];
+                                        Log.d(TAG, "loadUserAndCarData: Firestore 'carName' alanından marka çıkarıldı: " + carBrandForLogo);
+                                    }
+                                }
+
+                                // Eğer hala carName yoksa, fallback olarak ayarla
+                                if (tvCarName.getText().toString().equalsIgnoreCase("My Car") || tvCarName.getText().toString().isEmpty()) {
+                                    setCarNameFromFirestore(documentSnapshot.getString("carName"));
+                                }
+                                if (tvCarYear.getText().toString().equalsIgnoreCase("Not Specified") || tvCarYear.getText().toString().isEmpty()) {
+                                    setCarYearFromFirestore(documentSnapshot.getString("carYear"));
+                                }
+                            }
+
+                            // Logo yükleme
+                            if (carBrandForLogo != null && !carBrandForLogo.isEmpty()) {
+                                loadAndDisplayCarLogo(carBrandForLogo);
+                            } else {
+                                Log.w(TAG, "loadUserAndCarData: Logo yüklemek için geçerli marka adı bulunamadı. Varsayılan logo.");
+                                if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
+                            }
 
                         } else {
-                            Log.w(TAG, "Kullanıcı dokümanı Firestore'da bulunamadı: " + userId);
+                            Log.w(TAG, "loadUserAndCarData: Kullanıcı dokümanı Firestore'da bulunamadı: " + userId);
+                            // Varsayılan kullanıcı adı
                             String displayName = currentUser.getDisplayName();
                             if (displayName != null && !displayName.isEmpty()) {
                                 tvWelcomeUser.setText(displayName);
@@ -352,10 +399,12 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
                             }
                             setDefaultCarInfo();
+                            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Log.e(TAG, "Firestore'dan kullanıcı/araç verisi yüklenirken hata", e);
+                        Log.e(TAG, "loadUserAndCarData: Firestore'dan kullanıcı/araç verisi yüklenirken hata", e);
+                        // Hata durumunda kullanıcı adı
                         String displayName = currentUser.getDisplayName();
                         if (displayName != null && !displayName.isEmpty()) {
                             tvWelcomeUser.setText(displayName);
@@ -364,11 +413,98 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                             tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
                         }
                         setDefaultCarInfo();
+                        if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default_error).into(imgCarLogo);
                     });
         } else {
+            Log.w(TAG, "loadUserAndCarData: Kullanıcı giriş yapmamış.");
             tvWelcomeUser.setText("Guest");
             setDefaultCarInfo();
+            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
         }
+    }
+
+
+
+    private void loadAndDisplayCarLogo(String carBrandName) {
+        if (carBrandName == null || carBrandName.trim().isEmpty() || imgCarLogo == null) {
+            Log.w(TAG, "loadAndDisplayCarLogo: Marka adı boş/null veya ImageView null. Marka: '" + carBrandName + "'. Varsayılan logo gösteriliyor.");
+            if (imgCarLogo != null) {
+                Glide.with(this)
+                        .load(R.drawable.ic_car_default)
+                        .into(imgCarLogo);
+            }
+            return;
+        }
+
+        Log.i(TAG, "loadAndDisplayCarLogo: Logo aranıyor: '" + carBrandName + "'");
+
+        carLogosService.loadLogoForBrand(carBrandName, new CarLogosService.LogoLoadListener() {
+            @Override
+            public void onLogoBitmapLoaded(Bitmap bitmap) {
+                runOnUiThread(() -> {
+                    if (imgCarLogo != null && bitmap != null) {
+                        Log.d(TAG, "✅ Base64 logo başarıyla yüklendi: " + carBrandName);
+                        Glide.with(CarActivity.this)
+                                .load(bitmap)
+                                .placeholder(R.drawable.ic_car_default)
+                                .error(R.drawable.ic_car_default_error)
+                                .into(imgCarLogo);
+                    } else {
+                        Log.e(TAG, "❌ Base64 logo yüklenirken ImageView veya Bitmap null. Marka: " + carBrandName);
+                        if(imgCarLogo != null) {
+                            Glide.with(CarActivity.this)
+                                    .load(R.drawable.ic_car_default_error)
+                                    .into(imgCarLogo);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onLogoUrlLoaded(String logoUrl) {
+                runOnUiThread(() -> {
+                    if (imgCarLogo != null && logoUrl != null && !logoUrl.isEmpty()) {
+                        Log.d(TAG, "✅ URL logo yükleniyor: " + logoUrl + " (Marka: " + carBrandName + ")");
+                        Glide.with(CarActivity.this)
+                                .load(logoUrl)
+                                .placeholder(R.drawable.ic_car_default)
+                                .error(R.drawable.ic_car_default_error)
+                                .into(imgCarLogo);
+                    } else {
+                        Log.e(TAG, "❌ URL logo yüklenirken ImageView veya logoUrl null/boş. Marka: " + carBrandName);
+                        if(imgCarLogo != null) {
+                            Glide.with(CarActivity.this)
+                                    .load(R.drawable.ic_car_default_error)
+                                    .into(imgCarLogo);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onLogoNotFound() {
+                runOnUiThread(() -> {
+                    Log.w(TAG, "⚠️ '" + carBrandName + "' için logo bulunamadı. Varsayılan gösteriliyor.");
+                    if (imgCarLogo != null) {
+                        Glide.with(CarActivity.this)
+                                .load(R.drawable.ic_car_default)
+                                .into(imgCarLogo);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(() -> {
+                    Log.e(TAG, "❌ '" + carBrandName + "' için logo yüklenirken hata: ", e);
+                    if (imgCarLogo != null) {
+                        Glide.with(CarActivity.this)
+                                .load(R.drawable.ic_car_default_error)
+                                .into(imgCarLogo);
+                    }
+                });
+            }
+        });
     }
 
     private void setCarNameFromFirestore(String carName){
