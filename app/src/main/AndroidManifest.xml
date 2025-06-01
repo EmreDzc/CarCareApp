@@ -31,7 +31,6 @@
         android:theme="@style/Theme.CarCare"
         tools:targetApi="31">
 
-        <!-- API anahtarınızı buraya ekleyin -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAKnyjp_DEjxDm421EWz3WWV8e78orIXrk" />

@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     // Google Places API için
-    private static final String GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/place/";
+    private static final String GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/";
     private static Retrofit googlePlacesRetrofit = null;
 
     // NHTSA vPIC API için

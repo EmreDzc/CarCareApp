@@ -53,11 +53,15 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0") // Bu da libs.coordinatorlayout ile aynı olmalı.
 // Tekrar etmemek için birini seç.
 
+
+    // Google Maps bağımlılıkları
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 // Google Maps ve Location (Tekrar edenleri kaldırdım)
     implementation("com.google.android.gms:play-services-maps:18.2.0") // Sürümü güncelledim, kontrol et.
     implementation("com.google.android.gms:play-services-location:21.2.0") // Sürümü güncelledim, kontrol et.
     implementation(libs.places) // com.google.android.libraries.places:places:X.Y.Z
-
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")

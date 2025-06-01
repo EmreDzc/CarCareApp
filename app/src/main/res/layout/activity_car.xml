@@ -89,38 +89,39 @@
                 <!-- Car Icon and Details Button -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardCarImageContainer"
-                style="?attr/materialCardViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
+                    style="?attr/materialCardViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/imgCarIcon"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:contentDescription="Car Image"
-                    android:src="@drawable/car_icon"
-                    android:scaleType="fitCenter"
-                    android:layout_marginBottom="12dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnCarDetails"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="See Car Detaıls"
-                        android:textStyle="normal"
-                    android:textColor="?attr/colorOnSurface"
-                    app:icon="@drawable/ic_arrow_forward"
-                    app:iconTint="?attr/colorOnSurface" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <!-- Car Logo ImageView with proper ID -->
+                        <ImageView
+                            android:id="@+id/imgCarLogo"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:contentDescription="Car Logo"
+                            android:src="@drawable/car_icon"
+                            android:scaleType="fitCenter"
+                            android:layout_marginBottom="12dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCarDetails"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="See Car Details"
+                            android:textStyle="normal"
+                            android:textColor="?attr/colorOnSurface"
+                            app:icon="@drawable/ic_arrow_forward"
+                            app:iconTint="?attr/colorOnSurface" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
         <com.google.android.material.appbar.MaterialToolbar

@@ -8,16 +8,9 @@ import com.example.carcare.api.NearbySearchResponse;
 import com.example.carcare.api.RetrofitClient;
 import com.example.carcare.models.NearbyPlace;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,20 +22,11 @@ public class NearbyPlacesService {
     private static final double SEARCH_RADIUS_KM = 3.0; // 3 km radius
 
     private Context context;
-    private PlacesClient placesClient;
     private final String PLACES_API_KEY;
-
 
     public NearbyPlacesService(Context context, String apiKey) {
         this.context = context;
         this.PLACES_API_KEY = apiKey;
-
-        // Initialize Places
-        if (!Places.isInitialized()) {
-            Places.initialize(context, apiKey);
-        }
-
-        placesClient = Places.createClient(context);
     }
 
     public interface NearbyPlacesCallback {
@@ -50,54 +34,67 @@ public class NearbyPlacesService {
         void onError(String errorMessage);
     }
 
-    /**
-     * Yakındaki yerleri bulan ana metot
-     * @param location Arama yapılacak konum
-     * @param placeType Yer türü (NearbyPlace.Type'da tanımlı)
-     * @param callback Sonuçları almak için callback
-     */
     public void findNearbyPlaces(LatLng location, String placeType, NearbyPlacesCallback callback) {
         Log.d(TAG, "Searching for nearby places of type: " + placeType + " at location: " + location.latitude + "," + location.longitude);
-        findRealNearbyPlaces(location, placeType, callback);
-    }
 
-    /**
-     * Google Places API'yi kullanarak yakındaki yerleri arayan metot
-     */
-    private void findRealNearbyPlaces(LatLng location, String placeType, NearbyPlacesCallback callback) {
-        // Places API ile Retrofit kullanımı
         GooglePlacesApi apiService = RetrofitClient.getGooglePlacesClient().create(GooglePlacesApi.class);
         String locationString = location.latitude + "," + location.longitude;
         int radius = (int)(SEARCH_RADIUS_KM * 1000); // km to meters
+        String searchType = getNearbySearchType(placeType);
 
-        Log.d(TAG, "Making API call with location: " + locationString + ", radius: " + radius + ", type: " + getNearbySearchType(placeType));
+        Log.d(TAG, "Making API call with:");
+        Log.d(TAG, "Location: " + locationString);
+        Log.d(TAG, "Radius: " + radius);
+        Log.d(TAG, "Type: " + searchType);
+        Log.d(TAG, "API Key: " + PLACES_API_KEY.substring(0, 10) + "..."); // Güvenlik için sadece ilk 10 karakter
 
-        apiService.getNearbyPlaces(locationString, radius, getNearbySearchType(placeType), PLACES_API_KEY)
-                .enqueue(new Callback<NearbySearchResponse>() {
-                    @Override
-                    public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            Log.d(TAG, "API call successful, status: " + response.body().getStatus());
-                            List<NearbyPlace> places = convertToNearbyPlaces(response.body(), location, placeType);
-                            Log.d(TAG, "Found " + places.size() + " places");
-                            callback.onPlacesFound(places);
-                        } else {
-                            Log.e(TAG, "API response unsuccessful: " + (response.errorBody() != null ? response.errorBody().toString() : "No error body"));
-                            callback.onError("API yanıtı alınamadı: " + response.code());
+        Call<NearbySearchResponse> call = apiService.getNearbyPlaces(locationString, radius, searchType, PLACES_API_KEY);
+
+        // API URL'sini log'la
+        Log.d(TAG, "API URL: " + call.request().url().toString());
+
+        call.enqueue(new Callback<NearbySearchResponse>() {
+            @Override
+            public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
+                Log.d(TAG, "API Response Code: " + response.code());
+                Log.d(TAG, "API Response Message: " + response.message());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "API call successful, status: " + response.body().getStatus());
+
+                    if ("OK".equals(response.body().getStatus())) {
+                        List<NearbyPlace> places = convertToNearbyPlaces(response.body(), location, placeType);
+                        Log.d(TAG, "Found " + places.size() + " places");
+                        callback.onPlacesFound(places);
+                    } else {
+                        Log.w(TAG, "API returned status: " + response.body().getStatus());
+                        callback.onError("API Status: " + response.body().getStatus());
+                    }
+                } else {
+                    // Hata detaylarını oku
+                    String errorBody = "Bilinmeyen hata";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorBody = response.errorBody().string();
+                            Log.e(TAG, "API Error Body: " + errorBody);
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error reading error body", e);
                         }
                     }
 
-                    @Override
-                    public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
-                        Log.e(TAG, "API call failed", t);
-                        callback.onError("API çağrısı başarısız: " + t.getMessage());
-                    }
-                });
+                    Log.e(TAG, "API response unsuccessful: " + response.code() + " - " + response.message());
+                    callback.onError("API yanıtı alınamadı: " + response.code() + " - " + errorBody);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
+                Log.e(TAG, "API call failed", t);
+                callback.onError("API çağrısı başarısız: " + t.getMessage());
+            }
+        });
     }
 
-    /**
-     * API yanıtını NearbyPlace nesnelerine dönüştüren metot
-     */
     private List<NearbyPlace> convertToNearbyPlaces(NearbySearchResponse response, LatLng userLocation, String placeType) {
         List<NearbyPlace> places = new ArrayList<>();
 
@@ -150,66 +147,6 @@ public class NearbyPlacesService {
         return places;
     }
 
-    /**
-     * Location autocomplete için istek oluşturan yardımcı metot
-     */
-    private com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest.Builder
-    createNearbySearchRequest(LatLng location, double radiusKm, String placeType) {
-
-        // Calculate bounds for the search area (roughly within radiusKm)
-        RectangularBounds bounds = createBoundsWithRadiusKm(location, radiusKm);
-
-        // Build the request
-        return com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest.builder()
-                .setLocationBias(bounds)
-                .setTypesFilter(Arrays.asList(placeType))
-                .setCountries("TR") // Turkey
-                .setSessionToken(com.google.android.libraries.places.api.model.AutocompleteSessionToken.newInstance());
-    }
-
-    /**
-     * Belirli bir yarıçapta sınırlar oluşturan yardımcı metot
-     */
-    private RectangularBounds createBoundsWithRadiusKm(LatLng center, double radiusKm) {
-        // Approximately degrees per km
-        double latDegPerKm = 1.0 / 110.574;
-        double lngDegPerKm = 1.0 / (111.320 * Math.cos(Math.toRadians(center.latitude)));
-
-        double latDelta = radiusKm * latDegPerKm;
-        double lngDelta = radiusKm * lngDegPerKm;
-
-        LatLng southwest = new LatLng(
-                center.latitude - latDelta,
-                center.longitude - lngDelta);
-
-        LatLng northeast = new LatLng(
-                center.latitude + latDelta,
-                center.longitude + lngDelta);
-
-        return RectangularBounds.newInstance(southwest, northeast);
-    }
-
-    /**
-     * Test için merkez etrafında rastgele konum üreten metot
-     */
-    private LatLng getRandomLocationNearby(LatLng center, double radiusKm) {
-        double latDegPerKm = 1.0 / 110.574;
-        double lngDegPerKm = 1.0 / (111.320 * Math.cos(Math.toRadians(center.latitude)));
-
-        double randomDistance = Math.random() * radiusKm;
-        double randomAngle = Math.random() * 2 * Math.PI;
-
-        double latDelta = randomDistance * latDegPerKm * Math.sin(randomAngle);
-        double lngDelta = randomDistance * lngDegPerKm * Math.cos(randomAngle);
-
-        return new LatLng(
-                center.latitude + latDelta,
-                center.longitude + lngDelta);
-    }
-
-    /**
-     * İki nokta arasındaki mesafeyi hesaplayan Haversine formülü
-     */
     private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
         // Earth's radius in km
         final double R = 6371;
@@ -226,9 +163,6 @@ public class NearbyPlacesService {
         return R * c;
     }
 
-    /**
-     * Uygulama içi yer türünü Google Places API türüne dönüştüren metot
-     */
     private String getNearbySearchType(String placeType) {
         switch (placeType) {
             case NearbyPlace.Type.GAS:
@@ -238,7 +172,7 @@ public class NearbyPlacesService {
             case NearbyPlace.Type.WASH:
                 return "car_wash";
             case NearbyPlace.Type.PARTS:
-                return "car_dealer"; // No specific type for parts, using dealer as approximation
+                return "car_dealer";
             default:
                 return "gas_station";
         }
