@@ -254,13 +254,12 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                 @Override
                 public void onConnectionLost() {
                     runOnUiThread(() -> {
+                        Log.d(TAG, "OBD2 bağlantısı kesildi (onConnectionLost callback)");
                         CarCareApplication.setObd2Connected(false);
-                        updateConnectionStatus();
+                        updateConnectionStatus(); // Bu metod içinde cooldown ve notifiedDTCs temizliği yapılacak
                         showDefaultValues();
                         Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "OBD2 bağlantısı kesildi (onConnectionLost callback)");
                         lastProcessedVin = null;
-                        if (lastCriticalAlertTimestamps != null) lastCriticalAlertTimestamps.clear();
                     });
                 }
             });
@@ -565,7 +564,9 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         Log.d(TAG, "Bağlantı durumu UI güncellendi: " + (isObdConnected ? "Bağlı" : "Bağlı değil"));
         if (!isObdConnected) {
             lastProcessedVin = null;
-            if (lastCriticalAlertTimestamps != null) lastCriticalAlertTimestamps.clear();
+            CarCareApplication.clearGlobalLastCriticalAlertTimestamps(); // Sıcaklık ve Yakıt cooldown'larını sıfırla
+            CarCareApplication.clearNotifiedDtcs(); // Bildirilmiş DTC listesini sıfırla
+            Log.d(TAG, "OBD Bağlantısı kapalı, global kritik uyarı zaman damgaları ve bildirilmiş DTC listesi temizlendi.");
         }
     }
 
@@ -729,64 +730,75 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     // --- CriticalDataAlertListener Implementasyonu ---
     @Override
     public void onHighEngineTemperature(double temperature, double threshold) {
-        String alertType = "HIGH_ENGINE_TEMP";
-        if (canSendCriticalAlert(alertType)) {
+        String alertType = "HIGH_ENGINE_TEMP"; // Bu alertType, cooldown map'i için anahtar olacak
+        if (canSendCriticalAlert(alertType)) { // Sadece 20dk cooldown kontrolü
             String title = "🚨 High Engine Temperature!";
             String message = String.format("Engine temperature: %.0f°C (Threshold: %.0f°C). Please check your vehicle!", temperature, threshold);
-
             sendAndSaveCriticalAlert(title, message, 201);
-            updateLastCriticalAlertTimestamp(alertType);
-            Log.i(TAG, "High engine temperature notification sent: " + temperature);
+            // Sadece bu tip uyarı için cooldown zamanını güncelle
+            CarCareApplication.updateGlobalLastCriticalAlertTimestamp(alertType, System.currentTimeMillis());
+            Log.i(TAG, "Yüksek motor sıcaklığı bildirimi gönderildi: " + temperature);
+        } else {
+            Log.d(TAG, "Yüksek motor sıcaklığı (" + temperature + "°C) tespit edildi ancak '" + alertType + "' için bildirim cooldown periyodunda.");
         }
     }
 
     @Override
     public void onLowFuelLevel(double fuelLevel, double threshold) {
-        String alertType = "LOW_FUEL_LEVEL";
-        if (canSendCriticalAlert(alertType)) {
+        String alertType = "LOW_FUEL_LEVEL"; // Bu alertType, cooldown map'i için anahtar olacak
+        if (canSendCriticalAlert(alertType)) { // Sadece 20dk cooldown kontrolü
             String title = "⛽ Low Fuel Level!";
             String message = String.format("Fuel level: %%%.0f (Threshold: %%%.0f). Please refuel!", fuelLevel, threshold);
-
             sendAndSaveCriticalAlert(title, message, 202);
-            updateLastCriticalAlertTimestamp(alertType);
-            Log.i(TAG, "Low fuel level notification sent: " + fuelLevel);
+            // Sadece bu tip uyarı için cooldown zamanını güncelle
+            CarCareApplication.updateGlobalLastCriticalAlertTimestamp(alertType, System.currentTimeMillis());
+            Log.i(TAG, "Düşük yakıt seviyesi bildirimi gönderildi: " + fuelLevel);
+        } else {
+            Log.d(TAG, "Düşük yakıt seviyesi (%" + fuelLevel + ") tespit edildi ancak '" + alertType + "' için bildirim cooldown periyodunda.");
         }
     }
 
     @Override
     public void onNewDtcDetected(List<SimpleOBD2Manager.VehicleData.DTC> newDtcs, List<SimpleOBD2Manager.VehicleData.DTC> allDtcs) {
-        String alertType = "NEW_DTC_DETECTED";
-        if (canSendCriticalAlert(alertType)) {
-            String title = "🛠️ New Trouble Code Detected!";
-            StringBuilder messageBuilder = new StringBuilder("New trouble code(s) found in your vehicle:\n");
+        // Birden fazla yeni DTC olabileceği için her birini ayrı kontrol et
+        boolean didSendAnyDtcNotification = false;
+        StringBuilder notifiedCodesMessage = new StringBuilder();
 
-            for (SimpleOBD2Manager.VehicleData.DTC dtc : newDtcs) {
-                messageBuilder.append(dtc.code).append(": ").append(dtc.description).append("\n");
+        for (SimpleOBD2Manager.VehicleData.DTC dtc : newDtcs) {
+            if (!CarCareApplication.hasDtcBeenNotified(dtc.code)) {
+                // Bu DTC daha önce bildirilmemiş, şimdi bildir.
+                String title = "🛠️ New Trouble Code Detected!";
+                // Tek bir DTC için mesaj oluşturma (isterseniz tüm yeni DTC'leri tek mesajda birleştirebilirsiniz)
+                String message = "New trouble code found: " + dtc.code + ": " + dtc.description;
+
+                sendAndSaveCriticalAlert(title, message, 203 + dtc.code.hashCode()); // Her DTC için farklı bir ID oluşturmaya çalışalım
+                CarCareApplication.addNotifiedDtc(dtc.code); // Bu DTC'yi bildirilmiş olarak işaretle
+                didSendAnyDtcNotification = true;
+                notifiedCodesMessage.append(dtc.code).append(" ");
+                Log.i(TAG, "Yeni DTC (" + dtc.code + ") için bildirim gönderildi.");
+            } else {
+                Log.d(TAG, "DTC (" + dtc.code + ") zaten daha önce bildirilmiş, tekrar bildirim atılmıyor.");
             }
-            sendAndSaveCriticalAlert(title, messageBuilder.toString().trim(), 203);
-            updateLastCriticalAlertTimestamp(alertType);
-            Log.i(TAG, "New DTC notification sent. New codes: " + newDtcs.size());
         }
+
+        if (didSendAnyDtcNotification) {
+            Log.i(TAG, "Yeni DTC bildirimleri gönderildi: " + notifiedCodesMessage.toString().trim());
+        } else if (!newDtcs.isEmpty()){
+            Log.d(TAG, "Yeni DTC'ler tespit edildi ancak hepsi daha önce bildirilmişti.");
+        }
+        // DTC'ler için `updateLastCriticalAlertTimestamp` ÇAĞRILMAYACAK, çünkü 20dk cooldown istemiyoruz.
     }
 
+    // Bu metod artık SADECE sıcaklık ve yakıt gibi 20dk cooldown gerektirenler için kullanılacak.
     private boolean canSendCriticalAlert(String alertType) {
         long currentTime = System.currentTimeMillis();
-        if (lastCriticalAlertTimestamps == null) {
-            lastCriticalAlertTimestamps = new HashMap<>();
-        }
-        long lastTime = lastCriticalAlertTimestamps.getOrDefault(alertType, 0L);
+        long lastTime = CarCareApplication.getGlobalLastCriticalAlertTimestamp(alertType);
         if (currentTime - lastTime > CRITICAL_ALERT_COOLDOWN_MS) {
             return true;
         }
-        Log.d(TAG, alertType + " için kritik uyarı cooldown süresinde.");
+        Log.d(TAG, alertType + " için kritik uyarı cooldown süresinde. Son gönderim zamanı: " +
+                new Date(lastTime) + ", Mevcut zaman: " + new Date(currentTime));
         return false;
-    }
-
-    private void updateLastCriticalAlertTimestamp(String alertType) {
-        if (lastCriticalAlertTimestamps == null) {
-            lastCriticalAlertTimestamps = new HashMap<>();
-        }
-        lastCriticalAlertTimestamps.put(alertType, System.currentTimeMillis());
     }
 
     private void sendAndSaveCriticalAlert(String title, String message, int notificationId) {
