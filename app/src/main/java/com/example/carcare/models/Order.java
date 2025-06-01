@@ -11,7 +11,7 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Order {
     private String id;
-    @Exclude private String userId; // Subcollection'da saklanmayacak, sadece kod içinde kullanılacak
+    @Exclude private String userId;
     private String fullName;
     private String email;
     private String phone;
@@ -29,6 +29,10 @@ public class Order {
     private Date estimatedDeliveryDate;
     private String trackingNumber;
     private String shippingCompany;
+    private Date cancelledDate;
+    private String statusColor;
+
+
 
     public Order() {
         // Firestore için boş constructor gerekli
@@ -123,5 +127,13 @@ public class Order {
             default:
                 return "#757575"; // Grey
         }
+    }
+
+    public Date getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(Date cancelledDate) {
+        this.cancelledDate = cancelledDate;
     }
 }

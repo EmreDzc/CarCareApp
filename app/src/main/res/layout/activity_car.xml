@@ -48,49 +48,58 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
 
+                <!-- activity_car.xml içinde araç bilgilerinin olduğu CardView'a eklenecek -->
+
+                <!-- Mevcut araç bilgilerinin bulunduğu CardView içine -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="24dp"
-                    app:cardBackgroundColor="@android:color/white"
-                    app:cardCornerRadius="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
                     app:cardElevation="4dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:padding="16dp">
 
+                        <!-- Sol taraf - Logo -->
                         <ImageView
-                            android:id="@+id/imgCarIcon"
-                            android:layout_width="100dp"
-                            android:layout_height="match_parent"
-                            android:contentDescription="Car Icon"
-                            android:src="@drawable/car_icon" />
+                            android:id="@+id/imgCarLogo"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/circle_background"
+                            android:padding="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_car_default"
+                            android:contentDescription="Car Logo" />
 
+                        <!-- Sağ taraf - Araç bilgileri -->
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="16dp"
-                            android:gravity="center_vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/tvCarName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Opel Astra"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                                android:text="Empty"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tvCarYear"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="2017 Model"
-                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                                android:textColor="@android:color/black" />
+                                android:text="0000 Model"
+                                android:textColor="@color/gray"
+                                android:textSize="14sp" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnCarDetails"
@@ -102,8 +111,11 @@
                                 android:textColor="?attr/colorPrimary"
                                 app:icon="@drawable/ic_arrow_forward"
                                 app:iconTint="?attr/colorPrimary" />
+
                         </LinearLayout>
+
                     </LinearLayout>
+
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
@@ -343,7 +355,6 @@
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
                         </LinearLayout>
 
-                        {/* Sütun 2: Intake Air Temp */}
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -369,7 +380,6 @@
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
                         </LinearLayout>
 
-                        {/* Sütun 3: MAF Air Flow */}
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

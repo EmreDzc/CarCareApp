@@ -303,6 +303,30 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Cancel Order Button -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_cancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <Button
+                android:id="@+id/btn_cancel_order"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/btn_cancel_background"
+                android:text="Siparişi İptal Et"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:elevation="0dp" />
+        </androidx.cardview.widget.CardView>
+
         <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progress_bar_order_detail"
