@@ -4,11 +4,22 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.util.HashMap;
+import java.util.HashSet; // EKLENDİ
+import java.util.Map;
+import java.util.Set;     // EKLENDİ
+
 public class CarCareApplication extends Application {
 
     private static boolean obd2Connected = false;
     private static BluetoothManager bluetoothManager;
     private static SimpleOBD2Manager obd2Manager;
+    // Cooldown için global map (Sıcaklık ve Yakıt için)
+    private static Map<String, Long> globalLastCriticalAlertTimestamps = new HashMap<>();
+
+    // Bildirilmiş DTC'leri takip etmek için global Set
+    private static Set<String> notifiedDtcCodes = new HashSet<>(); // YENİ EKLENDİ
+
 
     @Override
     public void onCreate() {
@@ -66,4 +77,37 @@ public class CarCareApplication extends Application {
     public static SimpleOBD2Manager getObd2Manager() {
         return obd2Manager;
     }
+
+    // --- Kritik Uyarı Cooldown Metodları (Sıcaklık ve Yakıt için) ---
+    public static void updateGlobalLastCriticalAlertTimestamp(String alertType, long timestamp) {
+        globalLastCriticalAlertTimestamps.put(alertType, timestamp);
+    }
+
+    public static long getGlobalLastCriticalAlertTimestamp(String alertType) {
+        return globalLastCriticalAlertTimestamps.getOrDefault(alertType, 0L);
+    }
+
+    public static void clearGlobalLastCriticalAlertTimestamps() {
+        globalLastCriticalAlertTimestamps.clear();
+    }
+    // --- Kritik Uyarı Cooldown Metodları SONU ---
+
+
+    // --- Bildirilmiş DTC Takip Metodları --- YENİ EKLENDİ
+    public static boolean hasDtcBeenNotified(String dtcCode) {
+        return notifiedDtcCodes.contains(dtcCode);
+    }
+
+    public static void addNotifiedDtc(String dtcCode) {
+        notifiedDtcCodes.add(dtcCode);
+    }
+
+    public static void clearNotifiedDtcs() {
+        notifiedDtcCodes.clear();
+        // Opsiyonel: Eğer bir DTC bildirildiğinde 20dk cooldown da tetikleniyorsa
+        // ve bu istenmiyorsa, DTC için cooldown map'inden de ilgili kaydı silebiliriz.
+        // Ancak mevcut isteğinizde DTC için cooldown yok, sadece bir kerelik bildirim var.
+        // globalLastCriticalAlertTimestamps.remove("NEW_DTC_DETECTED"); // Bu satır şimdilik gereksiz
+    }
+    // --- Bildirilmiş DTC Takip Metodları SONU ---
 }
