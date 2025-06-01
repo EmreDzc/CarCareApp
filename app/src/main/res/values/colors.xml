@@ -19,7 +19,7 @@
     <color name="on_background">#1C1B1F</color> <!-- Ana metinler için koyu renk -->
     <color name="on_surface">#1C1B1F</color> <!-- Kartlardaki ana metinler için -->
     <color name="on_surface_variant">#49454F</color> <!-- İkincil metinler için -->
-    <color name="text_primary_dark">#212121</color> <!-- Koyu ana metin -->
+    <color name="text_primary_dark">#757575</color> <!-- Koyu ana metin -->
     <color name="text_secondary_dark">#757575</color> <!-- Açık gri ikincil metin -->
 
 
