@@ -15,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -95,6 +98,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
     private MaterialCardView cardMetricRpm, cardMetricEngineTemp;
     private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
+    private Spinner spinnerProtocol;
+    private String[] protocolCodes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +154,35 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         layoutMetricEngineLoad = findViewById(R.id.layoutMetricEngineLoad);
         layoutMetricIntakeAirTemp = findViewById(R.id.layoutMetricIntakeAirTemp);
         layoutMetricMaf = findViewById(R.id.layoutMetricMaf);
+        spinnerProtocol = findViewById(R.id.spinnerProtocol);
+
+        ArrayAdapter<CharSequence> protocolAdapter = ArrayAdapter.createFromResource(
+                this, R.array.obd2_protocol_display, android.R.layout.simple_spinner_item);
+        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProtocol.setAdapter(protocolAdapter);
+
+        protocolCodes = getResources().getStringArray(R.array.obd2_protocol_codes);
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String savedProto = prefs.getString("selected_protocol", "0");
+        int idx = 0;
+        for (int i = 0; i < protocolCodes.length; i++) {
+            if (protocolCodes[i].equals(savedProto)) { idx = i; break; }
+        }
+        spinnerProtocol.setSelection(idx);
+        spinnerProtocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String code = protocolCodes[position];
+                prefs.edit().putString("selected_protocol", code).apply();
+                if (obd2Manager != null) {
+                    obd2Manager.setSelectedProtocol(code);
+                }
+                Log.d(TAG, "OBD2 protocol selected: " + code);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         btnOpenSite = findViewById(R.id.btnOpenSite);
         btnTrafficFineInquiry = findViewById(R.id.btnTrafficFineInquiry);
@@ -198,6 +232,11 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             CarCareApplication.setObd2Manager(obd2Manager);
         } else {
             obd2Manager = CarCareApplication.getObd2Manager();
+        }
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String proto = prefs.getString("selected_protocol", "0");
+        if (obd2Manager != null) {
+            obd2Manager.setSelectedProtocol(proto);
         }
         // Listener atamasını onCreate içinde, bu metodun çağrısından sonra yapıyoruz.
     }
@@ -829,6 +868,9 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
     private void connectToOBD() {
         Log.d(TAG, "connectToOBD çağrıldı.");
+        if (obd2Manager != null) {
+            Log.i(TAG, "Connecting with protocol: " + obd2Manager.getSelectedProtocol());
+        }
         if (CarCareApplication.isObd2Connected()) {
             if (obd2Manager != null) obd2Manager.stopReading();
             if (bluetoothManager != null) bluetoothManager.disconnect();
@@ -918,7 +960,19 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             CarCareApplication.setObd2Manager(obd2Manager);
         }
         if (obd2Manager != null) {
+            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+            String proto = prefs.getString("selected_protocol", "0");
+            obd2Manager.setSelectedProtocol(proto);
             obd2Manager.setCriticalDataAlertListener(this);
+        }
+        if (spinnerProtocol != null && protocolCodes != null) {
+            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+            String proto = prefs.getString("selected_protocol", "0");
+            int idx = 0;
+            for (int i = 0; i < protocolCodes.length; i++) {
+                if (protocolCodes[i].equals(proto)) { idx = i; break; }
+            }
+            spinnerProtocol.setSelection(idx);
         }
         setupDataUpdateListener();
         updateConnectionStatus();

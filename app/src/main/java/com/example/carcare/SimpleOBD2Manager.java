@@ -63,6 +63,9 @@ public class SimpleOBD2Manager {
     private final Queue<String> commandQueue = new LinkedList<>();
     private final AtomicBoolean isProcessingQueue = new AtomicBoolean(false);
 
+    // Selected OBD2 protocol for ATSP command (default auto)
+    private String selectedProtocol = "0";
+
     // --- DTC Açıklamaları ---
     private static final Map<String, String> DTC_DESCRIPTIONS_RAW = new HashMap<>();
     static {
@@ -264,8 +267,20 @@ public class SimpleOBD2Manager {
         this.dataUpdateListener = listener;
     }
 
+    public void setSelectedProtocol(String proto) {
+        if (proto != null && !proto.isEmpty()) {
+            this.selectedProtocol = proto;
+        } else {
+            this.selectedProtocol = "0";
+        }
+    }
+
+    public String getSelectedProtocol() {
+        return selectedProtocol;
+    }
+
     private boolean initializeELM327() {
-        Log.i(TAG, "ELM327 başlatılıyor...");
+        Log.i(TAG, "ELM327 başlatılıyor... seçilen protokol: " + selectedProtocol);
         try {
             InputStream in = bluetoothManager.getInputStream();
             OutputStream out = bluetoothManager.getOutputStream();
@@ -278,7 +293,7 @@ public class SimpleOBD2Manager {
             clearInputStream(in);
 
             String[] initCommands = {
-                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", "ATSP0"
+                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", "ATSP" + selectedProtocol
             };
 
             for (String cmd : initCommands) {
@@ -287,11 +302,11 @@ public class SimpleOBD2Manager {
                 if (response == null ||
                         (!response.toUpperCase().contains("OK") &&
                                 !(cmd.equalsIgnoreCase("ATZ") && (response.toUpperCase().contains("ELM") || response.contains("?"))) &&
-                                !(cmd.equalsIgnoreCase("ATSP0") && response.toUpperCase().contains("OK"))
+                                !(cmd.startsWith("ATSP") && response.toUpperCase().contains("OK"))
                         )
                 ) {
                     Log.e(TAG, "Başlatma komutu başarısız veya beklenmedik yanıt: " + cmd + " -> [" + response + "]");
-                    if (cmd.equalsIgnoreCase("ATSP0") && (response == null || !response.toUpperCase().contains("OK"))) {
+                    if (cmd.startsWith("ATSP") && (response == null || !response.toUpperCase().contains("OK"))) {
                         return false;
                     }
                 }
