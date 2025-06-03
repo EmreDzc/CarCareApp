@@ -55,57 +55,82 @@
     <string name="metric_rpm_title">Engine Speed (RPM)</string>
     <string name="metric_rpm_description">
         <![CDATA[
-        <b>What is it?</b> Revolutions per minute of the engine\'s crankshaft.<br/><br/>
-        <b>Normal Range:</b><br/>
-        Idle: 650 - 900 RPM<br/>
-        Driving: 1500 - 3500 RPM (varies)<br/><br/>
-        <b>Low Abnormal (Idle <600 RPM):</b><br/>
-        Engine may stall, rough idle. (IAC valve, vacuum leak, ignition issue)<br/><br/>
-        <b>High Abnormal (Idle >1100 RPM):</b><br/>
-        Unnecessary high engine speed. (Vacuum leak, IAC valve, TPS issue)<br/><br/>
-        <b>Possible Related DTCs:</b> P0506, P0507, P0300
+        <b>What is it?</b><br/>
+        Revolutions per minute of the engine\'s crankshaft. Indicates how hard the engine is working.<br/><br/>
+
+        <b><u>Normal Range:</u></b><br/>
+        • <b>Idle (Warm Engine):</b> Approx. <b>650 - 900 RPM</b> (varies by vehicle).<br/>
+        • <b>Driving:</b> Typically <b>1500 - 3500 RPM</b>, higher during acceleration.<br/><br/>
+
+        <b><u>Abnormal Conditions (at Idle):</u></b><br/>
+        • <b>Very Low or Fluctuating (<600 RPM):</b><br/>
+            <i>Meaning:</i> Engine may stall or run rough. Indicates issues like vacuum leaks, faulty IAC valve, ignition problems (spark plugs, coils), or fuel delivery issues.<br/>
+            <i>Possible DTCs:</i> P0506 (Idle RPM Low), P0300 (Random Misfire)<br/><br/>
+        • <b>Very High (Consistently >1100 RPM):</b><br/>
+            <i>Meaning:</i> Engine racing unnecessarily. Caused by vacuum leaks, stuck IAC valve, faulty TPS, or incorrect sensor readings.<br/>
+            <i>Possible DTCs:</i> P0507 (Idle RPM High)<br/><br/>
+
+        <i>Note: Avoid prolonged operation near the engine\'s redline to prevent excessive wear.</i>
         ]]>
     </string>
 
-    <!-- Engine Temperature Information -->
+    <!-- Engine Coolant Temperature Information -->
     <string name="metric_engine_temp_title">Engine Coolant Temperature</string>
     <string name="metric_engine_temp_description">
         <![CDATA[
-        <b>What is it?</b> Temperature of the engine\'s coolant.<br/><br/>
-        <b>Normal Range:</b> 85°C - 105°C (185°F - 221°F)<br/><br/>
-        <b>Low Abnormal (<75°C / 167°F Constantly):</b><br/>
-        Engine not warming up. (Thermostat stuck open)<br/><br/>
-        <b>High Abnormal (>110°C / 230°F - OVERHEATING!):</b><br/>
-        Engine is too hot! <font color=\'#FF0000\'><b>EMERGENCY!</b></font> (Low coolant, fan, thermostat, pump issue)<br/><br/>
-        <b>Possible Related DTCs:</b> P0128, P0117, P0118, P0217
+        <b>What is it?</b><br/>
+        Temperature of the engine\'s coolant, critical for preventing overheating and ensuring efficient operation.<br/><br/>
+
+        <b><u>Normal Operating Range:</u></b><br/>
+        Typically <b>85°C - 105°C (185°F - 221°F)</b> once the engine is warmed up.<br/><br/>
+
+        <b><u>Abnormal Conditions:</u></b><br/>
+        • <b>Consistently Low (<75-80°C / 167-176°F after warm-up):</b><br/>
+            <i>Meaning:</i> Engine is not reaching optimal temperature, often due to a thermostat stuck open. Leads to poor fuel economy and increased emissions.<br/>
+            <i>Possible DTCs:</i> P0128 (Coolant Thermostat Temp Below Regulating Temp)<br/><br/>
+        • <b>Consistently High (>110-115°C / 230-239°F - OVERHEATING!):</b><br/>
+            <i>Meaning:</i> <font color=\'#FF0000\'><b>DANGER! Engine is overheating.</b></font> Stop the vehicle safely immediately. Causes include low coolant, faulty thermostat (stuck closed), fan malfunction, clogged radiator, or water pump failure.<br/>
+            <i>Possible DTCs:</i> P0217 (Engine Overheat), P0117/P0118 (ECT Sensor Circuit Low/High)
         ]]>
     </string>
 
-    <!-- Engine Load Information -->
+    <!-- Calculated Engine Load Information -->
     <string name="metric_engine_load_title">Calculated Engine Load</string>
     <string name="metric_engine_load_description">
         <![CDATA[
-        <b>What is it?</b> Percentage of current engine power output relative to its maximum potential.<br/><br/>
-        <b>Normal Range:</b> Idle: 10-30%, Driving: 20-70% (can reach 100% on acceleration)<br/><br/>
-        <b>Low Abnormal (Unexpectedly Low on Acceleration):</b><br/>
-        Possible power loss. (Sensor issue, engine performance drop)<br/><br/>
-        <b>High Abnormal (Consistently High During Normal Driving):</b><br/>
-        Engine is strained. (Mechanical issue, insufficient power)<br/><br/>
-        <b>Possible Related DTCs:</b> P0101 (MAF), P0068 (MAP/TPS Correlation)
+        <b>What is it?</b><br/>
+        An estimate of the engine\'s current power output relative to its maximum potential (0-100%).<br/><br/>
+
+        <b><u>Normal Range (Varies Greatly):</u></b><br/>
+        • <b>Idle:</b> Approx. <b>10% - 30%</b><br/>
+        • <b>Cruising:</b> Approx. <b>20% - 70%</b><br/>
+        • <b>Acceleration:</b> Can reach <b>70% - 100%</b><br/><br/>
+
+        <b><u>Abnormal Conditions:</u></b><br/>
+        • <b>Unexpectedly Low (During Acceleration):</b><br/>
+            <i>Meaning:</i> Potential loss of power. May indicate sensor issues (e.g., MAF, MAP, TPS) or reduced engine performance.<br/>
+            <i>Possible DTCs:</i> P0101 (MAF Range/Performance), P0068 (MAP/TPS Correlation)<br/><br/>
+        • <b>Consistently High (During Normal Driving):</b><br/>
+           _nbsp;<i>Meaning:</i> Engine is under excessive strain. Could be due to mechanical drag (e.g., binding brakes), transmission issues, or the vehicle being underpowered for the conditions.<br/>
         ]]>
     </string>
 
-    <!-- Intake Air Temperature Information -->
+    <!-- Intake Air Temperature (IAT) Information -->
     <string name="metric_intake_air_temp_title">Intake Air Temperature (IAT)</string>
     <string name="metric_intake_air_temp_description">
         <![CDATA[
-        <b>What is it?</b> Temperature of the air entering the engine.<br/><br/>
-        <b>Normal Range:</b> Close to or slightly above ambient temperature.<br/><br/>
-        <b>Low Abnormal (Much Lower Than Ambient/Illogical):</b><br/>
-        Possible sensor failure.<br/><br/>
-        <b>High Abnormal (Consistently Very High):</b><br/>
-        May reduce performance. (Engine bay heat soak, sensor location)<br/><br/>
-        <b>Possible Related DTCs:</b> P0112, P0113
+        <b>What is it?</b><br/>
+        Temperature of the air entering the engine\'s cylinders. Used by the ECU for fuel and ignition calculations.<br/><br/>
+
+        <b><u>Normal Range:</u></b><br/>
+        Generally close to or slightly above the ambient (outside) air temperature. Can be higher when stationary due to engine bay heat.<br/><br/>
+
+        <b><u>Abnormal Conditions:</u></b><br/>
+        • <b>Illogically Low or High (Compared to Ambient):</b><br/>
+            <i>Meaning:</i> Likely a faulty IAT sensor or wiring issue.<br/>
+            <i>Possible DTCs:</i> P0112 (IAT Sensor Circuit Low), P0113 (IAT Sensor Circuit High)<br/><br/>
+        • <b>Consistently Very High (Even When Moving):</b><br/>
+            <i>Meaning:</i> May reduce engine performance as the ECU might retard timing to prevent knock. Could be due to heat soak or poor sensor placement/shielding.<br/>
         ]]>
     </string>
 
@@ -113,15 +138,51 @@
     <string name="metric_maf_title">Mass Air Flow (MAF)</string>
     <string name="metric_maf_description">
         <![CDATA[
-        <b>What is it?</b> Mass of air entering the engine (g/s).<br/><br/>
-        <b>Normal Range:</b> Idle: 2-10 g/s (engine dependent), increases with load.<br/><br/>
-        <b>Low Abnormal (Lower Than Expected):</b><br/>
-        Restricted air intake. (Clogged filter, vacuum leak, MAF issue)<br/><br/>
-        <b>High Abnormal (Higher Than Expected):</b><br/>
-        Rare, usually sensor failure.<br/><br/>
-        <b>Possible Related DTCs:</b> P0101, P0102, P0103
+        <b>What is it?</b><br/>
+        Measures the mass (amount) of air entering the engine, usually in grams per second (g/s). Critical for the ECU to deliver the correct amount of fuel.<br/><br/>
+
+        <b><u>Normal Range (Varies by Engine Size/RPM):</u></b><br/>
+        • <b>Idle:</b> Approx. <b>2 - 10 g/s</b> (smaller engines lower, larger engines higher).<br/>
+        • <b>Under Load:</b> Increases significantly with RPM and throttle (can exceed 100 g/s).<br/><br/>
+
+        <b><u>Abnormal Conditions:</u></b><br/>
+        • <b>Lower Than Expected (for given RPM/Load):</b><br/>
+            <i>Meaning:</i> Restricted air intake. Possible causes: clogged air filter, vacuum leak (after MAF sensor), dirty or faulty MAF sensor.<br/>
+            <i>Possible DTCs:</i> P0101 (MAF Range/Performance), P0102 (MAF Circuit Low), P0171 (System Too Lean - if not enough air is reported)<br/><br/>
+        • <b>Higher Than Expected:</b><br/>
+            <i>Meaning:</i> Rare. Usually indicates a MAF sensor fault or an unmetered air leak before the MAF sensor (less common).<br/>
+            <i>Possible DTCs:</i> P0103 (MAF Circuit High)
         ]]>
     </string>
+
+    <string name="metric_battery_voltage_title">Battery Voltage</string>
+    <string name="metric_battery_voltage_description">
+    <![CDATA[
+    <b>What is it?</b><br/>
+    Indicates the health of your car\'s battery and charging system. This is typically the voltage at the vehicle\'s control module.<br/><br/>
+
+    <b><u>Engine OFF:</u></b><br/>
+    • <b>Normal Range:</b> Approx. <b>12.0V - 12.8V</b><br/>
+        <i>Meaning:</i> Battery has a good resting charge.<br/><br/>
+    • <b>Low Abnormal (<11.9V):</b><br/>
+        <i>Meaning:</i> Weak battery, low charge, or parasitic drain. May cause starting issues.<br/>
+        <i>Action:</i> Check battery age, look for drains, or have battery tested.<br/><br/>
+
+    <b><u>Engine RUNNING:</u></b><br/>
+    • <b>Normal Range:</b> Approx. <b>13.2V - 14.8V</b><br/>
+        <i>Meaning:</i> Charging system (alternator) is working correctly and charging the battery.<br/><br/>
+    • <b>Low Abnormal (<13.0V Consistently):</b><br/>
+        <i>Meaning:</i> Alternator may not be charging properly. Battery is discharging.<br/>
+        <i>Action:</i> <font color=\'#FF0000\'><b>Warning!</b></font> Risk of vehicle stalling. Check alternator, belts, connections immediately.<br/>
+        <i>Possible DTCs:</i> P0562 (System Voltage Low)<br/><br/>
+    • <b>High Abnormal (>15.0V Consistently):</b><br/>
+        <i>Meaning:</i> Overcharging! Can damage battery and vehicle electronics.<br/>
+        <i>Action:</i> <font color=\'#FF0000\'><b>Caution!</b></font> Check voltage regulator (often part of alternator).<br/>
+        <i>Possible DTCs:</i> P0563 (System Voltage High)<br/><br/>
+
+    <i>Note: These are general guidelines. Specific values may vary slightly by vehicle.</i>
+    ]]>
+</string>
 
     <!-- Close Button Text for Dialog -->
     <string name="dialog_close_button">Close</string>

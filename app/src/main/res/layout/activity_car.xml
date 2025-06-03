@@ -146,27 +146,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Real-Time Engine Data"
+                android:text="Real-Time Vehicle Data"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="normal"/>
 
+            <!-- 2x2 Grid için İlk Satır -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="8dp">
 
                 <!-- Speed (Tıklanabilir değil) -->
                 <com.google.android.material.card.MaterialCardView
                     style="?attr/materialCardViewStyle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="120dp"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="16dp">
@@ -200,15 +202,15 @@
                     android:id="@+id/cardMetricRpm"
                     style="?attr/materialCardViewStyle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="120dp"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="16dp">
@@ -236,20 +238,30 @@
                             android:textStyle="normal"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- 2x2 Grid için İkinci Satır -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
                 <!-- Engine Temperature (Tıklanabilir) -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardMetricEngineTemp"
                     style="?attr/materialCardViewStyle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="120dp"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="16dp">
@@ -271,13 +283,56 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Engine Temp"
+                            android:text="Coolant Temp"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="normal"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Battery Voltage Card (Tıklanabilir) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMetricBatteryVoltage"
+                    style="?attr/materialCardViewStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="120dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_battery_voltage"
+                            app:tint="@color/grey_dark"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="Battery Voltage Icon"/>
+                        <TextView
+                            android:id="@+id/tvBatteryVoltageValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="12.5V"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="normal"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Voltage"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="?attr/colorOnSurface"
                             android:textStyle="normal"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
+
 
             <!-- Engine Performance Card -->
             <com.google.android.material.card.MaterialCardView
@@ -317,7 +372,6 @@
                         android:orientation="horizontal"
                         android:baselineAligned="false">
 
-                        <!-- Engine Load Metric Grubu (Tıklanabilir) -->
                         <LinearLayout
                             android:id="@+id/layoutMetricEngineLoad"
                             android:layout_width="0dp"
@@ -348,7 +402,6 @@
                                 android:textStyle="normal"/>
                         </LinearLayout>
 
-                        <!-- Intake Air Temp Metric Grubu (Tıklanabilir) -->
                         <LinearLayout
                             android:id="@+id/layoutMetricIntakeAirTemp"
                             android:layout_width="0dp"
@@ -379,7 +432,6 @@
                                 android:textStyle="normal"/>
                         </LinearLayout>
 
-                        <!-- MAF Metric Grubu (Tıklanabilir) -->
                         <LinearLayout
                             android:id="@+id/layoutMetricMaf"
                             android:layout_width="0dp"
@@ -420,7 +472,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp">
-                <!-- Bu kart için clickable, focusable, foreground yok -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

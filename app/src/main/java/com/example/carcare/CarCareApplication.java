@@ -2,6 +2,8 @@ package com.example.carcare;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.HashMap;
@@ -19,6 +21,8 @@ public class CarCareApplication extends Application {
 
     // Bildirilmiş DTC'leri takip etmek için global Set
     private static Set<String> notifiedDtcCodes = new HashSet<>(); // YENİ EKLENDİ
+    private static boolean lowVoltageNotifiedThisSession = false;
+    private static boolean highVoltageNotifiedThisSession = false;
 
 
     @Override
@@ -55,6 +59,11 @@ public class CarCareApplication extends Application {
     // OBD2 bağlantı durumunu saklama
     public static void setObd2Connected(boolean connected) {
         obd2Connected = connected;
+        if (!connected) { // Bağlantı kesildiğinde bildirim bayraklarını sıfırla
+            resetVoltageNotificationFlags();
+            clearGlobalLastCriticalAlertTimestamps(); // Bunu zaten yapıyordun
+            clearNotifiedDtcs(); // Bunu da
+        }
     }
 
     public static boolean isObd2Connected() {
@@ -70,6 +79,27 @@ public class CarCareApplication extends Application {
         return bluetoothManager;
     }
 
+    public static boolean hasLowVoltageBeenNotifiedThisSession() {
+        return lowVoltageNotifiedThisSession;
+    }
+
+    public static void setLowVoltageNotifiedThisSession(boolean notified) {
+        lowVoltageNotifiedThisSession = notified;
+    }
+
+    public static boolean hasHighVoltageBeenNotifiedThisSession() {
+        return highVoltageNotifiedThisSession;
+    }
+
+    public static void setHighVoltageNotifiedThisSession(boolean notified) {
+        highVoltageNotifiedThisSession = notified;
+    }
+
+    public static void resetVoltageNotificationFlags() {
+        lowVoltageNotifiedThisSession = false;
+        highVoltageNotifiedThisSession = false;
+        Log.d("CarCareApp", "Voltaj bildirim bayrakları sıfırlandı.");
+    }
     public static void setObd2Manager(SimpleOBD2Manager manager) {
         obd2Manager = manager;
     }

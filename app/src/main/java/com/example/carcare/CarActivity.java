@@ -15,9 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +52,8 @@ import java.util.Set;
 
 interface CriticalDataAlertListener {
     void onHighEngineTemperature(double temperature, double threshold);
+    void onLowBatteryVoltage(double voltage, double threshold, boolean engineRunning);
+    void onHighBatteryVoltage(double voltage, double threshold, boolean engineRunning);
     void onLowFuelLevel(double fuelLevel, double threshold);
     void onNewDtcDetected(List<SimpleOBD2Manager.VehicleData.DTC> newDtcs, List<SimpleOBD2Manager.VehicleData.DTC> allDtcs);
 }
@@ -98,8 +97,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
     private MaterialCardView cardMetricRpm, cardMetricEngineTemp;
     private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
-    private Spinner spinnerProtocol;
-    private String[] protocolCodes;
+    private MaterialCardView cardMetricBatteryVoltage;
+    private TextView tvBatteryVoltageValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,35 +153,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         layoutMetricEngineLoad = findViewById(R.id.layoutMetricEngineLoad);
         layoutMetricIntakeAirTemp = findViewById(R.id.layoutMetricIntakeAirTemp);
         layoutMetricMaf = findViewById(R.id.layoutMetricMaf);
-        spinnerProtocol = findViewById(R.id.spinnerProtocol);
-
-        ArrayAdapter<CharSequence> protocolAdapter = ArrayAdapter.createFromResource(
-                this, R.array.obd2_protocol_display, android.R.layout.simple_spinner_item);
-        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerProtocol.setAdapter(protocolAdapter);
-
-        protocolCodes = getResources().getStringArray(R.array.obd2_protocol_codes);
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String savedProto = prefs.getString("selected_protocol", "0");
-        int idx = 0;
-        for (int i = 0; i < protocolCodes.length; i++) {
-            if (protocolCodes[i].equals(savedProto)) { idx = i; break; }
-        }
-        spinnerProtocol.setSelection(idx);
-        spinnerProtocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String code = protocolCodes[position];
-                prefs.edit().putString("selected_protocol", code).apply();
-                if (obd2Manager != null) {
-                    obd2Manager.setSelectedProtocol(code);
-                }
-                Log.d(TAG, "OBD2 protocol selected: " + code);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
 
         btnOpenSite = findViewById(R.id.btnOpenSite);
         btnTrafficFineInquiry = findViewById(R.id.btnTrafficFineInquiry);
@@ -192,6 +162,9 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
         fabConnectOBD = findViewById(R.id.fabConnectOBD);
         fabConnectOBD.setOnClickListener(v -> connectToOBD());
+
+        cardMetricBatteryVoltage = findViewById(R.id.cardMetricBatteryVoltage);
+        tvBatteryVoltageValue = findViewById(R.id.tvBatteryVoltageValue);
 
         cardDtcStatus = findViewById(R.id.cardDtcStatus);
         imgDtcIcon = findViewById(R.id.imgDtcIcon);
@@ -232,11 +205,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             CarCareApplication.setObd2Manager(obd2Manager);
         } else {
             obd2Manager = CarCareApplication.getObd2Manager();
-        }
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String proto = prefs.getString("selected_protocol", "0");
-        if (obd2Manager != null) {
-            obd2Manager.setSelectedProtocol(proto);
         }
         // Listener atamasını onCreate içinde, bu metodun çağrısından sonra yapıyoruz.
     }
@@ -361,6 +329,15 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             ));
         } else {
             Log.w(TAG, "setupMetricClickListeners: cardMetricEngineTemp is null!");
+        }
+
+        if (cardMetricBatteryVoltage != null) {
+            cardMetricBatteryVoltage.setOnClickListener(v -> showMetricInfoDialog(
+                    getString(R.string.metric_battery_voltage_title),
+                    getString(R.string.metric_battery_voltage_description)
+            ));
+        } else {
+            Log.w(TAG, "setupMetricClickListeners: cardMetricBatteryVoltage is null!");
         }
 
         if (layoutMetricEngineLoad != null) {
@@ -681,8 +658,10 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                 logMessage.append("Yakıt: ").append(data.getFuelLevel() != null && data.getFuelLevel() >= 0 ? String.format("%.0f%%", data.getFuelLevel()) : "N/A").append(", ");
                 tvEngineLoadValue.setText(data.getEngineLoad() != null ? String.format("%.0f%%", data.getEngineLoad()) : "N/A");
                 logMessage.append("Yük: ").append(data.getEngineLoad() != null ? String.format("%.0f%%", data.getEngineLoad()) : "N/A").append(", ");
-                // tvThrottleValue.setText satırı silindi
-                // logMessage.append("Gaz: ...) satırı silindi
+                if (tvBatteryVoltageValue != null) {
+                    tvBatteryVoltageValue.setText(data.getBatteryVoltage() != null ? String.format("%.1fV", data.getBatteryVoltage()) : "N/A");
+                    logMessage.append("Voltaj: ").append(data.getBatteryVoltage() != null ? String.format("%.1fV", data.getBatteryVoltage()) : "N/A").append(", ");
+                }
                 tvIntakeAirTempValue.setText(data.getIntakeTemp() != null ? String.format("%.0f°C", data.getIntakeTemp()) : "N/A");
                 logMessage.append("EmmeSıc: ").append(data.getIntakeTemp() != null ? String.format("%.0f°C", data.getIntakeTemp()) : "N/A").append(", ");
                 tvMafValue.setText(data.getMafAirFlow() != null && data.getMafAirFlow() >= 0 ? String.format("%.1f g/s", data.getMafAirFlow()) : "N/A");
@@ -868,9 +847,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
     private void connectToOBD() {
         Log.d(TAG, "connectToOBD çağrıldı.");
-        if (obd2Manager != null) {
-            Log.i(TAG, "Connecting with protocol: " + obd2Manager.getSelectedProtocol());
-        }
         if (CarCareApplication.isObd2Connected()) {
             if (obd2Manager != null) obd2Manager.stopReading();
             if (bluetoothManager != null) bluetoothManager.disconnect();
@@ -960,19 +936,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             CarCareApplication.setObd2Manager(obd2Manager);
         }
         if (obd2Manager != null) {
-            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String proto = prefs.getString("selected_protocol", "0");
-            obd2Manager.setSelectedProtocol(proto);
             obd2Manager.setCriticalDataAlertListener(this);
-        }
-        if (spinnerProtocol != null && protocolCodes != null) {
-            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String proto = prefs.getString("selected_protocol", "0");
-            int idx = 0;
-            for (int i = 0; i < protocolCodes.length; i++) {
-                if (protocolCodes[i].equals(proto)) { idx = i; break; }
-            }
-            spinnerProtocol.setSelection(idx);
         }
         setupDataUpdateListener();
         updateConnectionStatus();
@@ -1030,6 +994,36 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             Log.i(TAG, "Düşük yakıt seviyesi bildirimi gönderildi: " + fuelLevel);
         } else {
             Log.d(TAG, "Düşük yakıt seviyesi (%" + fuelLevel + ") tespit edildi ancak '" + alertType + "' için bildirim cooldown periyodunda.");
+        }
+    }
+
+    @Override
+    public void onLowBatteryVoltage(double voltage, double threshold, boolean engineRunning) {
+        if (!CarCareApplication.hasLowVoltageBeenNotifiedThisSession()) {
+            String title = "⚠️ Low Battery Voltage!";
+            String engineStatus = engineRunning ? " (Engine Running)" : " (Engine Off)";
+            String message = String.format("Battery voltage: %.1fV (Threshold: %.1fV)%s. Check battery or charging system!",
+                    voltage, threshold, engineStatus);
+            sendAndSaveCriticalAlert(title, message, 205); // Farklı notificationId
+            CarCareApplication.setLowVoltageNotifiedThisSession(true); // Bildirildi olarak işaretle
+            Log.i(TAG, "Düşük akü voltajı bildirimi gönderildi: " + voltage + engineStatus);
+        } else {
+            Log.d(TAG, "Düşük akü voltajı (" + voltage + "V) tespit edildi ancak bu oturumda zaten bildirilmişti.");
+        }
+    }
+
+    @Override
+    public void onHighBatteryVoltage(double voltage, double threshold, boolean engineRunning) {
+        if (!CarCareApplication.hasHighVoltageBeenNotifiedThisSession()) {
+            String title = "⚡ High Battery Voltage!";
+            String engineStatus = engineRunning ? " (Engine Running)" : ""; // Yüksek voltaj genellikle motor çalışırken önemlidir
+            String message = String.format("Battery voltage: %.1fV (Threshold: %.1fV)%s. Possible overcharging, check charging system!",
+                    voltage, threshold, engineStatus);
+            sendAndSaveCriticalAlert(title, message, 206); // Farklı notificationId
+            CarCareApplication.setHighVoltageNotifiedThisSession(true); // Bildirildi olarak işaretle
+            Log.i(TAG, "Yüksek akü voltajı bildirimi gönderildi: " + voltage + engineStatus);
+        } else {
+            Log.d(TAG, "Yüksek akü voltajı (" + voltage + "V) tespit edildi ancak bu oturumda zaten bildirilmişti.");
         }
     }
 

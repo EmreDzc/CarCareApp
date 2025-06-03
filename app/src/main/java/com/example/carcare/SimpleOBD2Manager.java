@@ -33,6 +33,8 @@ public class SimpleOBD2Manager {
     private static final String THROTTLE_POS_PID = "0111";
     private static final String INTAKE_TEMP_PID = "010F";
     private static final String MAF_AIR_FLOW_PID = "0110";
+    private static final String READ_VOLTAGE_COMMAND = "ATRV"; // ELM327 özel komutu
+    private static final String CONTROL_MODULE_VOLTAGE_PID = "0142"; // Alternatif standart PID
     private static final String DTC_REQUEST_PID = "03";      // Request current DTCs
     private static final String VEHICLE_VIN_PID = "0902";    // Request Vehicle Identification Number
 
@@ -46,6 +48,9 @@ public class SimpleOBD2Manager {
 
     // --- Kritik Eşik Değerleri (Başlangıç için sabit, daha sonra ayarlanabilir) ---
     private static final double THRESHOLD_ENGINE_TEMP_HIGH = 110.0; // Celsius
+    private static final double THRESHOLD_VOLTAGE_LOW_ENGINE_OFF = 11.8; // Motor kapalıyken düşük eşik
+    private static final double THRESHOLD_VOLTAGE_LOW_ENGINE_ON = 12.8;  // Motor çalışırken düşük eşik
+    private static final double THRESHOLD_VOLTAGE_HIGH_ENGINE_ON = 15.0; // Motor çalışırken yüksek eşik
     private static final double THRESHOLD_FUEL_LEVEL_LOW = 15.0;  // Yüzde %
 
     private CriticalDataAlertListener criticalDataAlertListener;
@@ -62,9 +67,6 @@ public class SimpleOBD2Manager {
 
     private final Queue<String> commandQueue = new LinkedList<>();
     private final AtomicBoolean isProcessingQueue = new AtomicBoolean(false);
-
-    // Selected OBD2 protocol for ATSP command (default auto)
-    private String selectedProtocol = "0";
 
     // --- DTC Açıklamaları ---
     private static final Map<String, String> DTC_DESCRIPTIONS_RAW = new HashMap<>();
@@ -267,20 +269,8 @@ public class SimpleOBD2Manager {
         this.dataUpdateListener = listener;
     }
 
-    public void setSelectedProtocol(String proto) {
-        if (proto != null && !proto.isEmpty()) {
-            this.selectedProtocol = proto;
-        } else {
-            this.selectedProtocol = "0";
-        }
-    }
-
-    public String getSelectedProtocol() {
-        return selectedProtocol;
-    }
-
     private boolean initializeELM327() {
-        Log.i(TAG, "ELM327 başlatılıyor... seçilen protokol: " + selectedProtocol);
+        Log.i(TAG, "ELM327 başlatılıyor...");
         try {
             InputStream in = bluetoothManager.getInputStream();
             OutputStream out = bluetoothManager.getOutputStream();
@@ -293,7 +283,7 @@ public class SimpleOBD2Manager {
             clearInputStream(in);
 
             String[] initCommands = {
-                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", "ATSP" + selectedProtocol
+                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", "ATSP0"
             };
 
             for (String cmd : initCommands) {
@@ -302,11 +292,11 @@ public class SimpleOBD2Manager {
                 if (response == null ||
                         (!response.toUpperCase().contains("OK") &&
                                 !(cmd.equalsIgnoreCase("ATZ") && (response.toUpperCase().contains("ELM") || response.contains("?"))) &&
-                                !(cmd.startsWith("ATSP") && response.toUpperCase().contains("OK"))
+                                !(cmd.equalsIgnoreCase("ATSP0") && response.toUpperCase().contains("OK"))
                         )
                 ) {
                     Log.e(TAG, "Başlatma komutu başarısız veya beklenmedik yanıt: " + cmd + " -> [" + response + "]");
-                    if (cmd.startsWith("ATSP") && (response == null || !response.toUpperCase().contains("OK"))) {
+                    if (cmd.equalsIgnoreCase("ATSP0") && (response == null || !response.toUpperCase().contains("OK"))) {
                         return false;
                     }
                 }
@@ -523,6 +513,8 @@ public class SimpleOBD2Manager {
             if (FUEL_LEVEL_PID != null) commandQueue.offer(FUEL_LEVEL_PID);
             if (INTAKE_TEMP_PID != null) commandQueue.offer(INTAKE_TEMP_PID);
             if (MAF_AIR_FLOW_PID != null) commandQueue.offer(MAF_AIR_FLOW_PID);
+            commandQueue.offer(READ_VOLTAGE_COMMAND); // Önce ATRV'yi deneyelim
+            // Alternatif olarak: commandQueue.offer(CONTROL_MODULE_VOLTAGE_PID);
             commandQueue.offer(DTC_REQUEST_PID);
             commandQueue.offer(VEHICLE_VIN_PID); // VIN komutu eklendi
             Log.d(TAG, "Kuyruğa " + commandQueue.size() + " komut eklendi: " + commandQueue.toString());
@@ -647,6 +639,7 @@ public class SimpleOBD2Manager {
 
         Double parsedValue = null;
         boolean parseAttemptedForThisPid = true;
+        String dataHex = null;
 
         try {
             if (pidWithoutSuffix.equals(DTC_REQUEST_PID)) {
@@ -715,6 +708,73 @@ public class SimpleOBD2Manager {
                             updateVehicleDataWithError(pidWithoutSuffix, true);
                         }
                         break;
+                    case READ_VOLTAGE_COMMAND: // "ATRV" komutu için
+                        vehicleData.setBatteryVoltage(null); // Önce null yapalım
+                        if (!isNoDataResponse && cleanedResponse != null && !cleanedResponse.isEmpty() &&
+                                !cleanedResponse.contains("?") && !cleanedResponse.contains("ERROR") &&
+                                !cleanedResponse.contains("STOPPED") && !cleanedResponse.contains("UNABLETOCONNECT") &&
+                                !(cleanedResponse.contains("SEARCHING") && !cleanedResponse.matches(".*[0-9.]+V?.*")) ) {
+
+                            String voltageString = cleanedResponse.replaceAll("[^0-9.]", "");
+                            try {
+                                if (!voltageString.isEmpty()) {
+                                    double tempVoltage = Double.parseDouble(voltageString);
+                                    if (tempVoltage >= 5.0 && tempVoltage <= 20.0) {
+                                        vehicleData.setBatteryVoltage(tempVoltage);
+                                        currentPidSuccessfullyProcessed = true;
+                                        Log.d(TAG, "ATRV'den voltaj parse edildi: " + tempVoltage + "V");
+                                    } else {
+                                        Log.w(TAG, "ATRV yanıtı mantıksız voltaj değeri: " + tempVoltage + " (Orijinal: " + cleanedResponse + ")");
+                                    }
+                                } else if (cleanedResponse.matches(".*[0-9.]+V?.*")){
+                                    Log.w(TAG, "ATRV'den voltaj parse edilemedi (string boş kaldı ama desen eşleşiyor): " + cleanedResponse);
+                                } else {
+                                    Log.w(TAG, "ATRV yanıtından sayısal voltaj çıkarılamadı: " + cleanedResponse);
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.e(TAG, "ATRV yanıtı (sayısal kısım) parse edilemedi: '" + voltageString + "' from '" + cleanedResponse + "'", e);
+                            }
+                        } else if (isNoDataResponse) { // Eğer ATRV "NO DATA" döndürürse (bazı adaptörler yapabilir)
+                            Log.i(TAG, "ATRV için 'NO DATA' yanıtı alındı.");
+                            currentPidSuccessfullyProcessed = true; // Bu komut için işlem tamamlandı
+                        } else {
+                            // Diğer hatalı durumlar zaten en başta yakalandı
+                            Log.w(TAG, "ATRV için işlenmeyen yanıt: " + cleanedResponse);
+                        }
+                        dataUpdatedThisParse = true;
+                        break;
+
+                    case CONTROL_MODULE_VOLTAGE_PID: // "0142" PID'i için
+                        vehicleData.setBatteryVoltage(null);
+                        dataHex = extractRelevantData(cleanedResponse, CONTROL_MODULE_VOLTAGE_PID); // dataHex'i burada tanımla
+                        if (dataHex != null && dataHex.length() >= 4) {
+                            try {
+                                int a = Integer.parseInt(dataHex.substring(0, 2), 16);
+                                int b = Integer.parseInt(dataHex.substring(2, 4), 16);
+                                double tempVoltage = ((a * 256.0) + b) / 1000.0;
+                                if (tempVoltage >= 5.0 && tempVoltage <= 20.0) {
+                                    vehicleData.setBatteryVoltage(tempVoltage);
+                                    currentPidSuccessfullyProcessed = true;
+                                    Log.d(TAG, "PID 0142'den voltaj parse edildi: " + tempVoltage + "V");
+                                } else {
+                                    Log.w(TAG, "PID 0142 yanıtı mantıksız voltaj değeri: " + tempVoltage + " (Hex: " + dataHex + ")");
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.e(TAG, "PID 0142 parse NFE: " + dataHex.substring(0, 4) + " from " + cleanedResponse, e);
+                            }
+                        } else if (isNoDataResponse) { // Eğer PID 0142 "NO DATA" döndürürse
+                            Log.i(TAG, "PID 0142 için 'NO DATA' yanıtı alındı.");
+                            currentPidSuccessfullyProcessed = true;
+                        } else {
+                            Log.w(TAG, "PID 0142 için yetersiz veri veya işlenmeyen yanıt: " + (dataHex != null ? dataHex : cleanedResponse));
+                            // Eğer isResponsePotentiallyValidForNull doğruysa, bu da bir tür "başarı" (veri yok ama hata değil)
+                            if (isResponsePotentiallyValidForNull(cleanedResponse, CONTROL_MODULE_VOLTAGE_PID)) {
+                                currentPidSuccessfullyProcessed = true;
+                            }
+                        }
+                        dataUpdatedThisParse = true;
+                        break;
+                    // --- AKÜ VOLTAJI CASE BLOKLARI BİTTİ ---
                     // FUEL_RATE_PID ve FUEL_TYPE_PID ile ilgili case'ler kaldırıldı.
                     default:
                         Log.w(TAG, "parseAndStoreData: Bilinmeyen veya işlenmeyen PID: " + pidWithoutSuffix + " (Yanıt: " + cleanedResponse + ")");
@@ -786,6 +846,28 @@ public class SimpleOBD2Manager {
         // 2. Düşük Yakıt Seviyesi Kontrolü
         if (currentData.getFuelLevel() != null && currentData.getFuelLevel() >= 0 && currentData.getFuelLevel() < THRESHOLD_FUEL_LEVEL_LOW) {
             criticalDataAlertListener.onLowFuelLevel(currentData.getFuelLevel(), THRESHOLD_FUEL_LEVEL_LOW);
+        }
+        // --- YENİ KONTROL EKLE (Akü Voltajı) ---
+        Double currentVoltage = currentData.getBatteryVoltage();
+        Double currentRpm = currentData.getRpm(); // RPM'i alıyoruz
+
+        if (currentVoltage != null && criticalDataAlertListener != null) {
+            boolean engineIsLikelyRunning = (currentRpm != null && currentRpm > 400); // Motorun çalıştığını varsaymak için bir eşik
+
+            if (engineIsLikelyRunning) {
+                if (currentVoltage < THRESHOLD_VOLTAGE_LOW_ENGINE_ON) {
+                    // --- BU SATIRI AKTİF ET/GÜNCELLE ---
+                    criticalDataAlertListener.onLowBatteryVoltage(currentVoltage, THRESHOLD_VOLTAGE_LOW_ENGINE_ON, true);
+                } else if (currentVoltage > THRESHOLD_VOLTAGE_HIGH_ENGINE_ON) {
+                    // --- BU SATIRI AKTİF ET/GÜNCELLE ---
+                    criticalDataAlertListener.onHighBatteryVoltage(currentVoltage, THRESHOLD_VOLTAGE_HIGH_ENGINE_ON, true);
+                }
+            } else {
+                if (currentVoltage < THRESHOLD_VOLTAGE_LOW_ENGINE_OFF) {
+                    // --- BU SATIRI AKTİF ET/GÜNCELLE ---
+                    criticalDataAlertListener.onLowBatteryVoltage(currentVoltage, THRESHOLD_VOLTAGE_LOW_ENGINE_OFF, false);
+                }
+            }
         }
 
         // 3. Yeni DTC Kontrolü
@@ -1218,6 +1300,7 @@ public class SimpleOBD2Manager {
         private Double throttlePosition = null;
         private Double intakeTemp = null;
         private Double mafAirFlow = null;
+        private Double batteryVoltage = null;
         private List<DTC> diagnosticTroubleCodes = new ArrayList<>();
         private String vin = null; // VIN alanı eklendi
 
@@ -1232,6 +1315,7 @@ public class SimpleOBD2Manager {
             this.throttlePosition = other.throttlePosition;
             this.intakeTemp = other.intakeTemp;
             this.mafAirFlow = other.mafAirFlow;
+            this.batteryVoltage = other.batteryVoltage;
             this.diagnosticTroubleCodes = new ArrayList<>(other.diagnosticTroubleCodes);
             this.vin = other.vin; // VIN kopyalandı
         }
@@ -1240,8 +1324,8 @@ public class SimpleOBD2Manager {
             return new VehicleData(this);
         }
 
-        public void setSpecificFieldToNull(String pid) {
-            switch (pid) {
+        public void setSpecificFieldToNull(String pidOrCommand) {
+            switch (pidOrCommand) {
                 case VEHICLE_SPEED_PID: this.speed = 0.0; break;
                 case ENGINE_RPM_PID: this.rpm = 0.0; break;
                 case COOLANT_TEMP_PID: this.engineTemp = null; break;
@@ -1250,6 +1334,10 @@ public class SimpleOBD2Manager {
                 case FUEL_LEVEL_PID: this.fuelLevel = null; break;
                 case INTAKE_TEMP_PID: this.intakeTemp = null; break;
                 case MAF_AIR_FLOW_PID: this.mafAirFlow = null; break;
+                case READ_VOLTAGE_COMMAND:
+                case CONTROL_MODULE_VOLTAGE_PID:
+                    this.batteryVoltage = null;
+                    break;
                 case DTC_REQUEST_PID:
                     if (this.diagnosticTroubleCodes != null) {
                         this.diagnosticTroubleCodes.clear();
@@ -1284,6 +1372,8 @@ public class SimpleOBD2Manager {
         public void setIntakeTemp(Double intakeTemp) { this.intakeTemp = intakeTemp; }
         public Double getMafAirFlow() { return mafAirFlow; }
         public void setMafAirFlow(Double mafAirFlow) { this.mafAirFlow = mafAirFlow; }
+        public Double getBatteryVoltage() { return batteryVoltage; }
+        public void setBatteryVoltage(Double batteryVoltage) { this.batteryVoltage = batteryVoltage; }
         public List<DTC> getDiagnosticTroubleCodes() { return diagnosticTroubleCodes; }
         public void setDiagnosticTroubleCodes(List<DTC> codes) { this.diagnosticTroubleCodes = codes; }
         public String getVin() { return vin; } // VIN getter
