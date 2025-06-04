@@ -615,12 +615,14 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/obd2_protocol_label"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurface" />
+                android:textColor="?attr/colorOnSurface"
+                android:visibility="gone" />
             <Spinner
                 android:id="@+id/spinnerProtocol"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Quick Services -->
             <TextView
