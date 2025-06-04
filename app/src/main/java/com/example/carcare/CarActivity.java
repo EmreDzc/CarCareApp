@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,6 +101,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
     private MaterialCardView cardMetricBatteryVoltage;
     private TextView tvBatteryVoltageValue;
+    private Spinner spinnerProtocol;
+    private TextView tvProtocolLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +169,13 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
         cardMetricBatteryVoltage = findViewById(R.id.cardMetricBatteryVoltage);
         tvBatteryVoltageValue = findViewById(R.id.tvBatteryVoltageValue);
+
+        tvProtocolLabel = findViewById(R.id.tvProtocolLabel);
+        spinnerProtocol = findViewById(R.id.spinnerProtocol);
+        ArrayAdapter<CharSequence> protocolAdapter = ArrayAdapter.createFromResource(this,
+                R.array.obd2_protocol_display, android.R.layout.simple_spinner_item);
+        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProtocol.setAdapter(protocolAdapter);
 
         cardDtcStatus = findViewById(R.id.cardDtcStatus);
         imgDtcIcon = findViewById(R.id.imgDtcIcon);
@@ -847,6 +858,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
     private void connectToOBD() {
         Log.d(TAG, "connectToOBD çağrıldı.");
+        boolean wasProtocolSpinnerVisible = spinnerProtocol != null && spinnerProtocol.getVisibility() == View.VISIBLE;
         if (CarCareApplication.isObd2Connected()) {
             if (obd2Manager != null) obd2Manager.stopReading();
             if (bluetoothManager != null) bluetoothManager.disconnect();
@@ -895,6 +907,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                 .setItems(deviceNames, (dialog, which) -> {
                     String deviceAddress = deviceAddresses[which];
                     Toast.makeText(this, "Bağlanılıyor: " + deviceNames[which], Toast.LENGTH_SHORT).show();
+                    final boolean finalWasProtocolSpinnerVisible = wasProtocolSpinnerVisible;
                     bluetoothManager.connectToDevice(deviceAddress, new BluetoothManager.ConnectionCallback() {
                         @Override
                         public void onConnectionSuccessful() {
@@ -903,6 +916,10 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 updateConnectionStatus();
                                 Toast.makeText(CarActivity.this, "OBD2 cihazına bağlandı!", Toast.LENGTH_SHORT).show();
                                 if (obd2Manager != null) obd2Manager.startReading();
+                                if (finalWasProtocolSpinnerVisible && spinnerProtocol != null && tvProtocolLabel != null) {
+                                    spinnerProtocol.setVisibility(View.GONE);
+                                    tvProtocolLabel.setVisibility(View.GONE);
+                                }
                             });
                         }
                         @Override
