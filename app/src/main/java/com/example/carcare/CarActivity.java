@@ -9,12 +9,17 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,16 +104,23 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
     private MaterialCardView cardMetricBatteryVoltage;
     private TextView tvBatteryVoltageValue;
+    private Spinner spinnerProtocol;
+    private boolean autoProtocolAttempt;
+    private Handler protocolHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
+        protocolHandler = new Handler(Looper.getMainLooper());
+        autoProtocolAttempt = false;
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         initializeViews();
+        setupProtocolSpinner();
         setupBottomNavigation();
         loadUserAndCarData();
 
@@ -166,6 +178,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         cardMetricBatteryVoltage = findViewById(R.id.cardMetricBatteryVoltage);
         tvBatteryVoltageValue = findViewById(R.id.tvBatteryVoltageValue);
 
+        spinnerProtocol = findViewById(R.id.spinnerProtocol);
+
         cardDtcStatus = findViewById(R.id.cardDtcStatus);
         imgDtcIcon = findViewById(R.id.imgDtcIcon);
         tvDtcStatusMessage = findViewById(R.id.tvDtcStatusMessage);
@@ -175,6 +189,42 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
 
         Log.d(TAG, "UI elemanları başarıyla bağlandı");
+    }
+
+    private void setupProtocolSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.obd2_protocol_display, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProtocol.setAdapter(adapter);
+
+        final String[] protocolCodes = getResources().getStringArray(R.array.obd2_protocol_codes);
+        SharedPreferences prefs = getSharedPreferences("OBD2Prefs", MODE_PRIVATE);
+        int savedCode = prefs.getInt("protocol_code", 0);
+        int selectedIndex = 0;
+        for (int i = 0; i < protocolCodes.length; i++) {
+            if (protocolCodes[i].equals(String.valueOf(savedCode))) {
+                selectedIndex = i;
+                break;
+            }
+        }
+        spinnerProtocol.setSelection(selectedIndex);
+
+        spinnerProtocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int code = Integer.parseInt(protocolCodes[position]);
+                prefs.edit().putInt("protocol_code", code).apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private int getSelectedProtocolCode() {
+        SharedPreferences prefs = getSharedPreferences("OBD2Prefs", MODE_PRIVATE);
+        return prefs.getInt("protocol_code", 0);
     }
 
     private void setupBottomNavigation() {
@@ -290,7 +340,15 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         CarCareApplication.setObd2Connected(false);
                         updateConnectionStatus(); // Bu metod içinde cooldown ve notifiedDTCs temizliği yapılacak
                         showDefaultValues();
-                        Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
+                        if (autoProtocolAttempt) {
+                            autoProtocolAttempt = false;
+                            View label = findViewById(R.id.tvProtocolLabel);
+                            if (label != null) label.setVisibility(View.VISIBLE);
+                            if (spinnerProtocol != null) spinnerProtocol.setVisibility(View.VISIBLE);
+                            Toast.makeText(CarActivity.this, "Automatic protocol failed. Please select protocol and reconnect.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
+                        }
                         lastProcessedVin = null;
                     });
                 }
@@ -902,7 +960,16 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                             runOnUiThread(() -> {
                                 updateConnectionStatus();
                                 Toast.makeText(CarActivity.this, "OBD2 cihazına bağlandı!", Toast.LENGTH_SHORT).show();
-                                if (obd2Manager != null) obd2Manager.startReading();
+                                if (obd2Manager != null) {
+                                    int selected = getSelectedProtocolCode();
+                                    if (spinnerProtocol.getVisibility() != View.VISIBLE) {
+                                        selected = 0;
+                                        autoProtocolAttempt = true;
+                                        protocolHandler.postDelayed(() -> autoProtocolAttempt = false, 10000);
+                                    }
+                                    obd2Manager.setProtocol(selected);
+                                    obd2Manager.startReading();
+                                }
                             });
                         }
                         @Override
