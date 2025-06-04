@@ -27,9 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.text.Html;
 import android.widget.LinearLayout; // Eğer tıklanabilir alanlarınız LinearLayout ise
-import android.os.Build; // Build.VERSION kontrolü için
 
 import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.models.NearbyPlace;
@@ -140,8 +138,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         setupMaintenanceScheduler();
         setupWelcomeNotification();
         carLogosService = new CarLogosService();
-        userVehicleService = new UserVehicleService();
-
         userVehicleService = new UserVehicleService();
     }
 
