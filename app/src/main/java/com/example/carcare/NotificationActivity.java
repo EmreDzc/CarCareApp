@@ -35,6 +35,8 @@ public class NotificationActivity extends AppCompatActivity {
     private List<NotificationData> notifications;
     private TextView errorTextView;
 
+    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

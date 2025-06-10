@@ -148,7 +148,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Close"
-        app:backgroundTint="?attr/colorOnSurface"
+        app:backgroundTint="?attr/colorPrimary"
         android:textColor="?attr/colorSurface"
         android:textStyle="normal"
         app:cornerRadius="8dp"

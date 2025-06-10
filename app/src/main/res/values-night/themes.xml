@@ -5,7 +5,6 @@
         <item name="colorPrimary">@color/primary_dark</item>
         <item name="colorPrimaryVariant">@color/primary_variant_dark</item>
         <item name="colorOnPrimary">@color/on_primary_dark</item>
-
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondary_dark</item>
         <item name="colorSecondaryVariant">@color/secondary_variant_dark</item>
@@ -26,4 +25,5 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
+
 </resources>

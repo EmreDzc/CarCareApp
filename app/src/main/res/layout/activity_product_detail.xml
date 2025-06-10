@@ -199,7 +199,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="395,15 TL"
-        android:textColor="@color/orange_primary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginTop="12dp"/>
@@ -292,11 +292,11 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:id="@+id/btn_submit_review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Değerlendirmeyi Gönder"
         android:layout_gravity="end"
-        app:backgroundTint="@color/blue_primary"
+        android:layout_marginBottom="24dp"
+        android:text="Değerlendirmeyi Gönder"
         android:textColor="@color/white"
-        android:layout_marginBottom="24dp"/>
+        app:backgroundTint="@color/blue_primary" />
 
 </LinearLayout>
 </androidx.core.widget.NestedScrollView>
@@ -336,7 +336,7 @@ app:hideOnScroll="false"> <!-- Kaydırıldığında gizlenmemesi için false -->
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="395,15 TL"
-        android:textColor="@color/orange_primary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"/>
 
@@ -378,7 +378,7 @@ android:textStyle="bold"/>
     android:layout_weight="1"
     android:text="Sepete Ekle"
     android:textColor="#FFFFFF"
-    app:backgroundTint="@color/orange_primary"
+    app:backgroundTint="?attr/colorPrimary"
 app:cornerRadius="8dp"
 android:textSize="14sp"
 android:paddingStart="8dp"

@@ -540,7 +540,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 loadAndDisplayCarLogo(carBrandForLogo);
                             } else {
                                 Log.w(TAG, "loadUserAndCarData: Logo yüklemek için geçerli marka adı bulunamadı. Varsayılan logo.");
-                                if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
+                                if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
                             }
 
                         } else {
@@ -554,7 +554,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
                             }
                             setDefaultCarInfo();
-                            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
+                            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -574,7 +574,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             Log.w(TAG, "loadUserAndCarData: Kullanıcı giriş yapmamış.");
             tvWelcomeUser.setText("Guest");
             setDefaultCarInfo();
-            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
+            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
         }
     }
 
@@ -585,7 +585,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             Log.w(TAG, "loadAndDisplayCarLogo: Marka adı boş/null veya ImageView null. Marka: '" + carBrandName + "'. Varsayılan logo gösteriliyor.");
             if (imgCarLogo != null) {
                 Glide.with(this)
-                        .load(R.drawable.ic_car_default)
+                        .load(R.drawable.ic_default_car)
                         .into(imgCarLogo);
             }
             return;
@@ -601,7 +601,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         Log.d(TAG, "✅ Base64 logo başarıyla yüklendi: " + carBrandName);
                         Glide.with(CarActivity.this)
                                 .load(bitmap)
-                                .placeholder(R.drawable.ic_car_default)
+                                .placeholder(R.drawable.ic_default_car)
                                 .error(R.drawable.ic_car_default_error)
                                 .into(imgCarLogo);
                     } else {
@@ -622,7 +622,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         Log.d(TAG, "✅ URL logo yükleniyor: " + logoUrl + " (Marka: " + carBrandName + ")");
                         Glide.with(CarActivity.this)
                                 .load(logoUrl)
-                                .placeholder(R.drawable.ic_car_default)
+                                .placeholder(R.drawable.ic_default_car)
                                 .error(R.drawable.ic_car_default_error)
                                 .into(imgCarLogo);
                     } else {
@@ -642,7 +642,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                     Log.w(TAG, "⚠️ '" + carBrandName + "' için logo bulunamadı. Varsayılan gösteriliyor.");
                     if (imgCarLogo != null) {
                         Glide.with(CarActivity.this)
-                                .load(R.drawable.ic_car_default)
+                                .load(R.drawable.ic_default_car)
                                 .into(imgCarLogo);
                     }
                 });

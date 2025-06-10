@@ -55,7 +55,7 @@
             android:text="$199.99"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#4285F4"
+            android:textColor="?attr/colorPrimary"
             android:gravity="center"
             android:layout_marginBottom="12dp" />
 
@@ -71,7 +71,7 @@
                 android:layout_alignParentStart="true"
                 android:text="🛒 Add to Cart"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#4285F4"
+                android:backgroundTint="?attr/colorPrimary"
                 android:textSize="12sp"
                 android:minWidth="120dp" />
 

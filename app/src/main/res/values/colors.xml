@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Temel renkler (Mevcutları koruyalım, gerekirse buradan seçeriz) -->
-    <color name="primary">#6750A4</color>
+    <color name="primary">#03045E</color>
     <color name="primary_variant">#4F378B</color>
     <color name="secondary">#E8DEF8</color>
     <color name="secondary_variant">#D0BCFF</color>
 
     <!-- Arka plan renkleri -->
     <!-- Referans görsele daha yakın bir arka plan için -->
-    <color name="background_app">#F5F7FA</color> <!-- Yeni eklenen - Referans görsele daha yakın -->
+    <color name="background_app">#efefef</color> <!-- Yeni eklenen - Referans görsele daha yakın -->
     <color name="background">#FFFBFE</color> <!-- Mevcut - Belki background_app kullanılır -->
     <color name="surface">#FFFFFF</color> <!-- Kartlar ve ana yüzeyler için beyaz -->
     <color name="surface_variant">#E7E0EC</color>
@@ -100,7 +100,7 @@
     <color name="icon_bg_grey">#607D8B</color>
 
     <!-- Arka plan renkleri -->
-    <color name="background_color">#F8F9FA</color>
+    <color name="background_color">#efefef</color>
 
 
     <color name="logout_red">#F44336</color>

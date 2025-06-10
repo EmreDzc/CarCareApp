@@ -24,8 +24,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Profil"
-                android:textSize="28sp"
-                android:textStyle="bold"
+                android:textSize="22sp"
+
                 android:textColor="?attr/colorOnBackground"
                 android:layout_marginBottom="24dp"
                 android:layout_marginStart="8dp" />
@@ -50,19 +50,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/icon_bg_blue">
+
 
                         <ImageView
                             android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_person"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="?attr/colorPrimary" />
+
 
                     <!-- Metin -->
                     <TextView
@@ -104,19 +100,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/icon_bg_green">
+
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_shopping_bag"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="?attr/colorPrimary" />
+
 
                     <!-- Metin -->
                     <TextView
@@ -158,19 +150,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/icon_bg_orange">
+
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_location"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="?attr/colorPrimary" />
+
 
                     <!-- Metin -->
                     <TextView
@@ -212,19 +200,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/icon_bg_red">
+
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_favorite"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="?attr/colorPrimary" />
+
 
                     <!-- Metin -->
                     <TextView
@@ -266,19 +250,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/icon_bg_purple">
+
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_credit_card"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="?attr/colorPrimary" />
+
 
                     <!-- Metin -->
                     <TextView
@@ -327,19 +307,15 @@
                     android:gravity="center_vertical">
 
                     <!-- İkon Container -->
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_background_circle"
-                        android:backgroundTint="@color/logout_red">
+
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_logout"
-                            app:tint="@color/white" />
-                    </FrameLayout>
+                            app:tint="@color/logout_red" />
+
 
                     <!-- Metin -->
                     <TextView

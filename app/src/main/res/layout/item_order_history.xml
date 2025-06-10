@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Detaylar >"
                 android:textSize="14sp"
-                android:textColor="#FF9800"
+                android:textColor="?attr/colorPrimary"
                 android:background="?attr/selectableItemBackground"
                 android:padding="8dp" />
         </LinearLayout>

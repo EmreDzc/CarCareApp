@@ -2,42 +2,62 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 
-    <!-- İçerik Alanı: Hata mesajı ve ListView -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Notifications"
+            app:titleTextColor="?attr/colorOnSurface"
+            app:titleTextAppearance="@style/AppToolbarTitle" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="0dp"
         android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Hata mesajı için TextView (varsayılan görünmez) -->
         <TextView
             android:id="@+id/errorTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"/>
+            android:textColor="?attr/colorError"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Bir hata oluştu."/>
 
-        <!-- Bildirimleri listelemek için ListView -->
+        <!-- ÇÖZÜM: ListView'a padding ve clipToPadding eklendi -->
         <ListView
             android:id="@+id/notificationListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="1dp"
-            android:padding="16dp" />
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clipToPadding="false" />
+
     </LinearLayout>
 
-    <!-- Persistent Bottom Navigation -->
     <include layout="@layout/include_bottom_nav" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

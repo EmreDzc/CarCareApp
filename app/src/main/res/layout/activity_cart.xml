@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:text="Siparişi Onayla"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#4285F4"/>
+            android:backgroundTint="?attr/colorPrimary"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

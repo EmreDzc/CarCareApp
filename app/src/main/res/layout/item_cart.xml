@@ -47,7 +47,7 @@
                 android:text="$199.99"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#4285F4"
+                android:textColor="?attr/colorPrimary"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
 
@@ -58,7 +58,7 @@
             android:text="Çıkar"
             android:textSize="12sp"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#FF5252"
+            android:backgroundTint="?attr/colorPrimary"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

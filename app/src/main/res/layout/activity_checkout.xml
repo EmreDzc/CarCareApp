@@ -638,7 +638,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/button_purple_background"
+            android:background="?attr/colorPrimary"
             android:text="Onayla ve Bitir • 113,39 TL"
             android:textColor="@android:color/white"
             android:textSize="16sp"

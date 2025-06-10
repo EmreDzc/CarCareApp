@@ -59,16 +59,16 @@
             android:id="@+id/text_search_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ara"
-            android:textColor="@color/blue_primary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:clickable="true"
             android:focusable="true"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="Ara"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:visibility="gone"
-        tools:visibility="visible"/>
+            tools:visibility="visible" />
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView

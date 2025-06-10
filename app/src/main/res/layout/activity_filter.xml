@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Clear All"
-                    android:textColor="#4285F4"
+                    android:textColor="?attr/colorPrimary"
                     android:background="@android:color/transparent"
                     android:layout_alignParentEnd="true"/>
             </RelativeLayout>
@@ -249,7 +249,7 @@
         android:layout_height="56dp"
         android:text="Apply Filters"
         android:textColor="#FFFFFF"
-        android:backgroundTint="#4285F4"
+        android:backgroundTint="?attr/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_margin="16dp"/>

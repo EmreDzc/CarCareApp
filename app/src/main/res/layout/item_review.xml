@@ -100,7 +100,7 @@ tools:visibility="visible">
     tools:text="Housebags"
     android:textSize="12sp"
     android:textStyle="bold"
-    android:textColor="@color/blue_primary"/> <!-- Kendi renkleriniz -->
+    android:textColor="?attr/colorPrimary"/> <!-- Kendi renkleriniz -->
 </LinearLayout>
 
     <!-- Sağdaki Butonlar -->
