@@ -9,17 +9,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +22,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import android.text.Html;
 import android.widget.LinearLayout; // Eğer tıklanabilir alanlarınız LinearLayout ise
+import android.os.Build; // Build.VERSION kontrolü için
 
 import com.example.carcare.ProfilePage.ProfileActivity;
 import com.example.carcare.models.NearbyPlace;
@@ -102,23 +99,16 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
     private LinearLayout layoutMetricEngineLoad, layoutMetricIntakeAirTemp, layoutMetricMaf;
     private MaterialCardView cardMetricBatteryVoltage;
     private TextView tvBatteryVoltageValue;
-    private Spinner spinnerProtocol;
-    private boolean autoProtocolAttempt;
-    private Handler protocolHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
-        protocolHandler = new Handler(Looper.getMainLooper());
-        autoProtocolAttempt = false;
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         initializeViews();
-        setupProtocolSpinner();
         setupBottomNavigation();
         loadUserAndCarData();
 
@@ -138,6 +128,8 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         setupMaintenanceScheduler();
         setupWelcomeNotification();
         carLogosService = new CarLogosService();
+        userVehicleService = new UserVehicleService();
+
         userVehicleService = new UserVehicleService();
     }
 
@@ -174,8 +166,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
         cardMetricBatteryVoltage = findViewById(R.id.cardMetricBatteryVoltage);
         tvBatteryVoltageValue = findViewById(R.id.tvBatteryVoltageValue);
 
-        spinnerProtocol = findViewById(R.id.spinnerProtocol);
-
         cardDtcStatus = findViewById(R.id.cardDtcStatus);
         imgDtcIcon = findViewById(R.id.imgDtcIcon);
         tvDtcStatusMessage = findViewById(R.id.tvDtcStatusMessage);
@@ -185,42 +175,6 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
 
 
         Log.d(TAG, "UI elemanları başarıyla bağlandı");
-    }
-
-    private void setupProtocolSpinner() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.obd2_protocol_display, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerProtocol.setAdapter(adapter);
-
-        final String[] protocolCodes = getResources().getStringArray(R.array.obd2_protocol_codes);
-        SharedPreferences prefs = getSharedPreferences("OBD2Prefs", MODE_PRIVATE);
-        int savedCode = prefs.getInt("protocol_code", 0);
-        int selectedIndex = 0;
-        for (int i = 0; i < protocolCodes.length; i++) {
-            if (protocolCodes[i].equals(String.valueOf(savedCode))) {
-                selectedIndex = i;
-                break;
-            }
-        }
-        spinnerProtocol.setSelection(selectedIndex);
-
-        spinnerProtocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int code = Integer.parseInt(protocolCodes[position]);
-                prefs.edit().putInt("protocol_code", code).apply();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
-
-    private int getSelectedProtocolCode() {
-        SharedPreferences prefs = getSharedPreferences("OBD2Prefs", MODE_PRIVATE);
-        return prefs.getInt("protocol_code", 0);
     }
 
     private void setupBottomNavigation() {
@@ -336,15 +290,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         CarCareApplication.setObd2Connected(false);
                         updateConnectionStatus(); // Bu metod içinde cooldown ve notifiedDTCs temizliği yapılacak
                         showDefaultValues();
-                        if (autoProtocolAttempt) {
-                            autoProtocolAttempt = false;
-                            View label = findViewById(R.id.tvProtocolLabel);
-                            if (label != null) label.setVisibility(View.VISIBLE);
-                            if (spinnerProtocol != null) spinnerProtocol.setVisibility(View.VISIBLE);
-                            Toast.makeText(CarActivity.this, "Automatic protocol failed. Please select protocol and reconnect.", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(CarActivity.this, "OBD2 bağlantısı kesildi", Toast.LENGTH_SHORT).show();
                         lastProcessedVin = null;
                     });
                 }
@@ -540,7 +486,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 loadAndDisplayCarLogo(carBrandForLogo);
                             } else {
                                 Log.w(TAG, "loadUserAndCarData: Logo yüklemek için geçerli marka adı bulunamadı. Varsayılan logo.");
-                                if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
+                                if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
                             }
 
                         } else {
@@ -554,7 +500,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                                 tvWelcomeUser.setText(email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Car Owner");
                             }
                             setDefaultCarInfo();
-                            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
+                            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -574,7 +520,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             Log.w(TAG, "loadUserAndCarData: Kullanıcı giriş yapmamış.");
             tvWelcomeUser.setText("Guest");
             setDefaultCarInfo();
-            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_default_car).into(imgCarLogo);
+            if (imgCarLogo != null) Glide.with(CarActivity.this).load(R.drawable.ic_car_default).into(imgCarLogo);
         }
     }
 
@@ -585,7 +531,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
             Log.w(TAG, "loadAndDisplayCarLogo: Marka adı boş/null veya ImageView null. Marka: '" + carBrandName + "'. Varsayılan logo gösteriliyor.");
             if (imgCarLogo != null) {
                 Glide.with(this)
-                        .load(R.drawable.ic_default_car)
+                        .load(R.drawable.ic_car_default)
                         .into(imgCarLogo);
             }
             return;
@@ -601,7 +547,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         Log.d(TAG, "✅ Base64 logo başarıyla yüklendi: " + carBrandName);
                         Glide.with(CarActivity.this)
                                 .load(bitmap)
-                                .placeholder(R.drawable.ic_default_car)
+                                .placeholder(R.drawable.ic_car_default)
                                 .error(R.drawable.ic_car_default_error)
                                 .into(imgCarLogo);
                     } else {
@@ -622,7 +568,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                         Log.d(TAG, "✅ URL logo yükleniyor: " + logoUrl + " (Marka: " + carBrandName + ")");
                         Glide.with(CarActivity.this)
                                 .load(logoUrl)
-                                .placeholder(R.drawable.ic_default_car)
+                                .placeholder(R.drawable.ic_car_default)
                                 .error(R.drawable.ic_car_default_error)
                                 .into(imgCarLogo);
                     } else {
@@ -642,7 +588,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                     Log.w(TAG, "⚠️ '" + carBrandName + "' için logo bulunamadı. Varsayılan gösteriliyor.");
                     if (imgCarLogo != null) {
                         Glide.with(CarActivity.this)
-                                .load(R.drawable.ic_default_car)
+                                .load(R.drawable.ic_car_default)
                                 .into(imgCarLogo);
                     }
                 });
@@ -956,16 +902,7 @@ public class CarActivity extends AppCompatActivity implements CriticalDataAlertL
                             runOnUiThread(() -> {
                                 updateConnectionStatus();
                                 Toast.makeText(CarActivity.this, "OBD2 cihazına bağlandı!", Toast.LENGTH_SHORT).show();
-                                if (obd2Manager != null) {
-                                    int selected = getSelectedProtocolCode();
-                                    if (spinnerProtocol.getVisibility() != View.VISIBLE) {
-                                        selected = 0;
-                                        autoProtocolAttempt = true;
-                                        protocolHandler.postDelayed(() -> autoProtocolAttempt = false, 10000);
-                                    }
-                                    obd2Manager.setProtocol(selected);
-                                    obd2Manager.startReading();
-                                }
+                                if (obd2Manager != null) obd2Manager.startReading();
                             });
                         }
                         @Override
