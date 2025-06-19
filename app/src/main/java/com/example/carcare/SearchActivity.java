@@ -53,8 +53,7 @@ public class SearchActivity extends AppCompatActivity {
     // İsteğe bağlı: Son gezilen ürünler ve popüler aramalar için
     private RecyclerView recyclerLastViewedProducts;
     private ChipGroup chipGroupPopularSearches;
-    // private LastViewedAdapter lastViewedAdapter;
-    // private List<Product> lastViewedProductList;
+
 
     private SharedPreferences searchPrefs;
     private List<String> searchHistoryList;
@@ -87,9 +86,6 @@ public class SearchActivity extends AppCompatActivity {
         layoutSearchHistoryHeader = findViewById(R.id.layout_search_history_header);
         btnClearSearchHistory = findViewById(R.id.btn_clear_search_history);
 
-        // İsteğe bağlı kısımlar
-        // recyclerLastViewedProducts = findViewById(R.id.recycler_last_viewed_products);
-        // chipGroupPopularSearches = findViewById(R.id.chip_group_popular_searches);
     }
 
     private void setupListeners() {
@@ -163,10 +159,7 @@ public class SearchActivity extends AppCompatActivity {
     private void loadSearchHistory() {
         Set<String> historySet = searchPrefs.getStringSet(KEY_SEARCH_HISTORY, new HashSet<>());
         searchHistoryList = new ArrayList<>(historySet);
-        // Genellikle en son arananlar üstte olsun istenir, ancak Set sıralamayı garanti etmez.
-        // Kaydederken listeyi sıralı tuttuğumuz için burada direkt kullanabiliriz.
-        // Veya burada Collections.reverse(searchHistoryList); yapılabilir.
-        // Şimdilik saveSearchQuery'deki sıralamaya güveniyoruz.
+
 
         chipGroupSearchHistory.removeAllViews();
         if (searchHistoryList.isEmpty()) {
@@ -220,8 +213,4 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    // Son gezilen ürünler ve popüler aramalar için metodlar eklenebilir.
-    // Örneğin:
-    // private void loadLastViewedProducts() { /* ... */ }
-    // private void loadPopularSearches() { /* ... */ }
 }

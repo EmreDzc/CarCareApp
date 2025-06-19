@@ -23,12 +23,12 @@ public class AddressPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new BillingAddressFragment();
             default:
-                return new DeliveryAddressFragment(); // Varsayılan olarak ilk sekme
+                return new DeliveryAddressFragment();
         }
     }
 
     @Override
     public int getItemCount() {
-        return 2; // İki sekmemiz var: Teslimat ve Fatura
+        return 2;
     }
 }

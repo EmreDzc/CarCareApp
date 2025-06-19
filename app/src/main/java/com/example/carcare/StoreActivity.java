@@ -54,7 +54,6 @@ public class StoreActivity extends AppCompatActivity {
     private ImageButton favoritesButton, cartButton;
     private FloatingActionButton fabAdmin; // FAB için tanımlama
 
-    // FilterActivity'den sonuç almak için Launcher
     private ActivityResultLauncher<Intent> filterActivityResultLauncher;
     private ActivityResultLauncher<Intent> searchActivityLauncher;
 
@@ -88,16 +87,8 @@ public class StoreActivity extends AppCompatActivity {
                         String searchQuery = result.getData().getStringExtra("SEARCH_QUERY");
                         if (searchQuery != null && !searchQuery.isEmpty()) {
                             if (searchBar != null) {
-                                searchBar.setText(searchQuery); // Arama çubuğuna sorguyu yaz
-                                // Arama çubuğuna yazılan metni adapter'a iletmek için
-                                // TextWatcher'ın onTextChanged'i zaten tetiklenecektir.
-                                // Veya doğrudan filtrelemeyi/yüklemeyi tetikleyebilirsiniz:
-                                // if(adapter != null) adapter.filter(searchQuery);
+                                searchBar.setText(searchQuery);
                             }
-                            // Gelen sorguyla ürünleri yüklemek için:
-                            // loadProductsWithQuery(searchQuery); // Özel bir metodunuz varsa
-                            // Veya mevcut loadProducts'ı kullanıp, TextWatcher'ın filtrelemesini bekleyin
-                            // TextWatcher, searchBar.setText() sonrası zaten çalışacak
                         }
                     }
                 }
@@ -197,7 +188,7 @@ public class StoreActivity extends AppCompatActivity {
                 Intent intent = new Intent(StoreActivity.this, WishlistActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(StoreActivity.this, "Favorileri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StoreActivity.this, "You must be logged in to see favorites..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -225,7 +216,7 @@ public class StoreActivity extends AppCompatActivity {
                 if (currentUser != null) {
                     intent = new Intent(this, NotificationActivity.class);
                 } else {
-                    Toast.makeText(StoreActivity.this, "Bildirimleri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StoreActivity.this, "You must be logged in to see notifications.", Toast.LENGTH_SHORT).show();
                     return false; // İşlemi iptal et, sayfada kal
                 }
             } else if (id == R.id.nav_settings) {
@@ -271,7 +262,7 @@ public class StoreActivity extends AppCompatActivity {
             editor.apply();
 
             filterButton.setText("Show Filters");
-            Toast.makeText(this, "Filtreler kaldırıldı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Filters removed", Toast.LENGTH_SHORT).show();
             loadProducts(); // Tüm ürünleri yükle
         } else {
             // FilterActivity'i aç
@@ -347,10 +338,6 @@ public class StoreActivity extends AppCompatActivity {
             product.setAverageRating(averageRating); // Rating bilgisini set et
             product.setTotalReviews(totalReviews);   // Review sayısını set et
 
-            // Diğer alanları da parse edebilirsiniz (modelCode, sellerName vb.)
-            // product.setModelCode(document.getString("modelCode"));
-            // ...
-
             return product;
         } catch (Exception e) {
             Log.e(TAG, "Ürün parse edilirken hata: " + document.getId(), e);
@@ -378,7 +365,7 @@ public class StoreActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Firebase sorgusu başarısız", e);
                     showLoading(false);
-                    showError("Ürünler yüklenirken hata oluştu: " + e.getMessage());
+                    showError("An error occurred while loading products: " + e.getMessage());
                 });
     }
 
@@ -428,10 +415,6 @@ public class StoreActivity extends AppCompatActivity {
         if (maxPrice < Float.MAX_VALUE) {
             query = query.whereLessThanOrEqualTo("price", maxPrice);
         }
-
-        // === SIRALAMA MANTIĞI (DÜZELTİLMİŞ KISIM) ===
-        // Firestore kuralı: Bir alanda aralık filtresi (<, <=, >, >=) varsa,
-        // ilk orderBy() aynı alana göre yapılmalıdır.
         switch (sortBy) {
             case "Artan Fiyat":
                 query = query.orderBy("price", Query.Direction.ASCENDING);
@@ -507,7 +490,7 @@ public class StoreActivity extends AppCompatActivity {
                     Log.e(TAG, "Filtered products query failed", e);
                     showLoading(false);
                     // Hata mesajını doğrudan göster
-                    showError("Filtrelenmiş ürünler yüklenirken hata:\n" + e.getMessage());
+                    showError("Error loading filtered products:\n" + e.getMessage());
                 });
     }
 
@@ -528,7 +511,7 @@ public class StoreActivity extends AppCompatActivity {
 
     private void updateProductDisplay() {
         if (products.isEmpty()) {
-            showError("Filtreyle eşleşen ürün bulunamadı veya henüz ürün yok.");
+            showError("No products were found matching the filter or there are no products yet.");
         } else {
             hideError();
             if (adapter == null) {

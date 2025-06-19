@@ -70,7 +70,7 @@ public class WishlistActivity extends AppCompatActivity {
     private void loadWishlist() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            showEmptyMessage("Lütfen önce giriş yapın.");
+            showEmptyMessage("Please log in first.");
             return;
         }
         showLoading(true);
@@ -82,7 +82,7 @@ public class WishlistActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         showLoading(false);
-                        showEmptyMessage("Favori listeniz boş.");
+                        showEmptyMessage("Your favorites list is empty.");
                         wishlistItems.clear(); // Önceki verileri temizle
                         adapter.notifyDataSetChanged();
                         return;
@@ -147,9 +147,9 @@ public class WishlistActivity extends AppCompatActivity {
 
                                 if (wishlistItems.isEmpty() && queryDocumentSnapshots.size() > 0 && duplicateFavoriteDocsToDelete.size() == queryDocumentSnapshots.size()) {
                                     // Tüm favoriler ya duplikeydi ya da karşılık gelen ürün yoktu
-                                    showEmptyMessage("Favori listenizdeki ürünler artık mevcut değil veya hatalı kayıtlar temizlendi.");
+                                    showEmptyMessage("Items in your favorite list are no longer available or incorrect records have been cleared.");
                                 } else if (wishlistItems.isEmpty()) {
-                                    showEmptyMessage("Favori listeniz boş.");
+                                    showEmptyMessage("Your favorites list is empty.");
                                 } else {
                                     emptyMessage.setVisibility(View.GONE);
                                     recyclerView.setVisibility(View.VISIBLE);
@@ -163,7 +163,7 @@ public class WishlistActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
-                    showEmptyMessage("Favoriler yüklenirken bir hata oluştu.");
+                    showEmptyMessage("An error occurred while loading favorites.");
                     Log.e(TAG, "Favoriler yüklenemedi", e);
                     Toast.makeText(this, "Hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });

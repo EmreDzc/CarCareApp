@@ -79,13 +79,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if (currentUser != null) {
                     startActivity(new Intent(ProfileActivity.this, NotificationActivity.class));
                 } else {
-                    Toast.makeText(ProfileActivity.this, "Bildirimleri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, "You must be logged in to see notifications.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_settings) {
-                return true; // Zaten buradayız
+                return true;
             }
             return false;
         });
@@ -97,14 +97,11 @@ public class ProfileActivity extends AppCompatActivity {
         // Hesap Ayarları
         MaterialCardView cardAccountSettings = findViewById(R.id.card_account_settings);
         cardAccountSettings.setOnClickListener(v -> {
-            Log.d(TAG, "Hesap Ayarları kartına tıklandı");
             try {
                 Intent intent = new Intent(ProfileActivity.this, AccountSettingsActivity.class);
                 startActivity(intent);
-                Log.d(TAG, "AccountSettingsActivity başlatıldı");
             } catch (Exception e) {
-                Log.e(TAG, "AccountSettingsActivity başlatılamadı", e);
-                Toast.makeText(this, "Sayfa açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Page could not be opened: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -116,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, OrderHistoryActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(ProfileActivity.this, "Siparişleri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "You must log in to see orders..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -125,18 +122,15 @@ public class ProfileActivity extends AppCompatActivity {
         cardAddresses.setOnClickListener(v -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
-                Log.d(TAG, "Adreslerim kartına tıklandı");
                 try {
                     // Artık Toast yerine AddressActivity'yi başlatıyoruz
                     Intent intent = new Intent(ProfileActivity.this, AddressActivity.class);
                     startActivity(intent);
-                    Log.d(TAG, "AddressActivity başlatıldı");
                 } catch (Exception e) {
-                    Log.e(TAG, "AddressActivity başlatılamadı", e);
-                    Toast.makeText(this, "Adresler sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Addresses page could not be opened: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(ProfileActivity.this, "Adresleri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "You must log in to see the addresses.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -148,7 +142,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, WishlistActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(ProfileActivity.this, "Favorileri görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "You must be logged in to see favorites..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -157,36 +151,27 @@ public class ProfileActivity extends AppCompatActivity {
         cardSavedCards.setOnClickListener(v -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
-                Log.d(TAG, "Kayıtlı Kartlarım kartına tıklandı");
                 try {
                     // SavedCardsActivity hazır olduğunda bu satırı aktif edin:
                     Intent intent = new Intent(ProfileActivity.this, SavedCardsActivity.class);
                     startActivity(intent);
-                    Log.d(TAG, "SavedCardsActivity başlatıldı");
-
-                    // Şimdilik (SavedCardsActivity hazır değilse) Toast mesajı:
-                    // Toast.makeText(ProfileActivity.this, "Kayıtlı kartlar sayfası yakında eklenecek", Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
-                    Log.e(TAG, "SavedCardsActivity başlatılamadı", e);
-                    Toast.makeText(this, "Kayıtlı kartlar sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "The saved cards page could not be opened.: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(ProfileActivity.this, "Kayıtlı kartları görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "You must log in to see saved cards.", Toast.LENGTH_SHORT).show();
             }
         });
 
         // YENİ EKLENECEK KISIM:
         MaterialCardView cardAiAssistant = findViewById(R.id.card_ai_assistant);
         cardAiAssistant.setOnClickListener(v -> {
-            Log.d(TAG, "AI Araba Asistanı kartına tıklandı");
             try {
                 Intent intent = new Intent(ProfileActivity.this, AIAssistantActivity.class);
                 startActivity(intent);
-                Log.d(TAG, "AIAssistantActivity başlatıldı");
             } catch (Exception e) {
-                Log.e(TAG, "AIAssistantActivity başlatılamadı", e);
-                Toast.makeText(this, "Asistan sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Assistant page could not be opened: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

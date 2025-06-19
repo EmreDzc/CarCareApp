@@ -43,16 +43,5 @@ public class AddressActivity extends AppCompatActivity {
             }
         }).attach();
 
-        // Diğer click listener'lar artık fragment'lar içinde olacak.
-        // Bu activity'deki eski buton listener'larını kaldırın veya yorum satırı yapın.
-        /*
-        findViewById(R.id.btn_add_address).setOnClickListener(v -> {
-            // Adres ekleme sayfasına git
-        });
-
-        findViewById(R.id.btn_add_first_address).setOnClickListener(v -> {
-            // İlk adres ekleme sayfasına git
-        });
-        */
     }
 }

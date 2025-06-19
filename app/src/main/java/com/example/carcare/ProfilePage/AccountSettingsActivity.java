@@ -60,7 +60,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
             db = FirebaseFirestore.getInstance();
 
             progressDialog = new ProgressDialog(this);
-            // progressDialog.setMessage("Lütfen bekleyin..."); // Mesajı her işlem öncesi set edelim
             progressDialog.setCancelable(false);
 
             editNameFromUi = findViewById(R.id.edit_name);
@@ -75,7 +74,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
-            Toast.makeText(this, "Bir hata oluştu, lütfen tekrar deneyin.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "An error occurred, please try again.", Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -97,14 +96,14 @@ public class AccountSettingsActivity extends AppCompatActivity {
             btnSaveProfile.setOnClickListener(v -> {
                 if (editNameFromUi == null || editSurnameFromUi == null) {
                     Log.e(TAG, "Profile EditTexts are null in onClickListener.");
-                    Toast.makeText(this, "Profil alanları yüklenemedi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Profile fields could not be loaded.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String namePart = editNameFromUi.getText().toString().trim();
                 String surnamePart = editSurnameFromUi.getText().toString().trim();
 
                 if (namePart.isEmpty()) {
-                    Toast.makeText(this, "İsim alanı boş olamaz.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "The name field cannot be empty.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String fullNameToSave = namePart;
@@ -113,14 +112,14 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 }
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    Toast.makeText(this, "Kullanıcı girişi yapılmamış.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "The user has not logged in.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 final String userId = currentUser.getUid();
                 Map<String, Object> profileUpdates = new HashMap<>();
                 profileUpdates.put("fullName", fullNameToSave);
 
-                progressDialog.setMessage("Profil güncelleniyor...");
+                progressDialog.setMessage("Updating profile...");
                 progressDialog.show();
 
                 String finalFullNameToSave = fullNameToSave;
@@ -130,10 +129,10 @@ public class AccountSettingsActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "Profile updated successfully with fullName: '" + finalFullNameToSave + "' for user: " + userId);
-                                Toast.makeText(AccountSettingsActivity.this, "Profil başarıyla güncellendi.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AccountSettingsActivity.this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.e(TAG, "Profile update failed for user: " + userId, task.getException());
-                                Toast.makeText(AccountSettingsActivity.this, "Profil güncelleme başarısız: " + (task.getException() != null ? task.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                                Toast.makeText(AccountSettingsActivity.this, "Profile update failed: " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"), Toast.LENGTH_LONG).show();
                             }
                         });
             });
@@ -191,9 +190,9 @@ public class AccountSettingsActivity extends AppCompatActivity {
             Log.e(TAG, "One or more views in setupPasswordForm are null. Check XML IDs and findViewById calls.");
             if (editCurrentPassword == null) Log.e(TAG, "editCurrentPassword is NULL");
             if (editNewPassword == null) Log.e(TAG, "editNewPassword is NULL");
-            if (editConfirmNewPassword == null) Log.e(TAG, "editConfirmNewPassword (R.id.edit_confirm_new_password) is NULL"); // Düzeltilmiş ID ile log
+            if (editConfirmNewPassword == null) Log.e(TAG, "editConfirmNewPassword (R.id.edit_confirm_new_password) is NULL");
             if (btnChangePassword == null) Log.e(TAG, "btnChangePassword is NULL");
-            Toast.makeText(this, "Şifre değiştirme formu yüklenirken hata oluştu.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "An error occurred while loading the password change form..", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -203,25 +202,25 @@ public class AccountSettingsActivity extends AppCompatActivity {
             String confirmPasswordStr = editConfirmNewPassword.getText().toString().trim(); // *** DÜZELTİLMİŞ EditText KULLANIMI ***
 
             if (currentPasswordStr.isEmpty() || newPasswordStr.isEmpty() || confirmPasswordStr.isEmpty()) {
-                Toast.makeText(this, "Tüm şifre alanlarını doldurun", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Fill in all password fields", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!newPasswordStr.equals(confirmPasswordStr)) {
-                Toast.makeText(this, "Yeni şifreler eşleşmiyor", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "New passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (newPasswordStr.length() < 6) {
-                Toast.makeText(this, "Yeni şifre en az 6 karakter olmalı.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "The new password must be at least 6 characters.", Toast.LENGTH_SHORT).show();
                 return;
             }
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null) {
                 if (user.getEmail() == null) {
-                    Toast.makeText(this, "Şifre değişikliği için kullanıcı e-postası gerekli.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "User email required for password change.", Toast.LENGTH_LONG).show();
                     Log.e(TAG, "User email is null, cannot re-authenticate for password change.");
                     return;
                 }
-                progressDialog.setMessage("Şifre değiştiriliyor...");
+                progressDialog.setMessage("Password is being changed...");
                 progressDialog.show();
                 AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPasswordStr);
                 user.reauthenticate(credential)
@@ -231,30 +230,29 @@ public class AccountSettingsActivity extends AppCompatActivity {
                                         .addOnCompleteListener(updatePasswordTask -> {
                                             progressDialog.dismiss();
                                             if (updatePasswordTask.isSuccessful()) {
-                                                Toast.makeText(AccountSettingsActivity.this, "Şifre başarıyla değiştirildi.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AccountSettingsActivity.this, "Password changed successfully.", Toast.LENGTH_SHORT).show();
                                                 if(editCurrentPassword != null) editCurrentPassword.setText("");
                                                 if(editNewPassword != null) editNewPassword.setText("");
                                                 if(editConfirmNewPassword != null) editConfirmNewPassword.setText(""); // Düzeltilmiş
                                             } else {
                                                 Log.e(TAG, "Password update failed: ", updatePasswordTask.getException());
-                                                Toast.makeText(AccountSettingsActivity.this, "Şifre değiştirilemedi: " + (updatePasswordTask.getException() != null ? updatePasswordTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                                                Toast.makeText(AccountSettingsActivity.this, "Password change failed: " + (updatePasswordTask.getException() != null ? updatePasswordTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
                                             }
                                         });
                             } else {
                                 progressDialog.dismiss();
                                 Log.w(TAG, "Re-authentication failed: ", reauthTask.getException());
-                                Toast.makeText(AccountSettingsActivity.this, "Mevcut şifre yanlış veya yeniden kimlik doğrulama başarısız: " + (reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                                Toast.makeText(AccountSettingsActivity.this, "Current password is incorrect or re-authentication failed: " + (reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
                             }
                         });
             } else {
-                Toast.makeText(this, "Kullanıcı girişi yapılmamış.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void setupDeleteAccountForm() {
         final Button btnDeleteAccount = findViewById(R.id.btn_delete_account);
-        // XML'deki edit_delete_password_confirm bu metodda doğrudan kullanılmıyor, dialog içinde yenisi oluşturuluyor.
 
         if (btnDeleteAccount == null) {
             Log.w(TAG, "btn_delete_account not found in layout");
@@ -263,12 +261,14 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         btnDeleteAccount.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(AccountSettingsActivity.this);
-            builder.setTitle("Hesabı Silmeyi Onayla");
-            builder.setMessage("⚠️ Uyarı: Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.\n\nDevam etmek için lütfen mevcut şifrenizi girin.");
+            builder.setTitle("Confirm Account Deletion");
+            builder.setMessage("⚠️ Warning: Are you sure you want to permanently delete your account? This action cannot be undone.\n" +
+                    "\n" +
+                    "Please enter your current password to continue.");
 
             final EditText inputPasswordDialog = new EditText(AccountSettingsActivity.this);
             inputPasswordDialog.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            inputPasswordDialog.setHint("Mevcut Şifreniz");
+            inputPasswordDialog.setHint("Your Current Password");
             // Dialog için layout ve margin ayarları
             LinearLayout layout = new LinearLayout(AccountSettingsActivity.this);
             layout.setOrientation(LinearLayout.VERTICAL);
@@ -280,15 +280,15 @@ public class AccountSettingsActivity extends AppCompatActivity {
             layout.addView(inputPasswordDialog);
             builder.setView(layout);
 
-            builder.setPositiveButton("HESABI SİL", (dialog, which) -> {
+            builder.setPositiveButton("DELETE ACCOUNT", (dialog, which) -> {
                 String password = inputPasswordDialog.getText().toString().trim();
                 if (password.isEmpty()) {
-                    Toast.makeText(AccountSettingsActivity.this, "Lütfen şifrenizi girin.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AccountSettingsActivity.this, "Please enter your password.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 proceedWithAccountDeletion(password);
             });
-            builder.setNegativeButton("İPTAL", (dialog, which) -> dialog.cancel());
+            builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.cancel());
             AlertDialog dialog = builder.create();
             dialog.show();
         });
@@ -297,16 +297,16 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private void proceedWithAccountDeletion(String password) {
         final FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(AccountSettingsActivity.this, "Kullanıcı bulunamadı. Lütfen tekrar giriş yapın.", Toast.LENGTH_LONG).show();
+            Toast.makeText(AccountSettingsActivity.this, "User not found. Please log in again.", Toast.LENGTH_LONG).show();
             return;
         }
         if (user.getEmail() == null) {
-            Toast.makeText(AccountSettingsActivity.this, "Hesap silme işlemi için kullanıcı e-postası gerekli.", Toast.LENGTH_LONG).show();
+            Toast.makeText(AccountSettingsActivity.this, "User email is required for account deletion.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "User email is null, cannot re-authenticate for account deletion.");
             return;
         }
 
-        progressDialog.setMessage("Hesabınız siliniyor...");
+        progressDialog.setMessage("Your account is being deleted...");
         progressDialog.show();
 
         AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
@@ -324,26 +324,26 @@ public class AccountSettingsActivity extends AppCompatActivity {
                                                     progressDialog.dismiss();
                                                     if (authDeleteTask.isSuccessful()) {
                                                         Log.d(TAG, "User account deleted from Firebase Auth.");
-                                                        Toast.makeText(AccountSettingsActivity.this, "Hesabınız başarıyla silindi.", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(AccountSettingsActivity.this, "Your account has been deleted successfully..", Toast.LENGTH_LONG).show();
                                                         Intent intent = new Intent(AccountSettingsActivity.this, LoginActivity.class);
                                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                         startActivity(intent);
                                                         finish();
                                                     } else {
                                                         Log.e(TAG, "Failed to delete user account from Auth: ", authDeleteTask.getException());
-                                                        Toast.makeText(AccountSettingsActivity.this, "Hesap silinemedi (Auth): " + (authDeleteTask.getException() != null ? authDeleteTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(AccountSettingsActivity.this, "Account deletion failed (Auth): " + (authDeleteTask.getException() != null ? authDeleteTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                     } else {
                                         progressDialog.dismiss();
                                         Log.e(TAG, "Failed to delete user data from Firestore: ", firestoreDeleteTask.getException());
-                                        Toast.makeText(AccountSettingsActivity.this, "Kullanıcı verileri silinemedi (Firestore): " + (firestoreDeleteTask.getException() != null ? firestoreDeleteTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(AccountSettingsActivity.this, "Failed to delete user data (Firestore): " + (firestoreDeleteTask.getException() != null ? firestoreDeleteTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
                                     }
                                 });
                     } else {
                         progressDialog.dismiss();
                         Log.w(TAG, "User re-authentication failed for deletion: ", reauthTask.getException());
-                        Toast.makeText(AccountSettingsActivity.this, "Şifre doğrulama başarısız: " + (reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AccountSettingsActivity.this, "Password verification failed: " + (reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Bilinmeyen hata"), Toast.LENGTH_LONG).show();
                     }
                 });
     }
