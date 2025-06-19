@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/orange_primary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Yeni Kart Ekle"
+            app:title="Add New Card"
             app:titleTextColor="@android:color/white"/>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="Kart İsmi (Örn: Maaş Kartım)">
+                android:hint="Card Name (Ex: My Salary Card)">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_card_name"
                     android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="Kart Üzerindeki İsim">
+                android:hint="Name on Card">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_card_holder_name"
                     android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="Kart Numarası"
+                android:hint="Card Number"
                 app:counterEnabled="true"
                 app:counterMaxLength="19">
                 <com.google.android.material.textfield.TextInputEditText
@@ -89,7 +89,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:hint="Ay">
+                    android:hint="Month">
                     <AutoCompleteTextView
                         android:id="@+id/actv_expiry_month"
                         android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:hint="Yıl">
+                    android:hint="Year">
                     <AutoCompleteTextView
                         android:id="@+id/actv_expiry_year"
                         android:layout_width="match_parent"
@@ -154,7 +154,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kredi kartı bilgilerimi masterpass altyapısıyla saklamak istiyorum."
+                    android:text="I want to store my credit card information with the Masterpass infrastructure."
                     android:textSize="12sp"
                     android:textColor="@color/text_color_secondary"/>
             </LinearLayout>
@@ -166,7 +166,7 @@
         android:id="@+id/btn_save_card_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Kaydet"
+        android:text="Save"
         android:backgroundTint="@color/orange_primary"
         android:textColor="@android:color/white"
         android:layout_margin="16dp"

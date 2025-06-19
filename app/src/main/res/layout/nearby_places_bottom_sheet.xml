@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Yakındaki Yerler"
+                    android:text="Nearby Places"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -57,22 +57,22 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Benzin" />
+                    android:text="Gas" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Servis" />
+                    android:text="Service" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Yıkama" />
+                    android:text="Wash" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Parça" />
+                    android:text="Parts" />
             </com.google.android.material.tabs.TabLayout>
 
             <!-- RecyclerView for Places List -->
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:gravity="center"
-                android:text="Bu bölgede yer bulunamadı"
+                android:text="No locations found in this area"
                 android:textSize="16sp"
                 android:visibility="gone" />
 

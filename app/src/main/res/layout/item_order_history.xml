@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="6 Nisan 2025"
+                android:text="6 April 2025"
                 android:textSize="16sp"
                 android:textColor="#000000"
                 android:textStyle="bold" />
@@ -36,7 +36,7 @@
                 android:id="@+id/text_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Detaylar >"
+                android:text="Details >"
                 android:textSize="14sp"
                 android:textColor="?attr/colorPrimary"
                 android:background="?attr/selectableItemBackground"
@@ -48,7 +48,7 @@
             android:id="@+id/text_total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Toplam: 2169.93 TL"
+            android:text="Total: 2169.93 TL"
             android:textSize="14sp"
             android:textColor="#000000"
             android:layout_marginBottom="8dp" />
@@ -58,7 +58,7 @@
             android:id="@+id/text_order_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="✓ Teslim Edildi"
+            android:text="✓ Delivered"
             android:textSize="14sp"
             android:textColor="#4CAF50"
             android:layout_marginBottom="12dp" />
@@ -89,7 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="2 ürün teslim edildi"
+                android:text="2 items delivered"
                 android:textSize="12sp"
                 android:textColor="#757575" />
 
@@ -97,7 +97,7 @@
                 android:id="@+id/text_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⭐ Değerlendir"
+                android:text="⭐ Review"
                 android:textSize="12sp"
                 android:textColor="#FF9800"
                 android:background="?attr/selectableItemBackground"

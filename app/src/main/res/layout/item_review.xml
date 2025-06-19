@@ -44,7 +44,7 @@ android:padding="16dp">
         android:layout_centerVertical="true"
         android:textColor="@color/grey_medium"
     android:textSize="12sp"
-    tools:text="26 Mayıs 2025" />
+    tools:text="26 May 2025" />
 </RelativeLayout>
 
 <!-- Kullanıcı Adı (Gizlenmiş) -->
@@ -90,7 +90,7 @@ tools:visibility="visible">
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Satıcı: "
+    android:text="Seller: "
     android:textSize="12sp"
     android:textColor="@color/grey_medium"/>
 <TextView

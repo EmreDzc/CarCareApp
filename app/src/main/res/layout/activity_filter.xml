@@ -112,70 +112,70 @@
                     android:id="@+id/category_motor_oil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Motor Yağları"
+                    android:text="Engine Oils"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_filters"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Filtreler"
+                    android:text="Filters"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_brake_parts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Fren Parçaları"
+                    android:text="Brake Parts"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_tires"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Lastikler"
+                    android:text="Tires"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_batteries"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Aküler"
+                    android:text="Batteries"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_cleaning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Temizlik Ürünleri"
+                    android:text="Cleaning Products"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_tools"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Araçlar ve Takımlar"
+                    android:text="Tools and Kits"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_accessories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Aksesuar"
+                    android:text="Accessory"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_lights"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Aydınlatma"
+                    android:text="Lighting"
                     android:padding="8dp"/>
 
                 <CheckBox
                     android:id="@+id/category_electronics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Elektronik"
+                    android:text="Electronic"
                     android:padding="8dp"/>
             </LinearLayout>
 

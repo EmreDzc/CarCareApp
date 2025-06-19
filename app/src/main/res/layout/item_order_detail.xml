@@ -36,7 +36,7 @@
             android:id="@+id/text_order_product_quantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adet: 1"
+            android:text="Piece: 1"
             android:textSize="12sp"
             android:textColor="#757575"
             android:layout_marginBottom="4dp" />
@@ -55,7 +55,7 @@
         android:id="@+id/text_review_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ürünü Değerlendir"
+        android:text="Review Product"
         android:textSize="12sp"
         android:textColor="?attr/colorPrimary"
         android:background="?attr/selectableItemBackground"

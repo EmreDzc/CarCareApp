@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Marka, ürün veya kategori ara"
+                    android:text="Search brand, product or category"
                     android:textColor="@color/grey_medium"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -190,7 +190,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         <TextView android:id="@+id/product_detail_review_count_main" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="(525)" android:textSize="12sp" android:layout_marginStart="8dp" android:textColor="@color/grey_medium"/>
     </LinearLayout>
 
-    <TextView android:id="@+id/product_detail_seller" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Satıcı: Teknoloji Mağazası" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:visibility="gone"/>
+    <TextView android:id="@+id/product_detail_seller" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Seller: Teknoloji Mağazası" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:visibility="gone"/>
 
     <!-- Fiyat (Sayfa İçinde - BottomAppBar'da da olacak) -->
     <!-- Bu kısmı isterseniz gizleyebilirsiniz, çünkü BottomAppBar'da da var -->
@@ -204,11 +204,11 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:textStyle="bold"
         android:layout_marginTop="12dp"/>
 
-    <TextView android:id="@+id/product_detail_stock_status" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Stokta var" android:textSize="14sp" android:layout_marginTop="8dp"/>
+    <TextView android:id="@+id/product_detail_stock_status" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="In Stock" android:textSize="14sp" android:layout_marginTop="8dp"/>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp"/>
 
     <!-- ... (Açıklama, Özellikler, Değerlendirmeler bölümleri aynı kalacak) ... -->
-    <TextView android:id="@+id/title_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ürün Açıklaması" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:visibility="gone"/>
+    <TextView android:id="@+id/title_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Item Description" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:visibility="gone"/>
     <TextView android:id="@+id/product_detail_description" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Uzun ürün açıklaması..." android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:visibility="gone"/>
     <View android:id="@+id/divider_after_description" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:visibility="gone"/>
 
@@ -216,7 +216,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
     <LinearLayout android:id="@+id/product_specifications_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone"/>
     <View android:id="@+id/divider_after_specs" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/grey_medium_light" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:visibility="gone"/>
 
-    <TextView android:id="@+id/title_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Teslimat ve İade" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="16dp" android:visibility="gone"/>
+    <TextView android:id="@+id/title_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Delivery and Return" android:textColor="@color/black" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="16dp" android:visibility="gone"/>
     <TextView android:id="@+id/product_detail_shipping_info" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Kargo: Ücretsiz Kargo" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_shipping" android:drawablePadding="8dp" android:visibility="gone"/>
     <TextView android:id="@+id/product_detail_warranty_info" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="Garanti: 2 Yıl" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_warranty" android:drawablePadding="8dp" android:visibility="gone"/>
     <TextView android:id="@+id/product_detail_return_policy" android:layout_width="match_parent" android:layout_height="wrap_content" tools:text="İade: 14 gün içinde iade" android:textSize="14sp" android:textColor="@color/grey_very_dark" android:layout_marginTop="8dp" android:drawableStart="@drawable/ic_return" android:drawablePadding="8dp" android:visibility="gone"/>
@@ -248,7 +248,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:id="@+id/text_no_reviews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bu ürün için henüz değerlendirme yapılmamış."
+        android:text="There are no reviews for this product yet."
         android:gravity="center"
         android:layout_marginTop="16dp"
         android:textSize="14sp"
@@ -257,7 +257,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ürünü Değerlendir"
+        android:text="Review Product"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -282,7 +282,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
             android:id="@+id/edit_text_review_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Yorumunuz (isteğe bağlı)"
+            android:hint="Comment (Optional)"
             android:inputType="textMultiLine"
             android:minLines="2"
             android:gravity="top"/>
@@ -294,7 +294,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginBottom="24dp"
-        android:text="Değerlendirmeyi Gönder"
+        android:text="Submit Review"
         android:textColor="@color/white"
         app:backgroundTint="@color/blue_primary" />
 
@@ -344,7 +344,7 @@ app:hideOnScroll="false"> <!-- Kaydırıldığında gizlenmemesi için false -->
         android:id="@+id/bottom_bar_free_shipping_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kargo Bedava"
+        android:text="Free Shipping"
         android:textColor="@color/green_dark"
     android:textSize="11sp"
     android:layout_marginTop="1dp"
@@ -359,7 +359,7 @@ app:hideOnScroll="false"> <!-- Kaydırıldığında gizlenmemesi için false -->
     android:layout_width="0dp"
     android:layout_height="48dp"
     android:layout_weight="1"
-    android:text="Şimdi Al"
+    android:text="Buy Now"
     android:textColor="#000000"
 app:backgroundTint="#FFDE59"
 app:cornerRadius="8dp"
@@ -376,7 +376,7 @@ android:textStyle="bold"/>
     android:layout_width="0dp"
     android:layout_height="48dp"
     android:layout_weight="1"
-    android:text="Sepete Ekle"
+    android:text="Add to Cart"
     android:textColor="#FFFFFF"
     app:backgroundTint="?attr/colorPrimary"
 app:cornerRadius="8dp"

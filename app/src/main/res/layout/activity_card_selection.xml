@@ -86,7 +86,7 @@
                 android:id="@+id/button_add_new_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+ Yeni Kart Ekle"
+                android:text="+ Add New Card"
                 android:textSize="16sp"
                 android:padding="12dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />

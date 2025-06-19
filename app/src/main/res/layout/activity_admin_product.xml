@@ -20,7 +20,7 @@
         </RelativeLayout>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="16dp">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ürün Görseli" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="8dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Product Image" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="8dp" />
             <ImageView android:id="@+id/image_product_preview" android:layout_width="200dp" android:layout_height="200dp" android:layout_gravity="center" android:src="@drawable/placeholder_image" android:scaleType="centerCrop" android:background="#F5F5F5" android:layout_marginBottom="8dp" />
             <Button android:id="@+id/btn_select_image" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="@string/admin_select_image" app:backgroundTint="?attr/colorPrimary" android:textColor="@color/white" />
         </LinearLayout>

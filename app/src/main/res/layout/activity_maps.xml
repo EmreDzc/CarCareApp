@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Konum, benzin istasyonu, servis ara..."
+                android:hint="Search location, gas station, service..."
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="Yakındaki Yerler"
+                android:text="Nearby Places"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -107,22 +107,22 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Benzin" />
+                android:text="Gas" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Servis" />
+                android:text="Service" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Yıkama" />
+                android:text="Wash" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Parça" />
+                android:text="Parts" />
         </com.google.android.material.tabs.TabLayout>
     </LinearLayout>
 
@@ -161,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Bu bölgede yer bulunamadı"
+            android:text="No locations found in this area"
             android:textSize="16sp"
             android:visibility="gone" />
     </FrameLayout>

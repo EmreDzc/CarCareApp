@@ -19,7 +19,7 @@
         android:id="@+id/btn_add_new_billing_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ Fatura Adresi Ekle"
+        android:text="+ Add Billing Address"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
@@ -45,7 +45,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kayıtlı fatura adresiniz bulunmamaktadır."
+            android:text="You do not have a saved billing address."
             android:textSize="16sp"
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginBottom="24dp"
@@ -55,7 +55,7 @@
             android:id="@+id/btn_add_first_billing_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="İlk Fatura Adresini Ekle" />
+            android:text="Add First Billing Address" />
     </LinearLayout>
 
 </RelativeLayout>

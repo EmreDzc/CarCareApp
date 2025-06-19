@@ -86,7 +86,7 @@
                 android:id="@+id/button_add_new_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+ Yeni Adres Ekle"
+                android:text="+ Add New Address"
                 android:textSize="16sp"
                 android:padding="12dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />

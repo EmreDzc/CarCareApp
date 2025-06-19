@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adres Bilgileri"
+                android:text="Address Information"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -48,7 +48,7 @@
                     android:id="@+id/edit_text_address_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Adres Başlığı (Örn: Ev Adresim)" />
+                    android:hint="Address Title (Ex: My Home Address)" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -60,7 +60,7 @@
                     android:id="@+id/edit_text_province"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="İl" />
+                    android:hint="City" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -72,7 +72,7 @@
                     android:id="@+id/edit_text_district"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="İlçe" />
+                    android:hint="District" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -85,7 +85,7 @@
                     android:id="@+id/edit_text_neighborhood"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mahalle" />
+                    android:hint="Neighbourhood" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -97,7 +97,7 @@
                     android:id="@+id/edit_text_street"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Cadde, Sokak" />
+                    android:hint="Avenue, Street" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -115,7 +115,7 @@
                         android:id="@+id/edit_text_building_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Bina No" />
+                        android:hint="Building Number" />
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -127,7 +127,7 @@
                         android:id="@+id/edit_text_floor_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Kat No (Opsiyonel)" />
+                        android:hint="Floor Number (Optional)" />
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -139,7 +139,7 @@
                         android:id="@+id/edit_text_door_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Daire No (Opsiyonel)" />
+                        android:hint="Apartment Number (Optional)" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -152,7 +152,8 @@
                     android:id="@+id/edit_text_address_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Adres Tarifi (Opsiyonel)"
+                    android:hint="Address Directions (Optional)
+"
                     android:minLines="2"
                     android:gravity="top"/>
             </com.google.android.material.textfield.TextInputLayout>
@@ -163,7 +164,7 @@
                 android:id="@+id/text_view_personal_info_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kişisel Bilgiler"
+                android:text="Personal Information"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -179,7 +180,7 @@
                     android:id="@+id/edit_text_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Ad" />
+                    android:hint="Name" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -192,7 +193,7 @@
                     android:id="@+id/edit_text_surname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Soyad" />
+                    android:hint="Surname" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -206,14 +207,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="phone"
-                    android:hint="Telefon Numarası" />
+                    android:hint="Phone Number" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/btn_save_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Kaydet"
+                android:text="Save"
                 android:padding="14dp"
                 android:layout_marginBottom="16dp"/>
 

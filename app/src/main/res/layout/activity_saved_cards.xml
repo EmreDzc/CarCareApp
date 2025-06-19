@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/orange_primary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Kayıtlı Kartlarım"
+            app:title="My Saved Cards"
             app:titleTextColor="@android:color/white"/>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -55,7 +55,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kayıtlı kartın bulunmamaktadır"
+            android:text="You do not have a saved card"
             android:textSize="18sp"
             android:textColor="@color/text_color_primary"
             android:textStyle="bold"
@@ -65,7 +65,7 @@
             android:id="@+id/btn_add_new_card_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Yeni Kart Ekle"
+            android:text="Add New Card"
             android:backgroundTint="@color/orange_primary"
             android:textColor="@android:color/white"
             android:paddingHorizontal="40dp"
@@ -116,7 +116,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kartlarını burada güvenle saklayabilirsin."
+            android:text="You can securely store your cards here."
             android:textSize="12sp"
             android:textColor="@color/grey_medium_dark"/>
 

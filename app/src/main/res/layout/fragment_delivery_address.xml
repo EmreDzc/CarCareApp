@@ -18,7 +18,7 @@
         android:id="@+id/btn_add_new_delivery_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ Teslimat Adresi Ekle"
+        android:text="+ Add Delivery Address"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
@@ -44,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kayıtlı teslimat adresiniz bulunmamaktadır."
+            android:text="You do not have a registered delivery address."
             android:textSize="16sp"
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginBottom="24dp"
@@ -54,7 +54,7 @@
             android:id="@+id/btn_add_first_delivery_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="İlk Teslimat Adresini Ekle" />
+            android:text="Add First Delivery Address" />
     </LinearLayout>
 
 </RelativeLayout>

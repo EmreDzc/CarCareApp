@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profil"
+                android:text="Profile"
                 android:textSize="22sp"
 
                 android:textColor="?attr/colorOnBackground"
@@ -66,7 +66,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Hesap Ayarları"
+                        android:text="Account Settings"
                         android:textSize="16sp"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="normal" />
@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Siparişlerim"
+                        android:text="My orders"
                         android:textSize="16sp"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="normal" />
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Adreslerim"
+                        android:text="My Addresses"
                         android:textSize="16sp"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="normal" />
@@ -216,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Favorilerim"
+                        android:text="My Favorites"
                         android:textSize="16sp"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="normal" />
@@ -266,7 +266,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Kayıtlı Kartlarım"
+                        android:text="My Saved Cards"
                         android:textSize="16sp"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="normal" />
@@ -323,7 +323,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="Çıkış Yap"
+                        android:text="Log Out"
                         android:textSize="16sp"
                         android:textColor="@color/logout_red"
                         android:textStyle="normal" />

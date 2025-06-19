@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Sepetim"
+                android:text="My Cart"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -99,7 +99,7 @@
             android:id="@+id/textTotalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Toplam: $0.00"
+            android:text="Total: $0.00"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000000"
@@ -110,7 +110,7 @@
             android:id="@+id/buttonConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Siparişi Onayla"
+            android:text="Confirm Order"
             android:textColor="#FFFFFF"
             android:backgroundTint="?attr/colorPrimary"/>
     </LinearLayout>

@@ -131,7 +131,7 @@
                 android:id="@+id/btn_add_to_cart_card"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
-                android:text="Sepete Ekle"
+                android:text="Add to Cart"
                 android:textSize="13sp"
                 app:backgroundTint="?attr/colorPrimary"
                 android:textColor="@color/white"
