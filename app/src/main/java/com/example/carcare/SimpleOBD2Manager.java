@@ -270,7 +270,7 @@ public class SimpleOBD2Manager {
     }
 
     private boolean initializeELM327() {
-        Log.i(TAG, "ELM327 başlatılıyor...");
+        Log.i(TAG, "Initializing ELM327...");
         try {
             InputStream in = bluetoothManager.getInputStream();
             OutputStream out = bluetoothManager.getOutputStream();
@@ -406,7 +406,7 @@ public class SimpleOBD2Manager {
 
     public void startReading() {
         if (!bluetoothManager.isConnected()) {
-            showToast("OBD2 cihazına bağlı değil!");
+            showToast("Not connected to OBD2 device!");
             Log.w(TAG, "startReading: Bluetooth bağlı değil.");
             if (dataUpdateListener != null) mainHandler.post(dataUpdateListener::onConnectionLost);
             return;
@@ -436,7 +436,7 @@ public class SimpleOBD2Manager {
 
         new Thread(() -> {
             if (initializeELM327()) {
-                mainHandler.post(() -> showToast("ELM327 başarıyla başlatıldı"));
+                mainHandler.post(() -> showToast("ELM327 successfully initialized"));
                 Log.i(TAG, "ELM327 başarıyla başlatıldı, periyodik okuma planlanıyor.");
 
                 fillCommandQueue();
@@ -456,7 +456,7 @@ public class SimpleOBD2Manager {
                 }
             } else {
                 mainHandler.post(() -> {
-                    showToast("ELM327 başlatılamadı.");
+                    showToast("ELM327 failed to start.");
                     Log.e(TAG, "ELM327 başlatılamadı.");
                 });
                 stopReadingInternally(); // Başlatma başarısız olursa okumayı durdur
