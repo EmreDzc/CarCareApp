@@ -1,4 +1,13 @@
 {
+  "suggestions": [
+    "Oil Change",
+    "Tire Pressure",
+    "How to save fuel?",
+    "Check Engine Light",
+    "Brake noise",
+    "What is Torque?",
+    "Driving in rain"
+  ],
   "questions": [
     {
       "keywords": ["engine oil", "oil change", "oil level", "what oil to use", "5w-30", "motor oil"],

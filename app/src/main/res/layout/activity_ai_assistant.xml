@@ -1,86 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background_color"
-    tools:context=".AIAssistantActivity"> <!-- Paket adınıza göre .AIAssistantActivity olarak değiştirin -->
+    tools:context=".AIAssistantActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@color/background_color">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_ai_assistant"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:title="Car Assistant Bot"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_arrow_back"/>
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="AI Car Assistant"
+            app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/layout_input_area"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-        <!-- Cevap Alanı -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginBottom="16dp"
-            android:background="@color/white"
-            android:padding="12dp">
+            android:hint="Type your message...">
 
-            <TextView
-                android:id="@+id/tv_answer"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"
-                android:textStyle="normal"
-                android:text="Hello! What are you curious about your car? For example: 'What should the tire pressure be?' or 'What is the fault code P0420?' You can ask questions like these."/>
-        </ScrollView>
+                android:inputType="text"
+                android:maxLines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Soru Giriş Alanı -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ask"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Write your question here..."
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_question"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="3"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_ask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ask"
-                android:layout_marginStart="8dp"
-                app:icon="@drawable/ic_send"
-                style="@style/Widget.MaterialComponents.Button.Icon"/>
-        </LinearLayout>
+            android:layout_marginStart="8dp"
+            app:backgroundTint="?attr/colorPrimary"
+            app:icon="@drawable/ic_send" />
     </LinearLayout>
-</LinearLayout>
+
+    <!-- ================== YENİ EKLENEN KISIM ================== -->
+    <HorizontalScrollView
+        android:id="@+id/hsv_suggestions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/layout_input_area"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_suggestions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:singleLine="true" />
+    </HorizontalScrollView>
+    <!-- ======================================================== -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/hsv_suggestions"
+        android:layout_below="@id/app_bar_layout"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+</RelativeLayout>
