@@ -87,7 +87,7 @@ public class BillingAddressFragment extends Fragment implements AddressAdapter.A
         if (currentUser == null) {
             layoutNoAddress.setVisibility(View.VISIBLE);
             recyclerViewBillingAddresses.setVisibility(View.GONE);
-            Toast.makeText(getContext(), "Adresleri görmek için giriş yapın.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Log in to see addresses.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,7 +119,7 @@ public class BillingAddressFragment extends Fragment implements AddressAdapter.A
                         }
                     } else {
                         Log.w(TAG, "Error getting billing documents.", task.getException());
-                        Toast.makeText(getContext(), "Fatura adresleri yüklenirken hata.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error loading billing addresses.", Toast.LENGTH_SHORT).show();
                         layoutNoAddress.setVisibility(View.VISIBLE);
                         recyclerViewBillingAddresses.setVisibility(View.GONE);
                     }
@@ -139,24 +139,24 @@ public class BillingAddressFragment extends Fragment implements AddressAdapter.A
     public void onDeleteAddress(AddressModel address) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || address.getDocumentId() == null) {
-            Toast.makeText(getContext(), "Fatura adresi silinemedi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Billing address could not be deleted.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         new androidx.appcompat.app.AlertDialog.Builder(getContext())
-                .setTitle("Fatura Adresini Sil")
-                .setMessage(address.getTitle() + " başlıklı fatura adresini silmek istediğinizden emin misiniz?")
-                .setPositiveButton("Sil", (dialog, which) -> {
+                .setTitle("Delete Billing Address")
+                .setMessage(address.getTitle() + " Are you sure you want to delete the billing address titled?")
+                .setPositiveButton("Delete", (dialog, which) -> {
                     db.collection("users").document(currentUser.getUid())
                             .collection("billingAddresses").document(address.getDocumentId()) // Doğru koleksiyon yolu
                             .delete()
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getContext(), "Fatura adresi başarıyla silindi.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "The billing address was deleted successfully.", Toast.LENGTH_SHORT).show();
                                 loadAddresses(); // Listeyi yenile
                             })
-                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Fatura adresi silinirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Error while deleting billing address: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
-                .setNegativeButton("İptal", null)
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 }

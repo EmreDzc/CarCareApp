@@ -88,7 +88,7 @@ public class DeliveryAddressFragment extends Fragment implements AddressAdapter.
         if (currentUser == null) {
             layoutNoAddress.setVisibility(View.VISIBLE);
             recyclerViewDeliveryAddresses.setVisibility(View.GONE);
-            Toast.makeText(getContext(), "Adresleri görmek için giriş yapın.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Log in to see addresses.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,7 +119,7 @@ public class DeliveryAddressFragment extends Fragment implements AddressAdapter.
                         }
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
-                        Toast.makeText(getContext(), "Adresler yüklenirken hata oluştu.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "An error occurred while loading addresses.", Toast.LENGTH_SHORT).show();
                         layoutNoAddress.setVisibility(View.VISIBLE);
                         recyclerViewDeliveryAddresses.setVisibility(View.GONE);
                     }
@@ -139,24 +139,24 @@ public class DeliveryAddressFragment extends Fragment implements AddressAdapter.
     public void onDeleteAddress(AddressModel address) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || address.getDocumentId() == null) {
-            Toast.makeText(getContext(), "Adres silinemedi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "The address could not be deleted.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         new androidx.appcompat.app.AlertDialog.Builder(getContext())
-                .setTitle("Adresi Sil")
-                .setMessage(address.getTitle() + " başlıklı adresi silmek istediğinizden emin misiniz?")
-                .setPositiveButton("Sil", (dialog, which) -> {
+                .setTitle("Delete Address")
+                .setMessage(address.getTitle() + " Are you sure you want to delete the titled address?")
+                .setPositiveButton("Delete", (dialog, which) -> {
                     db.collection("users").document(currentUser.getUid())
                             .collection("deliveryAddresses").document(address.getDocumentId())
                             .delete()
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getContext(), "Adres başarıyla silindi.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Address deleted successfully.", Toast.LENGTH_SHORT).show();
                                 loadAddresses(); // Listeyi yenile
                             })
-                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Adres silinirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Error while deleting address: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
-                .setNegativeButton("İptal", null)
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 }

@@ -92,7 +92,7 @@ public class SavedCardsActivity extends AppCompatActivity implements CardAdapter
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             updateUIForNoCards();
-            Toast.makeText(this, "Kayıtlı kartları görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must log in to see saved cards.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -117,7 +117,7 @@ public class SavedCardsActivity extends AppCompatActivity implements CardAdapter
                         updateUIVisibility();
                     } else {
                         Log.w(TAG, "Error getting saved cards.", task.getException());
-                        Toast.makeText(SavedCardsActivity.this, "Kayıtlı kartlar yüklenirken hata oluştu.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SavedCardsActivity.this, "An error occurred while loading saved cards.", Toast.LENGTH_SHORT).show();
                         updateUIForNoCards();
                     }
                 });
@@ -147,24 +147,24 @@ public class SavedCardsActivity extends AppCompatActivity implements CardAdapter
     public void onDeleteCard(CardModel card) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || card.getDocumentId() == null) {
-            Toast.makeText(this, "Kart silinemedi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "The card could not be deleted.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Kartı Sil")
-                .setMessage(card.getCardName() + " isimli (" + card.getMaskedCardNumber() + ") kartı silmek istediğinizden emin misiniz?")
-                .setPositiveButton("Sil", (dialog, which) -> {
+                .setTitle("Delete Card")
+                .setMessage(card.getCardName() + " named (" + card.getMaskedCardNumber() + ") Are you sure you want to delete the card?")
+                .setPositiveButton("Delete", (dialog, which) -> {
                     db.collection("users").document(currentUser.getUid())
                             .collection("savedCards").document(card.getDocumentId())
                             .delete()
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(SavedCardsActivity.this, "Kart başarıyla silindi.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SavedCardsActivity.this, "The card was deleted successfully.", Toast.LENGTH_SHORT).show();
                                 loadSavedCards(); // Listeyi yenile
                             })
-                            .addOnFailureListener(e -> Toast.makeText(SavedCardsActivity.this, "Kart silinirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> Toast.makeText(SavedCardsActivity.this, "Error while deleting card: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
-                .setNegativeButton("İptal", null)
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 
