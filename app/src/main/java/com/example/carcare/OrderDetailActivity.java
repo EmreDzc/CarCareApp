@@ -60,17 +60,15 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         orderId = getIntent().getStringExtra("ORDER_ID");
         if (orderId == null || orderId.isEmpty()) {
-            Toast.makeText(this, "Sipariş ID bulunamadı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Order ID not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // ÖNEMLİ: İlk önce Firebase'i initialize et
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
         initViews();
-        // ÖNEMLİ: Firebase initialize edildikten sonra çağır
         loadOrderDetails();
     }
 
@@ -158,7 +156,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            showError("Kullanıcı giriş yapmamış");
+            showError("User is not logged in");
             finish();
             return;
         }
@@ -184,17 +182,17 @@ public class OrderDetailActivity extends AppCompatActivity {
                             updateUI();
                             Log.d(TAG, "Order loaded successfully: " + currentOrder.getOrderNumber());
                         } else {
-                            showError("Sipariş bilgileri okunamadı");
+                            showError("Order information could not be read");
                         }
                     } else {
-                        showError("Sipariş bulunamadı");
+                        showError("Order not found");
                         Log.w(TAG, "Order document does not exist for orderId: " + orderId);
                     }
                     showLoading(false);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading order details", e);
-                    showError("Sipariş yüklenirken hata: " + e.getMessage());
+                    showError("Error while loading order: " + e.getMessage());
                     showLoading(false);
                 });
     }
@@ -207,15 +205,15 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         try {
             // Order Info
-            textOrderNumber.setText("Sipariş No: " + currentOrder.getOrderNumber());
+            textOrderNumber.setText("Order Number: " + currentOrder.getOrderNumber());
 
             if (currentOrder.getOrderDate() != null) {
-                textOrderDate.setText("Sipariş Tarihi: " + dateFormat.format(currentOrder.getOrderDate()));
+                textOrderDate.setText("Order Date: " + dateFormat.format(currentOrder.getOrderDate()));
             } else {
-                textOrderDate.setText("Sipariş Tarihi: Bilinmiyor");
+                textOrderDate.setText("Order Date: Unknown");
             }
 
-            String status = currentOrder.getStatus() != null ? currentOrder.getStatus() : "Durum Bilinmiyor";
+            String status = currentOrder.getStatus() != null ? currentOrder.getStatus() : "Status Unknown";
             textOrderStatus.setText(status);
 
             try {
@@ -229,28 +227,28 @@ public class OrderDetailActivity extends AppCompatActivity {
 
             // Tracking info
             if (currentOrder.getEstimatedDeliveryDate() != null) {
-                textEstimatedDelivery.setText("Tahmini Teslimat: " + dateFormat.format(currentOrder.getEstimatedDeliveryDate()));
+                textEstimatedDelivery.setText("Estimated Delivery: " + dateFormat.format(currentOrder.getEstimatedDeliveryDate()));
                 textEstimatedDelivery.setVisibility(View.VISIBLE);
             } else {
                 textEstimatedDelivery.setVisibility(View.GONE);
             }
 
             if (currentOrder.getTrackingNumber() != null && !currentOrder.getTrackingNumber().isEmpty()) {
-                textTrackingNumber.setText("Teslimat No: " + currentOrder.getTrackingNumber());
+                textTrackingNumber.setText("Delivery Number: " + currentOrder.getTrackingNumber());
                 textTrackingNumber.setVisibility(View.VISIBLE);
             } else {
                 textTrackingNumber.setVisibility(View.GONE);
             }
 
             if (currentOrder.getShippingCompany() != null && !currentOrder.getShippingCompany().isEmpty()) {
-                textShippingCompany.setText("Kargo Firması: " + currentOrder.getShippingCompany());
+                textShippingCompany.setText("Cargo Company: " + currentOrder.getShippingCompany());
                 textShippingCompany.setVisibility(View.VISIBLE);
             } else {
                 textShippingCompany.setVisibility(View.GONE);
             }
 
             // Delivery Address
-            textFullName.setText("Alıcı: " + (currentOrder.getFullName() != null ? currentOrder.getFullName() : ""));
+            textFullName.setText("Client: " + (currentOrder.getFullName() != null ? currentOrder.getFullName() : ""));
 
             String fullAddress = "";
             if (currentOrder.getAddress() != null) fullAddress += currentOrder.getAddress();
@@ -274,10 +272,10 @@ public class OrderDetailActivity extends AppCompatActivity {
             }
 
             // Payment Info
-            textSubtotal.setText("Ara Toplam: " + currencyFormat.format(currentOrder.getSubtotal()));
-            textTax.setText("Kargo: " + currencyFormat.format(currentOrder.getTax()));
-            textTotal.setText("Toplam: " + currencyFormat.format(currentOrder.getTotalAmount()));
-            textPaymentMethod.setText("Ödeme: " + (currentOrder.getPaymentMethod() != null ? currentOrder.getPaymentMethod() : "Bilinmiyor"));
+            textSubtotal.setText("Subtotal: " + currencyFormat.format(currentOrder.getSubtotal()));
+            textTax.setText("Cargo: " + currencyFormat.format(currentOrder.getTax()));
+            textTotal.setText("Total: " + currencyFormat.format(currentOrder.getTotalAmount()));
+            textPaymentMethod.setText("Payment: " + (currentOrder.getPaymentMethod() != null ? currentOrder.getPaymentMethod() : "Unknown"));
 
             // Order Items
             if (currentOrder.getItems() != null && !currentOrder.getItems().isEmpty()) {
@@ -290,7 +288,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Error updating UI", e);
-            showError("UI güncellenirken hata oluştu");
+            showError("Error while updating UI");
         }
     }
 
@@ -301,11 +299,11 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         // İptal butonu sadece belirli durumlarda görünür olsun
         boolean canCancel = status != null &&
-                !status.toLowerCase().contains("iptal") &&
-                !status.toLowerCase().contains("teslim") &&
-                !status.toLowerCase().contains("kargo") &&
-                !status.toLowerCase().contains("gönderildi") &&
-                !status.toLowerCase().contains("hazırlanıyor") &&
+                !status.toLowerCase().contains("cancel") &&
+                !status.toLowerCase().contains("delivery") &&
+                !status.toLowerCase().contains("cargo") &&
+                !status.toLowerCase().contains("sent") &&
+                !status.toLowerCase().contains("Getting ready") &&
                 !status.toLowerCase().contains("cancelled");
 
         cardCancelButton.setVisibility(canCancel ? View.VISIBLE : View.GONE);
@@ -315,12 +313,12 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private void showCancelConfirmationDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Sipariş İptali")
-                .setMessage("Bu siparişi iptal etmek istediğinizden emin misiniz?")
-                .setPositiveButton("Evet, İptal Et", (dialog, which) -> {
+                .setTitle("Order Cancellation")
+                .setMessage("Are you sure you want to cancel this order?")
+                .setPositiveButton("Yes, Cancel", (dialog, which) -> {
                     cancelOrder();
                 })
-                .setNegativeButton("Hayır", (dialog, which) -> {
+                .setNegativeButton("No", (dialog, which) -> {
                     dialog.dismiss();
                 })
                 .show();
@@ -328,7 +326,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private void cancelOrder() {
         if (currentOrder == null || auth.getCurrentUser() == null) {
-            showError("Sipariş iptal edilemedi");
+            showError("The order could not be cancelled");
             return;
         }
 
@@ -336,7 +334,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         // Sipariş durumunu güncelle
         Map<String, Object> updates = new HashMap<>();
-        updates.put("status", "İptal Edildi");
+        updates.put("status", "Cancelled");
         updates.put("statusColor", "#F44336"); // Kırmızı renk
         updates.put("cancelledDate", new Date());
 
@@ -347,10 +345,10 @@ public class OrderDetailActivity extends AppCompatActivity {
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Order cancelled successfully");
-                    Toast.makeText(this, "Sipariş başarıyla iptal edildi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show();
 
                     // Local order object'i güncelle
-                    currentOrder.setStatus("İptal Edildi");
+                    currentOrder.setStatus("Cancelled");
 
                     // UI'ı hemen güncelle
                     updateUI();
@@ -364,7 +362,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error cancelling order", e);
-                    showError("Sipariş iptal edilirken hata oluştu: " + e.getMessage());
+                    showError("An error occurred while canceling the order: " + e.getMessage());
                     showLoading(false);
                 });
     }

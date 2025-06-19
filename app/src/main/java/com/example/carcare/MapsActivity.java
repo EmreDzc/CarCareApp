@@ -81,9 +81,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NearbyPlacesService placesService;
     private NearbyPlacesAdapter placesAdapter;
     private Map<String, Marker> placeMarkers;
-    private String currentPlaceType = NearbyPlace.Type.GAS; // Default to gas stations
-    private boolean isUsingDeviceLocation = true; // Varsayılan olarak cihaz konumu kullanılıyor
-    private Marker searchLocationMarker; // Arama konumu işaretçisi
+    private String currentPlaceType = NearbyPlace.Type.GAS;
+    private boolean isUsingDeviceLocation = true;
+    private Marker searchLocationMarker;
 
 
 
@@ -127,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getDeviceLocation();
             } else {
                 // İzin yoksa, izin iste
-                Toast.makeText(this, "Konum izni gerekli", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Location permission required", Toast.LENGTH_SHORT).show();
                 getLocationPermission();
             }
         });
@@ -178,7 +178,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupPlacesPanel() {
-        Log.d(TAG, "setupPlacesPanel çağrıldı.");
         // Find panel components
         placesHeaderContainer = findViewById(R.id.places_header_container);
         placesPanelContainer = findViewById(R.id.places_panel_container);
@@ -188,15 +187,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         emptyPlacesView = findViewById(R.id.empty_places_view);
 
         if (placeCategoryTabs == null) {
-            Log.e(TAG, "setupPlacesPanel: placeCategoryTabs is null! UI düzgün yüklenmemiş olabilir.");
             // Hata durumuyla başa çıkmak için Toast gösterebilir veya aktiviteyi sonlandırabilirsiniz.
-            Toast.makeText(this, "Harita bileşenleri yüklenemedi.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Map components could not be loaded.", Toast.LENGTH_LONG).show();
             return; // placeCategoryTabs null ise devam etme
         }
 
         // Set up RecyclerView
         nearbyPlacesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        placesAdapter = new NearbyPlacesAdapter(this); // 'this' (Context) null olmamalı
+        placesAdapter = new NearbyPlacesAdapter(this);
         placesAdapter.setPlaceClickListener(this);
         nearbyPlacesRecyclerView.setAdapter(placesAdapter);
 
@@ -207,7 +205,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeCategoryTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d(TAG, "Sekme seçildi: " + tab.getText() + " (Pozisyon: " + tab.getPosition() + ")");
                 // Determine selected category
                 switch (tab.getPosition()) {
                     case 0:
@@ -223,31 +220,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         currentPlaceType = NearbyPlace.Type.PARTS;
                         break;
                     default:
-                        Log.w(TAG, "Bilinmeyen sekme pozisyonu: " + tab.getPosition());
-                        currentPlaceType = NearbyPlace.Type.GAS; // Varsayılana dön
+                        currentPlaceType = NearbyPlace.Type.GAS;
                         break;
                 }
 
                 // Eğer harita ve konum hazırsa (currentLocation null değilse) yerleri yükle
                 if (mMap != null && currentLocation != null) {
-                    Log.d(TAG, "OnTabSelected: Konum mevcut, '" + currentPlaceType + "' için yerler yükleniyor.");
-                    clearPlaceMarkers(); // Önceki işaretçileri temizle
-                    loadNearbyPlaces();  // Yeni kategori için yerleri yükle
+                    clearPlaceMarkers();
+                    loadNearbyPlaces();
 
                     if (!isPanelExpanded) {
                         expandPanel();
                     }
                 } else {
-                    Log.w(TAG, "OnTabSelected: Konum mevcut değil, yerler yüklenemiyor. (mMap: " + (mMap != null) + ", currentLocation: " + (currentLocation != null) + ")");
-                    if (mMap != null) { // Harita hazırsa ama konum yoksa mesaj göster
+                    if (mMap != null) {
                         Toast.makeText(MapsActivity.this,
                                 "Location information is pending or you need to search.",
                                 Toast.LENGTH_SHORT).show();
                     }
-                    // Panel açıksa ve konum yoksa, belki paneli kapatmak veya boş göstermek daha iyi olabilir.
-                    // collapsePanel(); // Opsiyonel: Konum yoksa paneli kapat
-                    placesAdapter.updatePlaces(new ArrayList<>()); // Liste boşaltılsın
-                    emptyPlacesView.setText("Lütfen bir konum seçin veya konum izni verin.");
+
+                    placesAdapter.updatePlaces(new ArrayList<>());
+                    emptyPlacesView.setText("Please select a location or grant location permission.");
                     emptyPlacesView.setVisibility(View.VISIBLE);
                     placesLoadingProgress.setVisibility(View.GONE);
                 }
@@ -255,8 +248,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // Genellikle burada bir işlem yapmaya gerek yok
-                Log.d(TAG, "Sekme seçimi kaldırıldı: " + tab.getText());
             }
 
             @Override
@@ -268,9 +259,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (isPanelExpanded) {
                         collapsePanel();
                     } else {
-                        Log.d(TAG, "OnTabReselected: Konum mevcut, '" + currentPlaceType + "' için yerler yeniden yükleniyor ve panel açılıyor.");
                         clearPlaceMarkers();
-                        loadNearbyPlaces(); // Verileri tazelemek için
+                        loadNearbyPlaces();
                         expandPanel();
                     }
                 } else {
@@ -283,13 +273,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (placeCategoryTabs.getTabCount() > 0) {
             TabLayout.Tab firstTab = placeCategoryTabs.getTabAt(0);
             if (firstTab != null) {
-                Log.d(TAG, "setupPlacesPanel: Varsayılan olarak ilk sekme seçiliyor: " + firstTab.getText());
                 firstTab.select();
             } else {
-                Log.e(TAG, "setupPlacesPanel: İlk sekme null, seçilemiyor.");
             }
         } else {
-            Log.e(TAG, "setupPlacesPanel: Hiç sekme yok!");
         }
     }
 
@@ -330,30 +317,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setCompassEnabled(true);
         } else {
-            Log.e(TAG, "onMapReady: GoogleMap nesnesi null!");
-            Toast.makeText(this, "Harita yüklenirken bir sorun oluştu.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "There was a problem loading the map.", Toast.LENGTH_SHORT).show();
             return; // mMap null ise devam etmenin anlamı yok
         }
 
-        // Konum izni durumuna göre arayüzü güncelle
-        updateLocationUI(); // Bu metod içinde mMap null kontrolü olmalı veya burada yapılmalı
+        updateLocationUI();
 
         // İzin verildiyse cihaz konumunu al
         if (locationPermissionGranted) {
-            Log.d(TAG, "onMapReady: Konum izni var, cihaz konumu alınıyor.");
-            getDeviceLocation(); // Bu metod currentLocation'ı ayarlar ve haritayı hareket ettirir
+            getDeviceLocation();
         } else {
-            // İzin yoksa ve mevcut bir konumumuz da yoksa (örneğin arama sonucu)
-            // varsayılan bir konuma ayarla.
+
             if (currentLocation == null) {
-                Log.d(TAG, "onMapReady: Konum izni yok ve currentLocation null, varsayılan konuma ayarlanıyor (Ankara).");
                 currentLocation = new LatLng(39.9334, 32.8597); // Ankara
                 isUsingDeviceLocation = false; // Cihaz konumu kullanılmıyor
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, DEFAULT_ZOOM));
             } else {
-                // Eğer izin yok ama bir arama sonucuyla currentLocation ayarlandıysa
-                // o konumu kullanmaya devam et.
-                Log.d(TAG, "onMapReady: Konum izni yok ama currentLocation mevcut, harita hareket ettiriliyor.");
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, DEFAULT_ZOOM));
             }
         }
@@ -371,10 +350,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (placeId != null && !placeId.equals("SEARCH_LOCATION_MARKER_TAG")) { // Arama işaretçisi değilse
                 highlightPlaceInList(placeId);
                 expandPanel();
-                // marker.showInfoWindow(); // showInfoWindow zaten varsayılan davranışta olabilir.
-                // Eğer highlightPlaceInList yavaşsa, önce info window gösterilebilir.
             } else if (placeId != null && placeId.equals("SEARCH_LOCATION_MARKER_TAG")) {
-                // Arama işaretçisine tıklandı, bir şey yapmaya gerek yok veya bilgi penceresini göster
                 marker.showInfoWindow();
             }
             return false;
@@ -389,7 +365,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("TARGET_PLACE_TYPE")) {
             String targetType = intent.getStringExtra("TARGET_PLACE_TYPE");
-            Log.d(TAG, "Intent'ten gelen TARGET_PLACE_TYPE: " + targetType);
 
             if (targetType != null) {
                 // Gelen tipe göre ilgili sekmeyi seç
@@ -411,19 +386,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (tabIndexToSelect != -1 && placeCategoryTabs != null) {
                     TabLayout.Tab tab = placeCategoryTabs.getTabAt(tabIndexToSelect);
                     if (tab != null) {
-                        Log.d(TAG, "Sekme seçiliyor: " + tab.getText());
                         tab.select(); // Bu, OnTabSelectedListener'ı tetikleyecektir.
-                        // OnTabSelectedListener zaten loadNearbyPlaces() ve expandPanel() çağırıyor.
                     }
                 } else if (placeCategoryTabs == null) {
-                    Log.e(TAG, "handleIntentData: placeCategoryTabs is null!");
                 } else {
-                    Log.w(TAG, "handleIntentData: Geçersiz veya bulunamayan TARGET_PLACE_TYPE için sekme: " + targetType);
                 }
             }
         } else {
             if (currentLocation != null && placeCategoryTabs != null && placeCategoryTabs.getSelectedTabPosition() == 0) {
-                Log.d(TAG, "Intent'te hedef yok, varsayılan (GAS) için yerler yükleniyor.");
             }
         }
     }
@@ -452,14 +422,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
-            Log.d(TAG, "Location permission already granted");
         } else {
             // İzin verilmeden önce açıklama göstermek için
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Kullanıcıya izin talep gerekçesini açıklayalım
                 new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle("Konum İzni Gerekli")
-                        .setMessage("Bu uygulama, çevrenizdeki benzin istasyonları, servisler ve diğer araç bakım noktalarını göstermek için konum bilginize ihtiyaç duyar.")
+                        .setTitle("Location Permission Required")
+                        .setMessage("This app needs your location to show gas stations, services and other vehicle maintenance points around you.")
                         .setPositiveButton("Tamam", (dialogInterface, i) -> {
                             // İzin isteyelim
                             ActivityCompat.requestPermissions(MapsActivity.this,
@@ -497,7 +466,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else {
                 Log.w(TAG, "Location permission denied");
                 Toast.makeText(this,
-                        "Konum izni verilmedi. Arama çubuğunu kullanarak konum araması yapabilirsiniz.",
+                        "Location permission not granted. You can search for location using the search bar.",
                         Toast.LENGTH_LONG).show();
 
                 // İzin olmasa da varsayılan konumla devam et
@@ -617,7 +586,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } catch (SecurityException e) {
             Log.e(TAG, "Security exception", e);
-            Toast.makeText(this, "Güvenlik hatası: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Security error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -640,7 +609,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String query = searchInput.getText().toString().trim();
 
         if (query.isEmpty()) {
-            Toast.makeText(this, "Lütfen arama kriterini girin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter your search criteria", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -650,7 +619,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Yükleme göstergesini göster
         placesLoadingProgress.setVisibility(View.VISIBLE);
-        Toast.makeText(this, "Aranıyor: " + query, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Searching: " + query, Toast.LENGTH_SHORT).show();
 
         // Adresle konum ara
         searchLocationByName(query);
@@ -712,12 +681,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else {
                 // Konum bulunamadı
                 Log.w(TAG, "No location found for: " + locationName);
-                Toast.makeText(this, "Konum bulunamadı: " + locationName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Location not found: " + locationName, Toast.LENGTH_SHORT).show();
                 placesLoadingProgress.setVisibility(View.GONE);
             }
         } catch (IOException e) {
             Log.e(TAG, "Geocoder error", e);
-            Toast.makeText(this, "Konum arama hatası: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Location search error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             placesLoadingProgress.setVisibility(View.GONE);
         }
     }
@@ -763,7 +732,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Boş durum kontrolü
                 if (places.isEmpty()) {
                     emptyPlacesView.setVisibility(View.VISIBLE);
-                    emptyPlacesView.setText("Bu bölgede " + getPlaceTypeDisplayName(currentPlaceType) + " bulunamadı");
+                    emptyPlacesView.setText(getPlaceTypeDisplayName(currentPlaceType) + " was not found in this region");
                 } else {
                     emptyPlacesView.setVisibility(View.GONE);
                 }
@@ -778,7 +747,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(MapsActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 placesAdapter.updatePlaces(new ArrayList<>());
                 emptyPlacesView.setVisibility(View.VISIBLE);
-                emptyPlacesView.setText("Yerler yüklenirken bir hata oluştu: " + errorMessage);
+                emptyPlacesView.setText("An error occurred while loading places: " + errorMessage);
             }
         });
     }
@@ -787,13 +756,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String getPlaceTypeDisplayName(String placeType) {
         switch (placeType) {
             case NearbyPlace.Type.GAS:
-                return "benzin istasyonu";
+                return "Petrol Station";
             case NearbyPlace.Type.SERVICE:
-                return "servis merkezi";
+                return "Service Center";
             case NearbyPlace.Type.WASH:
-                return "araç yıkama";
+                return "Car Wash";
             case NearbyPlace.Type.PARTS:
-                return "yedek parça";
+                return "Spare Parts";
             default:
                 return "yer";
         }
@@ -807,7 +776,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Log.d(TAG, "Showing " + places.size() + " places on map");
 
-        // Sadece yer işaretçilerini temizle (arama işaretçisini koru)
         clearPlaceMarkers();
 
         // Her yer için işaretçi ekle
@@ -853,7 +821,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    // clearPlaceMarkers metodunu güncelleyelim - sadece yer işaretçilerini temizle, arama işaretçisini değil
     private void clearPlaceMarkers() {
         // Tüm yer işaretçilerini haritadan kaldır
         for (Marker marker : placeMarkers.values()) {

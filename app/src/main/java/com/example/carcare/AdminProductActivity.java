@@ -64,7 +64,7 @@ public class AdminProductActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         initViews();
-        setupCategorySpinner(); // Bu satırı ekleyin
+        setupCategorySpinner();
         setupImagePicker();
         setupClickListeners();
     }
@@ -111,27 +111,25 @@ public class AdminProductActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        btnSelectImage.setOnClickListener(v -> selectImage()); // selectImage() burada çağrılıyor
+        btnSelectImage.setOnClickListener(v -> selectImage());
         btnSaveProduct.setOnClickListener(v -> saveProduct());
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
         Log.d(TAG, "Click listeners setup.");
     }
 
-    // Bu metodun var olduğundan ve doğru yazıldığından emin olun
     private void selectImage() {
         if (imagePickerLauncher == null) {
-            Log.e(TAG, "imagePickerLauncher is null in selectImage(). Did setupImagePicker() run?");
-            Toast.makeText(this, "Resim seçici hazır değil.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Image picker not ready.", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*"); // Sadece resim dosyalarını filtrele
+            intent.setType("image/*");
             imagePickerLauncher.launch(intent);
             Log.d(TAG, "Image picker launched.");
         } catch (Exception e) {
             Log.e(TAG, "Error launching image picker", e);
-            Toast.makeText(this, "Resim seçici açılamadı: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Could not open image picker: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -156,13 +154,13 @@ public class AdminProductActivity extends AppCompatActivity {
 
             Log.d(TAG, "Base64 string length: " + base64Image.length() + " bytes. Original bitmap size: " + originalBitmap.getByteCount() + ", Resized byte array size: " + byteArray.length);
             if (base64Image.length() > 700000) {
-                Toast.makeText(this, "Resim boyutu çok büyük. Lütfen daha küçük bir resim seçin.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Image size is too large. Please choose a smaller image.", Toast.LENGTH_LONG).show();
                 return "";
             }
             return base64Image;
         } catch (IOException | OutOfMemoryError e) {
             Log.e(TAG, "Error converting URI to Base64 or resizing image", e);
-            Toast.makeText(this, "Resim işlenirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error while processing image:" + e.getMessage(), Toast.LENGTH_SHORT).show();
             return "";
         }
     }
@@ -189,7 +187,7 @@ public class AdminProductActivity extends AppCompatActivity {
     private void saveProduct() {
         Log.d(TAG, "Save product button clicked.");
         if (!validateInputs()) {
-            Toast.makeText(this, "Lütfen zorunlu alanları (*) doldurun ve geçerli değerler girin.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please fill in the required fields (*) and enter valid values.", Toast.LENGTH_LONG).show();
             return;
         }
         showLoading(true);
@@ -199,7 +197,7 @@ public class AdminProductActivity extends AppCompatActivity {
             Log.d(TAG, "Image selected, converting to Base64...");
             imageBase64Data = convertUriToResizedBase64(selectedImageUri);
             if (TextUtils.isEmpty(imageBase64Data) && selectedImageUri != null) {
-                Toast.makeText(this, "Resim işlenemedi. Lütfen farklı bir resim deneyin veya resim seçmeyin.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Image could not be processed. Please try a different image or do not select an image.", Toast.LENGTH_LONG).show();
                 showLoading(false);
                 return;
             }
@@ -210,15 +208,15 @@ public class AdminProductActivity extends AppCompatActivity {
     }
 
     private boolean validateInputs() {
-        if (TextUtils.isEmpty(editName.getText())) { editName.setError("Gerekli"); editName.requestFocus(); return false; }
-        if (TextUtils.isEmpty(editDescription.getText())) { editDescription.setError("Gerekli"); editDescription.requestFocus(); return false; }
-        if (TextUtils.isEmpty(editPrice.getText())) { editPrice.setError("Gerekli"); editPrice.requestFocus(); return false; }
-        if (TextUtils.isEmpty(editStock.getText())) { editStock.setError("Gerekli"); editStock.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editName.getText())) { editName.setError("Necessary"); editName.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editDescription.getText())) { editDescription.setError("Necessary"); editDescription.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editPrice.getText())) { editPrice.setError("Necessary"); editPrice.requestFocus(); return false; }
+        if (TextUtils.isEmpty(editStock.getText())) { editStock.setError("Necessary"); editStock.requestFocus(); return false; }
         try {
             Double.parseDouble(editPrice.getText().toString());
             Integer.parseInt(editStock.getText().toString());
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Sayısal alanlarda geçersiz format.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid format in numeric fields.", Toast.LENGTH_SHORT).show();
             if (editPrice.getText().toString().isEmpty() || !editPrice.getText().toString().matches("\\d+(\\.\\d+)?")) {
                 editPrice.requestFocus();
             } else if (editStock.getText().toString().isEmpty() || !editStock.getText().toString().matches("\\d+")) {
@@ -251,16 +249,16 @@ public class AdminProductActivity extends AppCompatActivity {
     private void setupCategorySpinner() {
         // Görünen isimler (Türkçe)
         String[] displayNames = {
-                "Motor Yağları",
-                "Filtreler",
-                "Fren Parçaları",
-                "Lastikler",
-                "Aküler",
-                "Temizlik Ürünleri",
-                "Araçlar ve Takımlar",
-                "Aksesuar",
-                "Aydınlatma",
-                "Elektronik"
+                "Engine Oils",
+                "Filters",
+                "Brake Parts",
+                "Tires",
+                "Batteries",
+                "Cleaning Products",
+                "Tools and Kits",
+                "Accessory",
+                "Lighting",
+                "Electronic"
         };
 
         // Veritabanına kaydedilecek kodlar
@@ -292,7 +290,7 @@ public class AdminProductActivity extends AppCompatActivity {
         if (selectedPosition >= 0 && selectedPosition < categoryValues.length) {
             return categoryValues[selectedPosition];
         }
-        return "accessories"; // Varsayılan
+        return "accessories";
     }
 
     private void saveProductToFirestore(String imageBase64) {
@@ -326,13 +324,13 @@ public class AdminProductActivity extends AppCompatActivity {
                 .add(product)
                 .addOnSuccessListener(documentReference -> {
                     Log.d(TAG, "Product added successfully with ID: " + documentReference.getId());
-                    Toast.makeText(this, "Ürün başarıyla eklendi!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Product added successfully!", Toast.LENGTH_LONG).show();
                     clearForm();
                     showLoading(false);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error adding product", e);
-                    Toast.makeText(this, "Hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Mistake: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     showLoading(false);
                 });
     }
@@ -355,7 +353,6 @@ public class AdminProductActivity extends AppCompatActivity {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         btnSaveProduct.setEnabled(!isLoading);
         btnSelectImage.setEnabled(!isLoading);
-        // Diğer input alanlarını da disable/enable yapabilirsiniz
         for (View v : new View[]{editName, editDescription, editPrice, editStock, editBrand, editModelCode, editSellerName, editWarrantyInfo, editShippingInfo, editReturnPolicy, editSpecifications, spinnerCategory, switchIsFeatured}) {
             if (v!= null) v.setEnabled(!isLoading);
         }

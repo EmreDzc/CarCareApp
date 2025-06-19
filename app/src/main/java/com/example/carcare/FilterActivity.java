@@ -24,7 +24,6 @@ public class FilterActivity extends AppCompatActivity {
     private Spinner sortBySpinner;
     private Button applyButton, clearAllButton, hideFiltersButton;
 
-    // Category CheckBoxes - Araba kategorileri
     private CheckBox categoryMotorOil, categoryFilters, categoryBrakeParts,
             categoryTires, categoryBatteries, categoryCleaning,
             categoryTools, categoryAccessories, categoryLights, categoryElectronics;
@@ -81,7 +80,6 @@ public class FilterActivity extends AppCompatActivity {
 
     private void loadExistingFilters() {
         SharedPreferences prefs = getSharedPreferences("FilterPrefs", MODE_PRIVATE);
-
 
         // Fiyat aralığı
         float minPriceValue = prefs.getFloat("minPrice", 0f);
@@ -169,7 +167,7 @@ public class FilterActivity extends AppCompatActivity {
                 maxPriceValue = Double.parseDouble(maxPrice.getText().toString().trim());
             }
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Lütfen geçerli fiyat değerleri girin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter valid price values", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -194,7 +192,7 @@ public class FilterActivity extends AppCompatActivity {
         editor.apply();
 
         Log.d(TAG, "Filters applied: " + hasFilters);
-        Toast.makeText(this, "Filtreler uygulandı", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Filters applied", Toast.LENGTH_SHORT).show();
 
         setResult(RESULT_OK);
         finish();
@@ -227,16 +225,16 @@ public class FilterActivity extends AppCompatActivity {
                 double max = Double.parseDouble(maxText);
 
                 if (min < 0 || max < 0) {
-                    Toast.makeText(this, "Fiyat değerleri negatif olamaz", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Price values cannot be negative", Toast.LENGTH_SHORT).show();
                     return false;
                 }
 
                 if (min > max) {
-                    Toast.makeText(this, "Minimum fiyat, maksimum fiyattan büyük olamaz", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Minimum price cannot be greater than maximum price", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Lütfen geçerli fiyat değerleri girin", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please enter valid price values", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -268,7 +266,7 @@ public class FilterActivity extends AppCompatActivity {
         editor.apply();
 
         Log.d(TAG, "All filters cleared");
-        Toast.makeText(this, "Tüm filtreler temizlendi", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "All filters cleared", Toast.LENGTH_SHORT).show();
 
         setResult(RESULT_OK);
     }

@@ -33,7 +33,7 @@ public class NotificationHelper {
     public static void saveNotificationToFirestore(String title, String message) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            Log.e(TAG, "Kullanıcı oturum açmamış, bildirim kaydedilemedi");
+            Log.e(TAG, "User is not logged in, notification could not be saved");
             return;
         }
 
@@ -49,7 +49,7 @@ public class NotificationHelper {
                 .document(userId)
                 .collection("notifications")
                 .add(data)
-                .addOnSuccessListener(doc -> Log.d(TAG, "Kullanıcı için bildirim kaydedildi: " + userId))
-                .addOnFailureListener(e -> Log.e(TAG, "Bildirim kaydedilemedi: " + e.getMessage()));
+                .addOnSuccessListener(doc -> Log.d(TAG, "Notification saved for user: " + userId))
+                .addOnFailureListener(e -> Log.e(TAG, "Notification could not be saved: " + e.getMessage()));
     }
 }

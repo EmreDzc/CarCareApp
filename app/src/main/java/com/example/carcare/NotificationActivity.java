@@ -111,7 +111,7 @@ public class NotificationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-                final String err = (e.getMessage() != null) ? e.getMessage() : "Bildirimler alınamadı.";
+                final String err = (e.getMessage() != null) ? e.getMessage() : "Notifications not received.";
                 Log.e("NotificationActivity", err);
                 runOnUiThread(() -> {
                     errorTextView.setText("Hata: " + err);
@@ -132,7 +132,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Exception e) {
-                    final String err = (e.getMessage() != null) ? e.getMessage() : "Silme başarısız.";
+                    final String err = (e.getMessage() != null) ? e.getMessage() : "Delete failed.";
                     Log.e("NotificationActivity", err);
                     runOnUiThread(() -> {
                         errorTextView.setText("Hata: " + err);
@@ -177,8 +177,8 @@ public class NotificationActivity extends AppCompatActivity {
             }
 
             final NotificationData notification = notifications.get(position);
-            holder.titleTextView.setText(notification.getTitle() != null ? notification.getTitle() : "Başlık Yok");
-            holder.messageTextView.setText(notification.getMessage() != null ? notification.getMessage() : "Mesaj Yok");
+            holder.titleTextView.setText(notification.getTitle() != null ? notification.getTitle() : "No Title");
+            holder.messageTextView.setText(notification.getMessage() != null ? notification.getMessage() : "No Message");
 
             holder.deleteButton.setOnClickListener(v -> deleteNotification(notification));
 
@@ -241,7 +241,7 @@ public class NotificationActivity extends AppCompatActivity {
             if (currentUser != null) {
                 userId = currentUser.getUid();
             } else {
-                Log.e("FirebaseNotificationManager", "Kullanıcı oturum açmamış");
+                Log.e("FirebaseNotificationManager", "User is not logged in");
             }
         }
 
@@ -259,7 +259,7 @@ public class NotificationActivity extends AppCompatActivity {
         // Hoş geldiniz bildirimi ekleme metodu
         public void addWelcomeNotification(final SimpleCallback callback) {
             if (currentUser == null) {
-                callback.onFailure(new Exception("User not logged in")); // İngilizce hata mesajı
+                callback.onFailure(new Exception("User not logged in"));
                 return;
             }
             NotificationData notification = new NotificationData();
@@ -277,7 +277,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         public void addCustomNotification(NotificationData notification, final SimpleCallback callback) {
             if (currentUser == null) {
-                if (callback != null) callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                if (callback != null) callback.onFailure(new Exception("User is not logged in"));
                 return;
             }
             if (notification.getTimestamp() == null) { // Timestamp yoksa şimdi ayarla
@@ -299,7 +299,7 @@ public class NotificationActivity extends AppCompatActivity {
         // Tüm bildirimleri listeleme (timestamp'e göre)
         public void getAllNotifications(final NotificationListCallback callback) {
             if (currentUser == null) {
-                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                callback.onFailure(new Exception("User is not logged in"));
                 return;
             }
 
@@ -326,7 +326,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         public void updateNotification(String docId, java.util.Map<String, Object> updates, final SimpleCallback callback) {
             if (currentUser == null) {
-                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                callback.onFailure(new Exception("User is not logged in"));
                 return;
             }
 
@@ -341,7 +341,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         public void deleteNotification(String docId, final SimpleCallback callback) {
             if (currentUser == null) {
-                callback.onFailure(new Exception("Kullanıcı oturum açmamış"));
+                callback.onFailure(new Exception("User is not logged in"));
                 return;
             }
 

@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.carcare.R;
 import com.example.carcare.adapters.AddressSelectionAdapter;
 import com.example.carcare.models.AddressModel;
 import com.example.carcare.ProfilePage.address.AddEditAddressActivity;
@@ -51,7 +50,7 @@ public class AddressSelectionActivity extends AppCompatActivity implements Addre
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Adres Seçiniz");
+            getSupportActionBar().setTitle("Select Address");
         }
 
         db = FirebaseFirestore.getInstance();
@@ -92,8 +91,8 @@ public class AddressSelectionActivity extends AppCompatActivity implements Addre
 
         db.collection("users")
                 .document(user.getUid())
-                .collection("deliveryAddresses") // addresses -> deliveryAddresses
-                .orderBy("title") // Sadece title'a göre sırala
+                .collection("deliveryAddresses")
+                .orderBy("title")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     addressList.clear();
@@ -117,8 +116,8 @@ public class AddressSelectionActivity extends AppCompatActivity implements Addre
                     updateUIVisibility();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Adresler yüklenirken hata", e);
-                    Toast.makeText(this, "Adresler yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error loading addresses", e);
+                    Toast.makeText(this, "An error occurred while loading addresses.", Toast.LENGTH_SHORT).show();
                     showNoAddressesState();
                 });
     }
@@ -150,7 +149,6 @@ public class AddressSelectionActivity extends AppCompatActivity implements Addre
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_ADD_ADDRESS && resultCode == RESULT_OK) {
-            // Yeni adres eklendi, listeyi güncelle
             loadAddresses();
         }
     }

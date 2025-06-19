@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.carcare.R;
 import com.example.carcare.adapters.CardSelectionAdapter;
 import com.example.carcare.models.CardModel;
 import com.example.carcare.ProfilePage.card.AddEditCardActivity;
@@ -51,13 +50,12 @@ public class CardSelectionActivity extends AppCompatActivity implements CardSele
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Kart Seçiniz");
+            getSupportActionBar().setTitle("Select Card");
         }
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Mevcut seçili kart ID'sini al
         selectedCardId = getIntent().getStringExtra("selected_card_id");
 
         initializeViews();
@@ -105,7 +103,6 @@ public class CardSelectionActivity extends AppCompatActivity implements CardSele
                         tempList.add(card);
                     }
 
-                    // Varsayılan kartları önce sırala
                     tempList.sort((a, b) -> {
                         if (a.isDefault() && !b.isDefault()) return -1;
                         if (!a.isDefault() && b.isDefault()) return 1;
@@ -117,8 +114,8 @@ public class CardSelectionActivity extends AppCompatActivity implements CardSele
                     updateUIVisibility();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Kartlar yüklenirken hata", e);
-                    Toast.makeText(this, "Kartlar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error loading cards", e);
+                    Toast.makeText(this, "An error occurred while loading cards", Toast.LENGTH_SHORT).show();
                     showNoCardsState();
                 });
     }
@@ -150,7 +147,6 @@ public class CardSelectionActivity extends AppCompatActivity implements CardSele
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_ADD_CARD && resultCode == RESULT_OK) {
-            // Yeni kart eklendi, listeyi güncelle
             loadCards();
         }
     }
