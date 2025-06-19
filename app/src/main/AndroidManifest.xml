@@ -25,7 +25,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/carcarelogorounded"
-        android:label=""
+        android:label="@string/app_name"
         android:roundIcon="@drawable/carcarelogorounded"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarCare"
