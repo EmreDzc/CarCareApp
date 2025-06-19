@@ -583,7 +583,7 @@ public class StoreActivity extends AppCompatActivity {
         boolean hasFilters = prefs.getBoolean("hasFilters", false);
         if (filterButton != null) {
             // Not: "Hide/Show Filters" veya "Filtreleri Kaldır/Filtrele" gibi bir mantık kullanın
-            filterButton.setText(hasFilters ? "Filtreleri Kaldır" : "Filtrele");
+            filterButton.setText(hasFilters ? "Remove Filters" : "Filter");
         }
     }
 }

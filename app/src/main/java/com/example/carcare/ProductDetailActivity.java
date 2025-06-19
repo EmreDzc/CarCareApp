@@ -375,11 +375,11 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         if (productRatingMain != null) productRatingMain.setRating(product.getAverageRating());
         if (productReviewCountMain != null) productReviewCountMain.setText(String.format(Locale.getDefault(), "(%d)", product.getTotalReviews()));
-        updateTextViewVisibility(productSeller, product.getSellerName(), "Satıcı: ");
+        updateTextViewVisibility(productSeller, product.getSellerName(), "Seller: ");
 
         if (product.getStock() > 0) {
             if (productStockStatus != null) {
-                productStockStatus.setText(String.format(Locale.getDefault(), "Stokta: %d adet", product.getStock()));
+                productStockStatus.setText(String.format(Locale.getDefault(), "In Stock: %d Piece", product.getStock()));
                 productStockStatus.setTextColor(ContextCompat.getColor(this, R.color.green_dark));
             }
             if (addToCartButton != null) addToCartButton.setEnabled(true);
@@ -575,7 +575,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (currentProduct != null && textReviewsTitle != null) {
             String headerText = (currentProduct.getTotalReviews() > 0) ?
                     String.format(Locale.getDefault(), "Ürün Değerlendirmeleri ⭐ %.1f • %d Değerlendirme", currentProduct.getAverageRating(), currentProduct.getTotalReviews()) :
-                    "Ürün Değerlendirmeleri";
+                    "Product Reviews";
             textReviewsTitle.setText(headerText);
         }
     }
