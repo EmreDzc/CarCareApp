@@ -54,10 +54,10 @@ public class AddEditAddressActivity extends AppCompatActivity {
         initializeViews();
 
         if (addressToEditId != null) {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Adresi Düzenle");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Edit Address");
             loadAddressForEditing();
         } else {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Yeni Adres Ekle");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Add New Address");
         }
 
         btnSaveAddress.setOnClickListener(v -> saveAddress());
@@ -98,7 +98,7 @@ public class AddEditAddressActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Adres yüklenirken hata", e);
-                    Toast.makeText(this, "Adres yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "An error occurred while loading the address.", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -120,7 +120,7 @@ public class AddEditAddressActivity extends AppCompatActivity {
     private void saveAddress() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Adres kaydetmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must log in to save an address.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -151,12 +151,12 @@ public class AddEditAddressActivity extends AppCompatActivity {
             db.collection(collectionPath).document(addressToEditId)
                     .set(addressData)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(AddEditAddressActivity.this, "Adres başarıyla güncellendi!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddEditAddressActivity.this, "Address updated successfully!", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(AddEditAddressActivity.this, "Adres güncellenirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddEditAddressActivity.this, "Error while updating address: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Error updating address", e);
                     });
         } else {
@@ -164,12 +164,12 @@ public class AddEditAddressActivity extends AppCompatActivity {
             db.collection(collectionPath)
                     .add(addressData)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(AddEditAddressActivity.this, "Adres başarıyla kaydedildi!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddEditAddressActivity.this, "Address saved successfully!", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(AddEditAddressActivity.this, "Adres kaydedilirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddEditAddressActivity.this, "Error while saving address: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Error saving address", e);
                     });
         }
@@ -179,47 +179,47 @@ public class AddEditAddressActivity extends AppCompatActivity {
         boolean valid = true;
 
         if (TextUtils.isEmpty(editTextAddressTitle.getText())) {
-            editTextAddressTitle.setError("Adres başlığı gerekli");
+            editTextAddressTitle.setError("Address header required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextProvince.getText())) {
-            editTextProvince.setError("İl gerekli");
+            editTextProvince.setError("Province required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextDistrict.getText())) {
-            editTextDistrict.setError("İlçe gerekli");
+            editTextDistrict.setError("District required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextNeighborhood.getText())) {
-            editTextNeighborhood.setError("Mahalle gerekli");
+            editTextNeighborhood.setError("Neighborhood required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextStreet.getText())) {
-            editTextStreet.setError("Cadde/Sokak gerekli");
+            editTextStreet.setError("Street/Avenue required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextBuildingNo.getText())) {
-            editTextBuildingNo.setError("Bina numarası gerekli");
+            editTextBuildingNo.setError("House number required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextName.getText())) {
-            editTextName.setError("Ad gerekli");
+            editTextName.setError("Name required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextSurname.getText())) {
-            editTextSurname.setError("Soyad gerekli");
+            editTextSurname.setError("Surname required");
             valid = false;
         }
 
         if (TextUtils.isEmpty(editTextPhone.getText())) {
-            editTextPhone.setError("Telefon numarası gerekli");
+            editTextPhone.setError("Phone number required");
             valid = false;
         }
 
