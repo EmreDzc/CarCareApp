@@ -1,3 +1,6 @@
+import java.util.Properties
+
+
 plugins {
     id("com.android.application") // Bu şekilde kullanmak daha yaygın
     id("com.google.gms.google-services") // Bu şekilde kullanmak daha yaygın
@@ -20,6 +23,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -53,7 +57,6 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0") // Bu da libs.coordinatorlayout ile aynı olmalı.
 // Tekrar etmemek için birini seç.
 
-
     // Google Maps bağımlılıkları
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
@@ -78,6 +81,13 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-auth:22.3.0")
+
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("com.google.android.material:material:1.10.0")
+
+
+    // RecyclerView için
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
 
 // Glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")

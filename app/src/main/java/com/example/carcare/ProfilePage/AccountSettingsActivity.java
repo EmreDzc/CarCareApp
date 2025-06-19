@@ -3,6 +3,11 @@ package com.example.carcare.ProfilePage;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -49,6 +54,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         try {
             setContentView(R.layout.activity_account_settings);
+
 
             mAuth = FirebaseAuth.getInstance();
             db = FirebaseFirestore.getInstance();

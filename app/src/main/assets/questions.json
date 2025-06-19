@@ -1,0 +1,353 @@
+{
+  "suggestions": [
+    "Oil Change",
+    "Tire Pressure",
+    "How to save fuel?",
+    "Check Engine Light",
+    "Brake noise",
+    "What is Torque?",
+    "Driving in rain"
+  ],
+  "questions": [
+    {
+      "keywords": ["engine oil", "oil change", "oil level", "what oil to use", "5w-30", "motor oil"],
+      "answer": "Engine oil is the lifeblood of your car. Its main job is to lubricate moving parts, reduce friction, clean away contaminants, and help cool the engine.\n\n- When to Change: Most modern cars recommend an oil change every 10,000 to 15,000 km (6k-9k miles) or once a year, whichever comes first. Always check your owner's manual for the specific interval.\n\n- Checking the Level: Check the oil level with the dipstick when the engine is cool and the car is on level ground. The level should be between the 'MIN' and 'MAX' marks.\n\n- Oil Type: Using the correct oil grade (e.g., 5W-30, 0W-20) is critical. The wrong type can harm your engine. Your owner's manual will specify the exact grade required."
+    },
+    {
+      "keywords": ["coolant", "antifreeze", "engine temperature", "radiator fluid", "overheating"],
+      "answer": "Coolant, also known as antifreeze, circulates through your engine to absorb excess heat and prevent it from overheating. It also protects the engine from freezing in cold weather.\n\n- What to Know: Coolant comes in different colors (green, pink, orange) which correspond to different chemistries. NEVER mix different types of coolant.\n\n- How to Check: When the engine is completely cool, check the coolant level in the transparent reservoir (overflow tank) in your engine bay. The level should be between the 'LOW' and 'FULL' lines.\n\n- Overheating: If your temperature gauge goes into the red, pull over safely and turn off the engine immediately. Do not open the radiator cap when it's hot."
+    },
+    {
+      "keywords": ["transmission fluid", "atf", "gearbox oil", "transmission check", "hard shifting"],
+      "answer": "Transmission fluid cools and lubricates the gears inside your transmission, allowing for smooth gear shifts. \n\n- Automatic vs. Manual: Automatic Transmission Fluid (ATF) is typically red and has a specific viscosity. Manual transmissions use a thicker gear oil.\n\n- Checking: Some automatic cars have a dipstick to check the fluid level (usually checked while the engine is running), but many modern cars have a sealed transmission that requires a mechanic. Hard shifting or a burning smell can indicate a problem.\n\n- Maintenance: It's not a 'lifetime' fluid. Check your owner's manual for the recommended change interval to prevent very expensive repairs."
+    },
+    {
+      "keywords": ["brake fluid", "dot 3", "dot 4", "spongy brakes", "soft brake pedal"],
+      "answer": "Brake fluid is a hydraulic fluid that transfers the force from your foot on the brake pedal to the brakes at the wheels. \n\n- Key Property: Brake fluid is 'hygroscopic,' meaning it absorbs moisture from the air over time. Water in the fluid can lower its boiling point, leading to brake failure under heavy use, and can also cause internal corrosion.\n\n- Maintenance: This is why it must be flushed and replaced every 2-3 years, regardless of mileage. If your brake pedal feels soft or 'spongy,' it's a critical sign that your brake fluid needs immediate attention."
+    },
+    {
+      "keywords": ["engine air filter", "air filter"],
+      "answer": "The engine air filter is like the lungs for your car. It prevents dust, dirt, leaves, and other debris from being sucked into the engine, where they could cause significant damage.\n\n- Why it Matters: A clogged air filter restricts airflow, which can reduce horsepower, hurt fuel economy, and even cause the engine to run rough. \n\n- Replacement: It's an inexpensive but important maintenance item. It should be inspected at every oil change and typically replaced every 20,000-25,000 km (12k-15k miles) or once a year."
+    },
+    {
+      "keywords": ["cabin air filter", "ac filter", "air conditioner filter", "bad smell from ac"],
+      "answer": "The cabin air filter cleans the air that comes into the car's interior through the heating and air conditioning (A/C) system. It traps dust, pollen, and other airborne pollutants.\n\n- When to Change: If you notice reduced airflow from your vents or a musty, dusty smell when you turn on the fan or A/C, your cabin air filter is likely clogged. It's usually recommended to change it once a year or every 20,000-25,000 km."
+    },
+    {
+      "keywords": ["tire pressure", "tyre pressure", "psi", "tpms", "tire light"],
+      "answer": "Correct tire pressure is crucial for safety, fuel economy, and tire longevity.\n\n- Where to Find PSI: The correct pressure is listed on a sticker on the driver's side door jamb or in the owner's manual. DO NOT use the pressure written on the tire's sidewall; that is the maximum pressure the tire can hold, not the recommended pressure for your car.\n\n- How to Check: Always check the pressure when the tires are 'cold' (before driving or after a very short trip).\n\n- TPMS Light: The Tire Pressure Monitoring System (TPMS) warning light on your dash indicates that one or more of your tires is significantly under-inflated."
+    },
+    {
+      "keywords": ["tire tread", "tire wear", "penny test", "wear bars", "tire rotation"],
+      "answer": "Tire tread provides grip and channels water away to prevent hydroplaning. \n\n- Tread Depth: New tires have deep tread. As they wear down, their ability to grip in wet conditions decreases dramatically. Most jurisdictions have a minimum legal tread depth.\n\n- How to Check: Most tires have 'wear bars' molded into the tread. When the tread wears down to become even with these bars, the tire needs to be replaced. You can also use the 'penny test' (if you can see all of Lincoln's head, your tread is too low).\n\n- Tire Rotation: Rotating your tires (e.g., moving front tires to the back) every 10,000 km helps them wear evenly and last much longer."
+    },
+    {
+      "keywords": ["reading tire size", "tire numbers", "p225/60r16", "understanding a tire"],
+      "answer": "The numbers on your tire's sidewall contain important information. For example, in 'P225/60R16 98H':\n\n- P: Passenger vehicle tire.\n- 225: The width of the tire in millimeters.\n- 60: The aspect ratio. The height of the sidewall is 60% of its width.\n- R: Radial construction (the most common type).\n- 16: The diameter of the wheel (rim) in inches that this tire fits on.\n- 98: The load index, which corresponds to how much weight the tire can support.\n- H: The speed rating, indicating the maximum safe speed for the tire."
+    },
+    {
+      "keywords": ["how brakes work", "brake components", "brake system"],
+      "answer": "Your car's brake system is a hydraulic system that multiplies force. Here's a simple breakdown:\n\n1. You press the brake pedal.\n2. This pushes a piston in the master cylinder, pressurizing the brake fluid.\n3. The pressurized fluid travels through brake lines to each wheel.\n4. At the wheel, the fluid pushes on a caliper.\n5. The caliper squeezes brake pads against a spinning disc (rotor) that is attached to the wheel.\n6. The friction created between the pads and the rotor slows the car down."
+    },
+    {
+      "keywords": ["squeaking brakes", "grinding brakes", "shaking when braking", "brake warning signs"],
+      "answer": "Your brakes give you warning signs when they need attention. Never ignore them!\n\n- High-Pitched Squeak: This is often the built-in 'wear indicator' on the brake pads, telling you it's time for a replacement.\n- Deep Grinding Noise: This is a DANGEROUS sign. It means your brake pads are completely worn away, and now metal is grinding against metal. This causes severe damage and reduces stopping power. Get it serviced immediately.\n- Vibration/Pulsating in Pedal: This usually means your brake rotors are warped and need to be resurfaced or replaced.\n- Car Pulls to One Side: When braking, this could indicate a stuck caliper or a problem with a brake hose."
+    },
+    {
+      "keywords": ["car battery", "battery life", "dead battery", "corroded terminals"],
+      "answer": "The car battery provides the electrical power needed to start the engine and run accessories when the engine is off. \n\n- Lifespan: A typical car battery lasts about 3 to 5 years. Extreme heat or cold can shorten its life.\n\n- Warning Signs: Signs of a failing battery include slow engine cranking, dimming headlights when starting, and the battery warning light on the dash.\n\n- Maintenance: Keep the battery terminals clean. A white or bluish, crusty deposit is corrosion, which can prevent a good electrical connection. You can clean it off with a wire brush and a mixture of baking soda and water (wear gloves and eye protection)."
+    },
+    {
+      "keywords": ["how to jump start", "jumper cables", "jump a car", "jump starting"],
+      "answer": "Jump starting a car requires caution. Follow these steps precisely:\n\n1. Park a running car (the 'good' car) close to the car with the dead battery, but do not let the cars touch.\n2. Attach the RED (+) jumper cable to the POSITIVE (+) terminal of the dead battery.\n3. Attach the other end of the RED (+) cable to the POSITIVE (+) terminal of the good battery.\n4. Attach the BLACK (-) cable to the NEGATIVE (-) terminal of the good battery.\n5. CRITICAL STEP: Attach the other end of the BLACK (-) cable to an unpainted metal surface on the car with the dead battery (like a bolt on the engine block), AWAY from the battery itself. This prevents sparks near the battery.\n6. Start the good car and let it run for a few minutes.\n7. Try to start the car with the dead battery. If it starts, remove the cables in the REVERSE order of how you attached them."
+    },
+    {
+      "keywords": ["check engine light", "cel", "mil", "malfunction indicator lamp"],
+      "answer": "The Check Engine Light (CEL), or Malfunction Indicator Lamp (MIL), is your car's way of telling you its onboard computer (ECU) has detected a problem. It could be minor or serious.\n\n- What to do: First, check if your gas cap is tight. A loose cap is a common trigger. If the light is steady, you should get the car checked soon. If it's BLINKING, this indicates a severe misfire that could damage your catalytic converter. Pull over safely and have the car towed.\n\n- Getting the Code: You can buy an inexpensive OBD-II scanner to read the Diagnostic Trouble Code (DTC), which looks like 'P0420'. This code gives you a starting point for diagnosis."
+    },
+    {
+      "keywords": ["timing belt", "timing chain", "when to replace timing belt"],
+      "answer": "The timing belt or chain is a critical component that synchronizes the rotation of your engine's crankshaft and camshafts. This ensures the engine's valves open and close at the proper times during each cylinder's intake and exhaust strokes.\n\n- Belt vs. Chain: Belts are made of rubber, are quieter, and need periodic replacement (typically 100k-160k km / 60k-100k miles). Chains are metal, lubricated by engine oil, and designed to last the life of the engine, though their guides can wear out.\n\n- Why it's CRITICAL: If a timing belt breaks, the pistons can collide with the open valves, causing catastrophic and extremely expensive engine damage. There is often NO warning before it fails. Always follow the replacement interval in your owner's manual."
+    },
+    {
+      "keywords": ["spark plug", "ignition coil", "engine misfire", "rough idle"],
+      "answer": "The ignition system creates the high-voltage spark needed to ignite the air-fuel mixture in the cylinders.\n\n- Spark Plugs: These are the small devices that create the actual spark. They wear out over time, leading to a weak spark, misfires, poor fuel economy, and trouble starting. They are a routine maintenance item.\n\n- Ignition Coils: These transform the battery's low voltage into the thousands of volts needed for the spark plugs. A modern car has one coil per cylinder. If a coil fails, that cylinder will not fire, causing a noticeable 'misfire' (shaking, loss of power) and a blinking check engine light."
+    },
+    {
+      "keywords": ["oxygen sensor", "o2 sensor", "lambda sensor", "air-fuel ratio sensor"],
+      "answer": "An oxygen (O2) sensor measures the amount of unburned oxygen in your exhaust system. The engine's computer (ECU) uses this data to fine-tune the air-fuel mixture for maximum efficiency and minimum emissions.\n\n- Symptoms of Failure: A bad O2 sensor is a very common cause of a Check Engine Light. It can lead to significantly reduced fuel economy, failed emissions tests, and a rough-running engine.\n\n- Location: Cars typically have at least two O2 sensors: one before the catalytic converter ('upstream') and one after ('downstream')."
+    },
+    {
+      "keywords": ["catalytic converter", "cat", "bad egg smell", "p0420"],
+      "answer": "The catalytic converter is a part of your exhaust system that looks like a small muffler. It contains precious metals (like platinum and rhodium) that act as catalysts to convert harmful exhaust gases (like carbon monoxide) into less harmful substances (like carbon dioxide and water).\n\n- Symptoms of Failure: A failing catalytic converter can cause a 'rotten egg' smell from the exhaust, reduced engine power, and poor acceleration. It is the most common reason for the P0420 fault code.\n\n- Why they fail: They can get clogged over time or be damaged by engine misfires that send unburned fuel into the exhaust."
+    },
+    {
+      "keywords": ["exhaust system", "muffler", "exhaust leak"],
+      "answer": "The exhaust system's job is to route harmful gases from the engine to the rear of the car, quiet the engine noise, and reduce emissions.\n\n- Main Components: It consists of the exhaust manifold, oxygen sensors, catalytic converter, resonators, and the muffler.\n\n- Exhaust Leak: A leak can be identified by a loud, deep rumbling or hissing noise that gets louder when you accelerate. A leak before the oxygen sensors can confuse the engine computer and hurt performance. A leak anywhere is dangerous because it can allow deadly carbon monoxide gas to enter the car's cabin."
+    },
+    {
+      "keywords": ["diagnostic trouble code", "dtc", "obd-ii", "p-code", "fault code"],
+      "answer": "A Diagnostic Trouble Code (DTC) is a standardized code created by the vehicle's On-Board Diagnostics (OBD-II) system when it detects a problem. \n\n- Code Structure: Codes start with a letter followed by four numbers (e.g., P0301).\n  - P: Powertrain (Engine, Transmission)\n  - B: Body (Airbags, Power Seats)\n  - C: Chassis (ABS, Brakes)\n  - U: Network (Communication between modules)\n\n- Example: P0301 means 'Cylinder 1 Misfire Detected'. The '0300' series relates to misfires, and the last digit '1' specifies the cylinder."
+    },
+    {
+      "keywords": ["mass air flow sensor", "maf sensor", "dirty maf"],
+      "answer": "The Mass Air Flow (MAF) sensor measures the amount (mass) of air entering the engine. This is one of the most important sensors for the engine computer (ECU) to calculate how much fuel to inject.\n\n- Symptoms of a Bad MAF: A dirty or failing MAF sensor can cause a wide range of problems, including stalling, hesitation, poor fuel economy, and a Check Engine Light. It often doesn't report its own failure but causes other codes to appear because the fuel mixture is incorrect."
+    },
+    {
+      "keywords": ["throttle body", "electronic throttle control", "etc", "dirty throttle body"],
+      "answer": "The throttle body contains a butterfly valve that opens and closes to control the amount of air entering the engine. In modern cars, it's electronically controlled (Electronic Throttle Control - ETC).\n\n- Maintenance: Over time, carbon deposits can build up inside the throttle body, which can restrict airflow and cause a rough idle or stalling. Cleaning the throttle body is a common maintenance procedure that can solve these issues."
+    },
+    {
+      "keywords": ["fuel injector", "clogged injector", "dirty injector"],
+      "answer": "Fuel injectors are electronically controlled valves that spray a fine mist of fuel into the engine's cylinders at precisely the right moment. \n\n- Problems: Over time, they can become clogged with carbon deposits from fuel. A clogged injector won't deliver the proper amount of fuel, leading to a misfire, poor performance, and reduced fuel economy. Using high-quality fuel and occasionally using a fuel system cleaner additive can help keep them clean."
+    },
+    {
+      "keywords": ["suspension", "shocks", "struts", "bouncy ride", "shock absorber"],
+      "answer": "The suspension system connects the wheels to the car's body. Its job is to absorb bumps from the road for a comfortable ride and to keep the tires in contact with the road for safety and handling.\n\n- Key Components: The main parts are springs (which absorb the impact) and shock absorbers or struts (which dampen the bouncing motion of the springs).\n\n- Signs of Worn Suspension: A car that feels excessively 'bouncy' after hitting a bump, 'nosedives' excessively when braking, or feels unstable in corners likely has worn shocks or struts. You might also see uneven tire wear."
+    },
+    {
+      "keywords": ["wheel alignment", "alignment", "car pulls to one side", "uneven tire wear"],
+      "answer": "A wheel alignment adjusts the angles of the wheels so that they are set to the car manufacturer's specifications. Proper alignment ensures your car drives straight and reduces tire wear.\n\n- When to Get an Alignment: You should get an alignment if you notice your car 'pulling' to the left or right when you're trying to drive straight, if your steering wheel is off-center, or if you see uneven wear on your tires. It's also a good idea after hitting a major pothole or installing new tires."
+    },
+    {
+      "keywords": ["wheel balancing", "balancing", "vibration in steering wheel", "shaking at high speed"],
+      "answer": "Wheel balancing ensures that the weight of the tire and wheel assembly is distributed evenly. Small metal weights are attached to the rim to compensate for any imbalances.\n\n- Why it's Important: An unbalanced wheel will cause a vibration or shaking, which you'll typically feel in the steering wheel at higher speeds (e.g., above 80-90 km/h or 50-55 mph). Balancing is essential for a smooth ride and prevents premature wear on your tires and suspension components."
+    },
+    {
+      "keywords": ["steering system", "power steering", "hydraulic steering", "electric power steering", "eps"],
+      "answer": "The steering system translates the rotation of your steering wheel into the turning motion of the road wheels.\n\n- Hydraulic Power Steering: An older, very common system that uses a pump driven by the engine to circulate high-pressure fluid, making it easy to turn the wheel. If you hear a whining noise when turning, the fluid might be low.\n\n- Electric Power Steering (EPS): The modern standard. It uses an electric motor instead of a hydraulic pump. It's more fuel-efficient and requires less maintenance, as there is no fluid to leak or replace."
+    },
+    {
+      "keywords": ["drivetrain", "fwd", "rwd", "awd", "4wd", "drivetrain explained"],
+      "answer": "The drivetrain is the group of components that delivers power from the engine to the wheels.\n\n- Front-Wheel Drive (FWD): The engine powers the front wheels. Most common in passenger cars for efficiency and good traction in most conditions.\n- Rear-Wheel Drive (RWD): The engine powers the rear wheels. Common in sports cars and trucks for better handling balance and towing.\n- All-Wheel Drive (AWD): Power is sent to all four wheels automatically as needed. Great for all-weather traction and performance.\n- Four-Wheel Drive (4WD): A more rugged system, typically for trucks and SUVs, that allows the driver to manually select 2WD or 4WD. Designed for serious off-road use."
+    },
+    {
+      "keywords": ["differential", "diff", "limited slip differential", "lsd"],
+      "answer": "The differential is a crucial gearbox located between the drive wheels (on the axle). Its clever design allows the outside wheel to spin faster than the inside wheel when you are making a turn. Without it, the wheels would skip and scrape during turns.\n\n- Maintenance: The differential contains its own special gear oil that needs to be changed at intervals specified in your owner's manual. A humming or whining noise from the front or rear axle area can indicate a problem."
+    },
+    {
+      "keywords": ["abs", "anti-lock braking system", "abs light", "what is abs"],
+      "answer": "The Anti-lock Braking System (ABS) prevents the wheels from locking up during emergency braking. This allows you to maintain steering control while braking hard, which is crucial for avoiding obstacles.\n\n- How it Works: If the ABS sensors detect a wheel is about to lock, the system rapidly 'pumps' the brake for that wheel many times per second. You will feel this as a pulsing or buzzing in the brake pedal, which is normal.\n\n- ABS Light: If the ABS warning light on your dashboard is on, it means the ABS system is deactivated. Your normal brakes will still work, but you won't have the anti-lock feature in an emergency."
+    },
+    {
+      "keywords": ["esp", "esc", "traction control", "stability control", "skidding car light"],
+      "answer": "Electronic Stability Control (ESC or ESP) is a life-saving safety feature that helps prevent skids. It's a computerized system that can detect if the driver is losing control of the car.\n\n- How it Works: If the system senses a skid, it can automatically brake individual wheels and even reduce engine power to help straighten the car out and bring it back under the driver's control.\n\n- The Light: The 'skidding car' icon on your dash will flash when the system is actively working (e.g., on a slippery road). If the light stays on constantly, it indicates a fault in the system."
+    },
+    {
+      "keywords": ["airbags", "srs", "supplemental restraint system", "airbag light"],
+      "answer": "Airbags are part of the Supplemental Restraint System (SRS). They are designed to inflate instantly during a moderate to severe crash to cushion the occupants and reduce injuries. ALWAYS wear your seatbelt, as airbags are designed to work with them, not replace them.\n\n- Airbag Light: If the airbag or SRS light on your dashboard is on and stays on, it means there is a fault in the system. In this case, the airbags WILL NOT deploy in a crash. You should get it serviced immediately for your safety."
+    },
+    {
+      "keywords": ["air conditioning", "a/c", "ac not working", "ac recharge", "refrigerant"],
+      "answer": "Your car's Air Conditioning (A/C) system works by compressing and expanding a special gas called a refrigerant to move heat from inside the cabin to the outside air.\n\n- Common Problem: The most common reason for an A/C system to stop blowing cold air is a low level of refrigerant, usually due to a small leak in the system over time.\n\n- Compressor: The A/C compressor is the pump of the system, driven by a belt from the engine. You might hear a 'click' when it engages. If the compressor doesn't turn on, the system won't cool."
+    },
+    {
+      "keywords": ["p0300", "dtc p0300", "random misfire", "code p0300"],
+      "answer": "Code P0300 - Random/Multiple Cylinder Misfire Detected\n\n- Meaning: This is a serious code indicating that the engine's computer has detected that multiple cylinders are not firing correctly, but it cannot pinpoint which specific ones are at fault.\n\n- Common Symptoms: The engine will run very rough, shake or vibrate, and lack power. The Check Engine Light will likely be BLINKING, which signals a misfire severe enough to damage the catalytic converter.\n\n- Possible Causes: Worn spark plugs, bad ignition coils, a vacuum leak, low fuel pressure (bad fuel pump or filter), or issues with the engine's internal timing."
+    },
+    {
+      "keywords": ["p0301", "p0302", "p0303", "p0304", "p0305", "p0306", "specific misfire"],
+      "answer": "Codes P0301 to P0306 - Cylinder [1-6] Misfire Detected\n\n- Meaning: Unlike P0300, these codes are specific. The last digit tells you exactly which cylinder is misfiring. For example, P0301 is a misfire in Cylinder 1, P0302 is in Cylinder 2, and so on.\n\n- Why it's useful: This is much easier to diagnose than a random misfire. The problem is almost always located at the specific cylinder.\n\n- Most Common Cause: The most frequent culprits for a single-cylinder misfire are a bad spark plug, a failed ignition coil (or spark plug wire), or a clogged fuel injector for that specific cylinder."
+    },
+    {
+      "keywords": ["p0420", "dtc p0420", "catalyst efficiency", "code p0420"],
+      "answer": "Code P0420 - Catalyst System Efficiency Below Threshold (Bank 1)\n\n- Meaning: This is one of the most common check engine codes. It means the oxygen sensors are detecting that the catalytic converter is not cleaning the exhaust gases as efficiently as it should.\n\n- Common Symptoms: Often, there are no noticeable driving issues, but you will fail an emissions test. In some cases, you might experience reduced engine power.\n\n- Possible Causes: The most common cause is a failing catalytic converter. However, it can also be triggered by a faulty rear oxygen sensor, an exhaust leak, or even engine misfires that have damaged the converter."
+    },
+    {
+      "keywords": ["p0171", "p0174", "dtc p0171", "system too lean", "code p0171"],
+      "answer": "Code P0171 - System Too Lean (Bank 1) or P0174 (Bank 2 for V6/V8 engines)\n\n- Meaning: The engine's computer is detecting too much oxygen (or not enough fuel) in the exhaust. It's trying to compensate by adding more fuel, but it has reached its limit.\n\n- Common Symptoms: Rough idle, engine hesitation, and potentially a misfire. You may also notice decreased fuel economy.\n\n- Most Common Cause: The number one cause for a 'lean' code is a vacuum leak—un-metered air entering the engine after the MAF sensor (e.g., from a cracked hose or bad gasket). Other causes include a dirty MAF sensor or a weak fuel pump."
+    },
+    {
+      "keywords": ["p0442", "dtc p0442", "evap leak", "code p0442", "gas cap"],
+      "answer": "Code P0442 - Evaporative Emission Control System Leak Detected (Small Leak)\n\n- Meaning: The EVAP system is designed to capture gasoline vapors from the fuel tank and prevent them from escaping into the atmosphere. This code means the system has detected a very small leak.\n\n- Most Common Cause: By far, the most frequent reason for this code is a loose, cracked, or improperly installed gas cap. Before panicking, always check your gas cap first. Tighten it until it clicks, clear the code, and see if it comes back.\n\n- Other Causes: If the gas cap isn't the issue, it could be a cracked hose or a faulty valve within the EVAP system."
+    },
+    {
+      "keywords": ["p0128", "dtc p0128", "coolant thermostat", "engine not warming up"],
+      "answer": "Code P0128 - Coolant Thermostat (Coolant Temperature Below Thermostat Regulating Temperature)\n\n- Meaning: The engine's computer has determined that the engine is not reaching its proper operating temperature within a certain amount of time.\n\n- Common Symptoms: Your temperature gauge on the dashboard may stay low and not reach the middle. You might also notice your car's heater isn't blowing very hot air.\n\n- Most Common Cause: This is almost always caused by a faulty thermostat that is stuck in the open position. This allows coolant to circulate constantly, preventing the engine from warming up properly. Replacing the thermostat is a common and relatively inexpensive repair."
+    },
+    {
+      "keywords": ["p0135", "p0141", "dtc p0135", "o2 sensor heater", "oxygen sensor heater"],
+      "answer": "Code P0135/P0141 - O2 Sensor Heater Circuit Malfunction (Bank 1, Sensor 1 / Bank 1, Sensor 2)\n\n- Meaning: Oxygen sensors need to be hot to work correctly. They have a built-in electric heater to warm them up quickly. This code means the heater element inside the O2 sensor has failed.\n\n- Symptoms: The primary symptom will be a Check Engine Light. It might take longer for your car to enter 'closed loop' mode (the most efficient operating state), which could slightly affect fuel economy.\n\n- The Fix: The O2 sensor itself needs to be replaced. The heater is an internal part of the sensor and cannot be repaired separately."
+    },
+    {
+      "keywords": ["gasoline vs diesel", "petrol or diesel", "what fuel type", "difference between gasoline and diesel"],
+      "answer": "Gasoline (Petrol) and Diesel are two different types of fuel and work in very different ways. Putting the wrong one in your car can cause catastrophic engine damage.\n\n- How They Work:\n  - Gasoline Engines use spark plugs to ignite a compressed air-fuel mixture.\n  - Diesel Engines use extreme compression to heat the air, which then ignites the diesel fuel as it's injected.\n\n- Key Differences:\n  - Diesel engines typically produce more torque (pulling power) and have better fuel economy.\n  - Gasoline engines are generally quieter, smoother, and have a higher RPM range.\n\n- CRITICAL WARNING: Never put diesel in a gasoline car, or gasoline in a diesel car. If you make this mistake, DO NOT start the engine and call for a tow truck immediately to have the fuel tank drained."
+    },
+    {
+      "keywords": ["octane", "what is octane", "premium vs regular", "95 octane", "98 octane", "high octane fuel"],
+      "answer": "Octane rating is a standard measure of a fuel's ability to resist 'knocking' or 'pinging' during combustion. It is NOT a measure of the fuel's power or energy content.\n\n- What is 'Knocking'?: This is an uncontrolled explosion of the air-fuel mixture in the engine cylinder, instead of a smooth burn. It can damage your engine over time.\n\n- Who Needs High Octane?: High-performance, turbocharged, or supercharged engines operate at higher compression ratios and require high-octane (premium) fuel to prevent knocking.\n\n- The Golden Rule: Always use the minimum octane rating recommended in your vehicle's owner's manual. Using higher octane fuel than required in a car designed for regular fuel provides NO benefit (no more power, no better mileage) and is a waste of money. However, using lower octane than required in a high-performance car can lead to engine damage."
+    },
+    {
+      "keywords": ["fuel economy", "save fuel", "fuel saving tips", "improve mpg", "gas mileage", "how to save gas"],
+      "answer": "You can significantly improve your fuel economy with a few changes to your driving habits and maintenance routine.\n\n- Driving Style (The Biggest Factor):\n  - Be Gentle: Accelerate smoothly and brake gradually. Aggressive driving is a major fuel waster.\n  - Maintain Speed: Use cruise control on the highway to maintain a steady speed.\n  - Anticipate Traffic: Look ahead to anticipate stops, slow-downs, and turns to avoid unnecessary braking and acceleration.\n\n- Maintenance:\n  - Tire Pressure: Properly inflated tires have less rolling resistance. This is one of the easiest and most effective ways to save fuel.\n  - Engine Health: A well-maintained engine with a clean air filter and fresh oil runs more efficiently.\n\n- Reduce Weight & Drag:\n  - Lighten the Load: Remove any heavy, unnecessary items from your car (trunk, roof rack).\n  - Be Aerodynamic: At highway speeds, close your windows and sunroof to reduce aerodynamic drag.\n\n- Plan Your Trips:\n  - Combine Errands: Plan to do multiple errands in one trip rather than several short ones. A warm engine is more efficient than a cold one.\n  - Avoid Idling: If you'll be stopped for more than 60 seconds, it's more fuel-efficient to turn off the engine."
+    },
+    {
+      "keywords": ["how to wash a car", "car wash", "two bucket method", "washing technique"],
+      "answer": "Washing your car correctly prevents swirl marks and scratches in the paint. Avoid automatic car washes with harsh brushes if you care about your paint's finish.\n\n- The Two-Bucket Method (The Best Way):\n  1.  You need two buckets: one for soapy water (the 'Wash' bucket) and one for clean water (the 'Rinse' bucket).\n  2.  Rinse the entire car with a hose to remove loose dirt and grit.\n  3.  Dunk your wash mitt into the soapy 'Wash' bucket and wash a small section of the car, starting from the top and working your way down.\n  4.  CRITICAL STEP: Before putting the mitt back into the soapy water, rinse it thoroughly in the clean 'Rinse' bucket. This removes the dirt from the mitt so you don't rub it back onto the paint.\n  5.  Repeat until the whole car is washed.\n  6.  Rinse the car thoroughly and dry it with a clean, soft microfiber towel to prevent water spots."
+    },
+    {
+      "keywords": ["car wax", "car polish", "wax vs polish", "polishing a car", "protecting paint"],
+      "answer": "Polish and Wax are two different products with different purposes. They are often confused.\n\n- Polish is an ABRASIVE compound designed to correct paint defects. It works by removing a very thin layer of the clear coat to smooth out light scratches, swirl marks, and oxidation. Polishing is what restores the shine and gloss.\n\n- Wax is a PROTECTIVE layer. It contains no abrasives. Its job is to seal the paint, protect it from UV rays, bird droppings, and water, and give it a deep, wet look. Wax is applied *after* polishing.\n\n- In short: You POLISH to fix and shine, then you WAX to protect that shine. For a new car with perfect paint, you only need to apply wax."
+    },
+    {
+      "keywords": ["clay bar", "using a clay bar", "what is a clay bar", "rough paint"],
+      "answer": "A clay bar is an engineered resin compound used to remove contaminants from the surface of your car's paint that cannot be removed by washing, such as industrial fallout, tree sap, and road tar.\n\n- How to Tell if You Need It: After washing and drying your car, gently run your fingertips over the paint. If it feels gritty or rough instead of perfectly smooth like glass, you need to use a clay bar.\n\n- How it Works: You use a special lubricant (or a quick detailer spray) and gently glide the clay bar over the surface. The clay picks up and holds onto the contaminants, leaving the paint perfectly clean and smooth. It is a necessary step before polishing or applying a high-quality wax for the best results."
+    },
+    {
+      "keywords": ["interior cleaning", "detailing interior", "clean dashboard", "clean car seats"],
+      "answer": "A clean interior makes driving more enjoyable. Here's how to tackle it like a pro:\n\n1.  Remove Everything: Take out all floor mats and trash.\n2.  Vacuum Thoroughly: Start from the top and work down. Use brush and crevice attachments to get into all the nooks and crannies, including under the seats.\n3.  Dashboard & Plastics: Use a dedicated interior cleaner and a microfiber towel. Avoid greasy 'shine' products, which can attract dust and cause glare on the windshield.\n4.  Seats: \n    - Fabric Seats: Use a specific upholstery cleaner. Spray it on, agitate with a soft brush, and then wipe/blot dry with a clean microfiber towel.\n    - Leather Seats: Use a two-step process: a dedicated leather cleaner first, followed by a leather conditioner to moisturize and protect it from cracking.\n5.  Glass: Clean all windows, mirrors, and the inside of the windshield last. Use an automotive glass cleaner (they are ammonia-free to protect window tint) and two microfiber towels—one for cleaning, one for a final streak-free buff."
+    },
+    {
+      "keywords": ["hp", "horsepower", "bhp", "what is horsepower", "brake horsepower"],
+      "answer": "Horsepower (HP) is a unit of measurement for power. It essentially measures how quickly an engine can do work. Think of it as the engine's ability to overcome forces that resist motion, like wind and rolling resistance.\n\n- What it Feels Like: High horsepower is what allows a car to achieve a high top speed and to continue accelerating strongly at higher speeds.\n\n- In Simple Terms: If torque is the raw strength, horsepower is how fast that strength can be applied."
+    },
+    {
+      "keywords": ["torque", "tork", "what is torque", "lb-ft", "nm", "newton-meter"],
+      "answer": "Torque is a measure of rotational force. It's the 'twisting' or 'pulling' power of an engine. \n\n- What it Feels Like: High torque is what you feel when you are pushed back into your seat from a standstill. It's the force that gets the car moving, especially from low speeds, up hills, or when towing.\n\n- In Simple Terms: If you're trying to open a very tight jar lid, the amount of twisting force you apply with your hand is torque."
+    },
+    {
+      "keywords": ["hp vs torque", "horsepower vs torque", "difference between hp and torque"],
+      "answer": "This is a classic car question! Here is the simplest way to think about it:\n\n- Torque gets you moving. Horsepower keeps you moving fast.\n\n- An engine's horsepower is mathematically derived from its torque and RPM (HP = Torque x RPM / 5252).\n\n- Analogy: A powerful weightlifter has high torque (can lift a very heavy weight). A fast sprinter has high horsepower (can move quickly). A car needs both to be a great all-around performer."
+    },
+    {
+      "keywords": ["ecu", "engine control unit", "engine computer", "car brain", "pcm"],
+      "answer": "The ECU (Engine Control Unit), sometimes called the PCM (Powertrain Control Module), is the main computer or 'brain' of your car's engine. It receives data from dozens of sensors around the vehicle (like oxygen sensors, temperature sensors, etc.) and uses this information to control critical engine functions like fuel injection, ignition timing, and idle speed to ensure optimal performance, fuel economy, and low emissions."
+    },
+    {
+      "keywords": ["vin", "vehicle identification number", "what is a vin", "chassis number"],
+      "answer": "The VIN (Vehicle Identification Number) is a unique 17-character code assigned to every single vehicle, acting as its fingerprint. It contains coded information about the car, including the manufacturer, model, year, and the plant where it was built. The VIN is essential for vehicle registration, insurance, and checking a car's history report for accidents or theft."
+    },
+    {
+      "keywords": ["rpm", "revolutions per minute", "tachometer", "revs", "revving", "redline"],
+      "answer": "RPM stands for Revolutions Per Minute. It measures how fast the engine's crankshaft is spinning. The gauge on your dashboard that shows this is called the tachometer.\n\n- What it means: 3,000 RPM means the crankshaft is making 3,000 full rotations every minute.\n\n- Redline: The red area on the tachometer is the 'redline,' which indicates the maximum safe operating speed for the engine. You should avoid revving the engine into the redline to prevent damage."
+    },
+    {
+      "keywords": ["obd-ii", "obd2", "on-board diagnostics", "obd port", "check engine port"],
+      "answer": "OBD-II (On-Board Diagnostics II) is the standardized self-diagnostic system built into all modern cars (since 1996 in the US). It continuously monitors the performance of your engine and emissions systems. When it detects a fault, it turns on the Check Engine Light and stores a Diagnostic Trouble Code (DTC) in its memory. The OBD-II port, usually located under the dashboard, is where a mechanic (or you, with a scanner) can access these codes."
+    },
+    {
+      "keywords": ["turbo", "turbocharger", "supercharger", "forced induction", "boost"],
+      "answer": "Both are 'forced induction' systems that compress air and force it into the engine. More air means more fuel can be burned, which results in more power from a smaller engine.\n\n- Turbocharger: It's powered by the flow of hot exhaust gases spinning a turbine. This is very efficient but can sometimes have a slight delay before the power kicks in, known as 'turbo lag'.\n\n- Supercharger: It's driven directly by a belt connected to the engine's crankshaft. This provides instant power with no lag but uses a small amount of engine power to operate."
+    },
+    {
+      "keywords": ["oil pressure light", "red oil can light", "yağ basınç lambası", "yağ lambası"],
+      "answer": "This is one of the most critical warning lights. If the RED oil can light comes on while driving, it means the engine has lost oil pressure. This is NOT the same as a low oil level warning. \n\n- What to do: Pull over safely and turn off the engine IMMEDIATELY. Do not restart it. Continuing to drive for even a minute can destroy your engine.\n\n- Cause: It could be a failed oil pump, a major leak, or a faulty sensor, but the risk is too high to ignore. The car must be towed to a mechanic."
+    },
+    {
+      "keywords": ["battery light", "alternator light", "charging system light", "akü ışığı", "şarj lambası"],
+      "answer": "The battery-shaped light indicates a problem with the vehicle's charging system, not necessarily the battery itself. The system usually involves the alternator, voltage regulator, and wiring.\n\n- Meaning: The alternator is not generating enough electricity to run the car and charge the battery. The car is running on battery power alone and will die once the battery is depleted.\n\n- What to do: Turn off all non-essential accessories (radio, A/C, heated seats) to conserve power. Do not turn the engine off if you can avoid it. Drive immediately to a safe location or a repair shop. The car may not restart if you turn it off."
+    },
+    {
+      "keywords": ["temperature warning light", "engine temp light", "hot engine light", "hararet lambası"],
+      "answer": "The thermometer icon light means your engine is overheating. This is a critical warning that can lead to severe engine damage, such as a warped cylinder head.\n\n- What to do: If the light comes on, turn on your heater to the highest setting (this draws some heat away from the engine) and pull over safely as soon as possible. Turn off the engine. \n\n- DANGER: DO NOT open the radiator cap or coolant reservoir cap while the engine is hot. The system is under high pressure and can spray boiling coolant, causing severe burns. Wait for the engine to cool down completely before checking coolant levels. The car should be inspected for leaks or a faulty fan/thermostat."
+    },
+    {
+      "keywords": ["winter prep", "winter car care", "kışa hazırlık", "snow tires", "kar lastiği"],
+      "answer": "Preparing your car for winter is essential for safety and reliability.\n\n- Tires: Switch to winter/snow tires if you live in an area with frequent snow and ice. Their rubber compound stays soft in the cold for better grip. At a minimum, ensure your all-season tires have deep tread.\n- Battery: Cold weather is very hard on batteries. Have your battery tested to ensure it's strong enough for cold starts.\n- Coolant/Antifreeze: Make sure your coolant provides adequate freeze protection. A 50/50 mix of antifreeze and water is typical.\n- Wiper Blades & Fluid: Replace worn wiper blades and fill your washer fluid reservoir with a de-icing type that won't freeze.\n- Emergency Kit: Pack a kit with a blanket, flashlight, jumper cables, and a small shovel."
+    },
+    {
+      "keywords": ["serpentine belt", "accessory belt", "drive belt", "squealing belt", "v kayışı"],
+      "answer": "The serpentine belt (or accessory belt) is a long rubber belt that powers multiple engine accessories, including the alternator, power steering pump, water pump, and A/C compressor.\n\n- Warning Signs: A high-pitched squealing noise, especially on startup or when the A/C is on, is a common sign of a worn or loose belt. Visually inspect the belt for cracks, fraying, or missing chunks.\n\n- Why it's Important: If the serpentine belt breaks, your car will lose power steering, the A/C will stop working, and the battery will stop charging. If it also drives the water pump, the engine will overheat quickly. It should be replaced as part of routine maintenance."
+    },
+    {
+      "keywords": ["wiper blades", "windshield wipers", "silecekler", "silecek lastiği"],
+      "answer": "Wiper blades are a critical safety item. They are made of soft rubber and wear out from exposure to sun and use.\n\n- When to Replace: Replace them every 6 to 12 months, or as soon as you notice streaking, skipping, or a chattering sound on the glass. Reduced visibility in rain is a major safety hazard.\n\n- What to Know: It's an easy and inexpensive DIY task. You can find the correct size for your car in your owner's manual or by using the guide at an auto parts store."
+    },
+    {
+      "keywords": ["cvv", "continuously variable transmission", "what is a cvt", "cvt şanzıman"],
+      "answer": "A CVT (Continuously Variable Transmission) is a type of automatic transmission that doesn't have fixed gears like a traditional automatic. Instead, it uses a system of belts and pulleys to provide a continuous range of gear ratios.\n\n- How it Feels: Driving a car with a CVT feels very smooth, as there are no noticeable gear shifts. The engine RPM might seem to hang at a certain level during acceleration, which is normal for this design.\n\n- Benefit: CVTs are designed to keep the engine in its most efficient RPM range, often resulting in better fuel economy compared to traditional automatic transmissions."
+    },
+    {
+      "keywords": ["oem vs aftermarket", "oem parts", "aftermarket parts", "original parts"],
+      "answer": "When you need to replace a part on your car, you have a few options:\n\n- OEM (Original Equipment Manufacturer): These parts are made by the car manufacturer or a company contracted by them. They are identical to the part your car was built with. They guarantee perfect fit and quality but are usually the most expensive.\n\n- OES (Original Equipment Supplier): This is a part made by the same company that supplies the car manufacturer, but sold in a non-branded box. It's the exact same part as OEM but often cheaper.\n\n- Aftermarket: These parts are made by a different company. The quality can range from excellent (often improving on the original design) to very poor. They are typically the least expensive option but require more research to ensure you are buying a quality brand."
+    },
+    {
+      "keywords": ["used car inspection", "buying a used car", "ikinci el araba kontrolü", "pre-purchase inspection"],
+      "answer": "Before buying a used car, a thorough inspection is crucial to avoid costly surprises.\n\n- Exterior: Check for mismatched paint, uneven panel gaps, and signs of rust. These can indicate a previous accident.\n- Tires: Check for uneven tire wear, which can signal alignment or suspension problems.\n- Under the Hood: Look for any fluid leaks (oil, coolant), cracked hoses, and listen for strange noises when the engine is running.\n- Interior: Check that all electronics work. A musty smell could mean a water leak.\n- Test Drive: Pay attention to how the brakes feel, how the transmission shifts, and if the car pulls to one side.\n- Professional Help: Always consider paying for a 'Pre-Purchase Inspection' (PPI) from a trusted mechanic. It's the best way to get a professional opinion on the car's health."
+    },{
+      "keywords": ["car shaking", "vibration at speed", "shaking steering wheel", "unbalanced tires", "shaking while driving"],
+      "answer": "A shaking or vibrating car can be caused by several issues, and the clues often depend on when it happens.\n\n- Vibration at a Specific Speed (e.g., 80-100 km/h or 50-60 mph): This is almost always due to an unbalanced wheel. Getting your wheels balanced is a simple fix.\n- Vibration When Braking: This points to warped brake rotors. You will feel the pulsation through the brake pedal and steering wheel. The rotors need to be resurfaced or replaced.\n- Vibration at Idle or During Acceleration: This often indicates an engine issue, such as a misfire from a bad spark plug or ignition coil. A failing motor mount can also cause this.\n- Vibration That's Constant and Gets Worse with Speed: This could be a sign of a worn-out CV axle or a tire that has developed a flat spot or a bubble in the sidewall."
+    },
+    {
+      "keywords": ["car won't start", "engine cranks but won't start", "engine doesn't turn over", "no start condition"],
+      "answer": "A 'car won't start' issue can be broken down into two main scenarios:\n\n1. You Turn the Key and Hear Clicking or Nothing (No Crank): This is almost always an electrical problem. The most likely cause is a dead battery. Other possibilities include a bad starter, a faulty ignition switch, or corroded battery terminals.\n\n2. The Engine 'Cranks' or 'Turns Over' But Won't Fire Up: This means the starter is working, but the engine isn't getting one of the three things it needs to run: Fuel, Spark, or Air.\n   - Common Causes: This is more complex but often points to a failed fuel pump, a clogged fuel filter, a problem with the ignition system (like a bad crankshaft position sensor), or a major vacuum leak."
+    },
+    {
+      "keywords": ["clunking noise", "knocking sound", "clunk when turning", "suspension noise"],
+      "answer": "A 'clunking' or 'knocking' noise from your suspension usually indicates a worn-out part. The location and timing of the noise are key clues.\n\n- Clunking Over Bumps: This is a classic sign of worn shock absorbers/struts, sway bar links, or control arm bushings.\n- Clunking or Clicking When Turning: This often points to a failing CV (Constant Velocity) joint on a front-wheel-drive car. It will be more pronounced during sharp, low-speed turns.\n- A Single, Loud Clunk When Shifting into Drive or Reverse: This may indicate a worn U-joint (on rear-wheel-drive vehicles) or a bad transmission mount."
+    },
+    {
+      "keywords": ["whining noise", "whirring noise", "car whining"],
+      "answer": "A whining or whirring noise that changes pitch with engine speed can point to several issues.\n\n- Whining When Turning the Steering Wheel: This is a classic sign of a low power steering fluid level or a failing power steering pump.\n- A High-Pitched Whine from the Engine Bay: This could be a failing alternator. Often, an alternator will whine before it fails completely.\n- A Whine from the Rear of the Car: This can be a symptom of a failing fuel pump (located inside the gas tank) or a problem with the differential.\n- Whining That Changes with Vehicle Speed (not engine RPM): This often points to a bad wheel bearing. The noise will get louder as you go faster and may change when you turn left or right."
+    },
+    {
+      "keywords": ["fuel pump", "bad fuel pump", "car stalling"],
+      "answer": "The fuel pump is a critical component that delivers gasoline from the tank to the engine. When it starts to fail, it gives several warning signs.\n\n- Symptoms of a Bad Fuel Pump: The most common symptom is a whining noise from the rear of the car. Other signs include difficulty starting the engine, engine sputtering at high speeds, loss of power when accelerating or climbing hills, and stalling. \n\n- Complete Failure: If the fuel pump fails completely, the engine will crank but will not start because it is not receiving any fuel."
+    },
+    {
+      "keywords": ["radiator", "what is a radiator", "car radiator", "radiator leak"],
+      "answer": "The radiator is a type of heat exchanger at the front of your car. Its job is to dissipate the heat that the coolant has absorbed from the engine. \n\n- How it Works: Hot coolant from the engine flows through the radiator's thin tubes. Airflow from driving (and a fan) passes over the fins, cooling the fluid before it's sent back to the engine to absorb more heat.\n\n- Problems: Radiators can become clogged internally, reducing their efficiency. They can also develop leaks, often visible as green, pink, or orange puddles under the front of the car. An overheating engine is the primary symptom of a radiator problem."
+    },
+    {
+      "keywords": ["crankshaft position sensor", "camshaft position sensor", "crank sensor", "cam sensor"],
+      "answer": "The Crankshaft and Camshaft Position Sensors are vital for modern engine management. They tell the ECU the exact position and speed of the engine's internal rotating parts.\n\n- Crankshaft Position Sensor (CKP): This is one of the most important sensors. It tells the ECU the rotational speed and position of the crankshaft. If it fails, the engine will not know when to create a spark or inject fuel. A bad CKP sensor will often cause the engine to crank but not start, or to stall while driving.\n\n- Camshaft Position Sensor (CMP): This sensor tells the ECU the position of the camshaft, which helps with fuel injector timing and variable valve timing. A bad CMP sensor can cause a check engine light, rough running, and poor fuel economy."
+    },
+    {
+      "keywords": ["heater core", "car heater not working", "no heat from vents", "foggy windshield inside"],
+      "answer": "The heater core is like a small radiator located inside your dashboard. Hot coolant from the engine flows through it, and the car's fan blows air over it to provide warm air for the cabin.\n\n- Symptoms of a Bad Heater Core:\n  - No Heat: The most obvious sign is a lack of warm air from the vents, even when the engine is at full operating temperature.\n  - Sweet Smell: A distinct, sweet smell of antifreeze inside the car indicates a leak.\n  - Foggy Windows: If the heater core is leaking, it can create a greasy, foggy film on the inside of the windshield that is difficult to wipe away.\n  - Coolant Leak Inside: In severe cases, you may see coolant dripping onto the passenger-side floor mat."
+    },
+    {
+      "keywords": ["how to change a flat tire", "spare tire", "using a car jack", "lug nuts", "changing a wheel"],
+      "answer": "Changing a flat tire is a crucial skill. Safety is the top priority.\n\n1.  **Be Safe:** Park on a flat, stable surface away from traffic. Turn on your hazard lights and apply the parking brake.\n2.  **Get Tools:** Get the spare tire, lug wrench, and jack from your trunk.\n3.  **Loosen Lug Nuts:** BEFORE jacking up the car, use the lug wrench to loosen the lug nuts on the flat tire by about half a turn. They may be very tight.\n4.  **Jack Up the Car:** Place the jack at the correct lift point on the car's frame (check your owner's manual). Raise the car until the flat tire is a few inches off the ground.\n5.  **Swap Tires:** Finish unscrewing the lug nuts and remove the flat tire. Mount the spare tire onto the wheel studs.\n6.  **Hand-Tighten:** Screw the lug nuts back on by hand until they are snug.\n7.  **Lower and Tighten:** Carefully lower the car. Once the car is on the ground, use the wrench to fully tighten the lug nuts in a star pattern to ensure they are evenly torqued.\n\n**Warning:** Spare tires are for temporary, low-speed use only. Get your primary tire repaired or replaced as soon as possible."
+    },
+    {
+      "keywords": ["how to check fuses", "blown fuse", "car fuse box", "radio not working fuse"],
+      "answer": "If an electrical component in your car (like the radio, power outlet, or interior lights) suddenly stops working, the first thing to check is a blown fuse.\n\n1.  **Locate the Fuse Box:** Cars typically have two fuse boxes: one in the engine bay and one inside the cabin (often near the driver's left foot or behind the glove box). Your owner's manual will show their locations.\n2.  **Identify the Fuse:** The diagram on the back of the fuse box cover (or in the manual) will show you which fuse corresponds to the component that isn't working.\n3.  **Inspect the Fuse:** Use a fuse puller (usually included in the fuse box) or small pliers to remove the suspect fuse. Hold it up to the light. A good fuse has an intact metal wire inside. In a blown fuse, this wire will be broken or melted.\n4.  **Replace:** If the fuse is blown, replace it with a new one of the *exact same amperage rating*. Using a higher-rated fuse is a fire hazard."
+    },
+    {
+      "keywords": ["optimum tire pressure", "correct psi", "how much tire pressure", "tire pressure value"],
+      "answer": "The optimum tire pressure is specific to your vehicle and is crucial for safety and fuel economy. It is NOT the 'Max Press' value on the tire sidewall.\n\n- Where to Find It: The correct pressure is listed on a sticker located on the driver's side door jamb or in your owner's manual.\n\n- General Values: For most passenger cars, the recommended pressure is typically between 30 and 35 PSI (Pounds per Square Inch) when the tires are cold.\n\n- Why it Matters: \n  - Too Low: Causes excessive tire wear on the outer edges, poor fuel economy, and unsafe handling.\n  - Too High: Causes wear in the center of the tread, a harsh ride, and reduced grip.\n\n- IMPORTANT: Always check the pressure when the tires are 'cold' (not driven for at least 3 hours)."
+    },
+    {
+      "keywords": ["correct oil level", "dipstick reading", "how much oil", "oil level check"],
+      "answer": "The correct engine oil level is vital for preventing engine damage. You can check it using the dipstick in your engine bay.\n\n- How to Check: For an accurate reading, park the car on level ground and wait for the engine to cool down for at least 10-15 minutes.\n\n- The Dipstick: Pull the dipstick out, wipe it clean, re-insert it fully, and then pull it out again. The oil level should be between the two marks, dots, or cross-hatched area at the bottom. This area represents the 'safe zone'.\n\n- What the Levels Mean:\n  - Below the 'MIN' or 'ADD' mark: The oil is dangerously low. Add a small amount of the correct oil type and check again.\n  - Above the 'MAX' or 'FULL' mark: The engine is overfilled, which can also cause damage. Do not drive and consult a mechanic."
+    },
+    {
+      "keywords": ["coolant level", "antifreeze level", "radiator fluid level", "expansion tank level"],
+      "answer": "The coolant level should be checked regularly to prevent overheating. This should ONLY be done when the engine is completely cool.\n\n- Where to Look: Do not open the metal radiator cap. Instead, look for the translucent plastic 'expansion' or 'overflow' tank. This tank will have 'MIN' (or 'LOW') and 'MAX' (or 'FULL') lines marked on the side.\n\n- Optimum Level: The coolant level should be between the 'MIN' and 'MAX' marks. If it's below the 'MIN' line, you need to top it off with the correct type of coolant specified for your vehicle. Using the wrong type or mixing colors can cause problems."
+    },
+    {
+      "keywords": ["minimum tread depth", "legal tire depth", "tire wear limit", "how much tread"],
+      "answer": "Tire tread depth is critical for grip, especially in wet conditions. As the tread wears down, the tire's ability to channel water away decreases, increasing the risk of hydroplaning.\n\n- Wear Bars: Most tires have small, raised bars of rubber in the grooves called 'wear bars'. When the tread wears down to become even with these bars, the tire is at its legal limit and must be replaced immediately.\n\n- Legal Limits: The legal minimum tread depth in most places (including the EU and many US states) is 1.6 mm (or 2/32 of an inch). However, for safety in wet weather, it is highly recommended to replace tires when the tread depth reaches 3 mm (or 4/32 of an inch)."
+    },
+    {
+      "keywords": ["battery voltage", "normal battery voltage", "car battery reading", "multimeter test"],
+      "answer": "A healthy car battery's voltage can tell you a lot about its state of charge and overall health. You can measure this with a simple multimeter.\n\n- Engine Off: A fully charged, healthy 12-volt car battery should read around 12.6 to 12.8 volts when the engine is off. A reading of 12.2 volts indicates about a 50% charge, and below 12 volts, the battery is considered discharged.\n\n- Engine Running: When the engine is running, the alternator is charging the battery. The voltage reading should be higher, typically between 13.7 and 14.7 volts. If the voltage is below 13.5V or above 15V with the engine running, it could indicate a problem with your alternator."
+    },
+    {
+      "keywords": ["defensive driving", "safe driving", "how to drive safely", "3 second rule", "avoid accidents"],
+      "answer": "Defensive driving means anticipating danger to prevent accidents before they happen. It's about being proactive, not reactive.\n\n- The 3-Second Rule: Pick a fixed object (like a sign) that the car in front of you has just passed. You should be able to count 'one-thousand-one, one-thousand-two, one-thousand-three' before you pass the same object. In bad weather, increase this to 4 or 5 seconds.\n\n- Scan and Look Ahead: Don't just stare at the car in front of you. Constantly scan the entire road, including mirrors and side roads, to see the big picture and anticipate potential hazards.\n\n- Have an Escape Route: Always be aware of the space around you. In traffic, leave enough room to pull into an adjacent lane if the car in front of you suddenly stops."
+    },
+    {
+      "keywords": ["driving in rain", "wet road safety", "heavy rain driving"],
+      "answer": "Driving in the rain significantly reduces tire grip and visibility. Adjust your driving accordingly.\n\n- Slow Down: This is the single most important rule. Your tires need more time to channel water away. Reducing speed gives them a chance to maintain contact with the road.\n\n- Increase Following Distance: Double your following distance (use a 4-5 second rule) as your braking distance will be much longer on wet pavement.\n\n- Visibility: Turn on your low-beam headlights to be more visible to others. Use your A/C or defroster to keep the inside of your windshield from fogging up.\n\n- Avoid Cruise Control: Do not use cruise control in heavy rain. You need to be in full control of your speed at all times."
+    },
+    {
+      "keywords": ["aquaplaning", "hydroplaning", "car sliding on water"],
+      "answer": "Aquaplaning (or hydroplaning) occurs when a layer of water builds between your tires and the road surface, causing a complete loss of steering and braking control. It feels like you're floating.\n\n- How to Avoid It: Ensure your tires have good tread depth and are properly inflated. Slow down significantly when there is standing water on the road.\n\n- WHAT TO DO IF IT HAPPENS:\n  1. DO NOT PANIC. Do not slam on the brakes or make sharp turns.\n  2. Ease your foot off the accelerator GENTLY.\n  3. Keep the steering wheel straight and pointed in the direction you want to go.\n  4. As the car slows down, the tires will regain contact with the road, and you will feel control return."
+    },
+    {
+      "keywords": ["driving in snow", "icy road", "winter driving tips", "driving on ice"],
+      "answer": "Driving in snow and ice is extremely hazardous and requires maximum caution.\n\n- Use Winter Tires: They are made from a softer rubber compound that stays flexible in the cold and have special tread patterns for grip on snow and ice. They make a huge difference.\n\n- Be Incredibly Gentle: Every action—accelerating, braking, and turning—must be done slowly and smoothly. Any sudden movement can cause a skid.\n\n- Look Where You Want to Go: If you start to skid, your instinct is to look at what you're afraid of hitting. Force yourself to look at the open path where you want the car to go. Your hands will naturally follow your eyes.\n\n- Increase Following Distance Dramatically: It can take up to 10 times longer to stop on ice. Leave a huge gap between you and the car in front."
+    },
+    {
+      "keywords": ["black ice", "what is black ice", "how to spot black ice"],
+      "answer": "Black ice is a thin, transparent layer of ice on the roadway. It's so dangerous because it's nearly invisible to drivers.\n\n- Where it Forms: It's most common on bridges, overpasses, and in shaded areas, as these surfaces freeze much faster than the rest of the road. Be extra cautious in these areas, especially near freezing temperatures (0°C or 32°F).\n\n- How to Spot It: Look for patches of road that appear dark and wet when the surrounding pavement is dry and light-colored. If you see cars in front of you suddenly swerving for no reason, they may have hit black ice.\n\n- If You Hit It: Follow the same rules as aquaplaning: do not brake, ease off the gas, and keep the steering wheel straight."
+    },
+    {
+      "keywords": ["night driving", "driving at night safety", "headlight glare"],
+      "answer": "Your vision is significantly reduced at night, so extra precautions are necessary.\n\n- Clean Your Glass: A dirty or hazy windshield can cause severe glare from oncoming headlights. Clean the inside and outside of your windshield regularly.\n\n- Dim Your Interior Lights: A bright dashboard or infotainment screen can reduce your eyes' ability to see in the dark. Dim them to a comfortable, low level.\n\n- Dealing with Glare: When an oncoming car has bright lights, avoid staring directly at them. Instead, shift your gaze down and to the right, focusing on the white line at the edge of your lane to guide you until the car passes."
+    }
+  ],
+  "default_answer": "I'm sorry, I could not find a specific answer for that. Could you please rephrase your question? You can ask about 'engine oil', 'tire pressure', or 'squeaking brakes'."
+}

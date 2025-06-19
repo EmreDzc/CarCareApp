@@ -146,6 +146,11 @@
             android:exported="false"
             android:theme="@style/Theme.CarCare" />
 
+        <activity
+            android:name=".AIAssistantActivity"
+        android:exported="false"
+        android:theme="@style/Theme.CarCare" />
+
     </application>
 
 </manifest>

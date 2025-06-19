@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Uygulamanın ana rengini kullanacak. Bu şekilde temanın rengi değişse bile uyumlu kalır. -->
+    <solid android:color="?attr/colorPrimary" />
+
+    <!-- Köşeleri yuvarlat. Sağ alt köşeyi daha az yuvarlatarak "balon" hissi verebilirsin. -->
+    <corners
+        android:radius="16dp"
+        android:bottomRightRadius="4dp"/>
+
+</shape>
