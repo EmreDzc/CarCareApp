@@ -127,7 +127,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         // Sepet boş kontrolü
         if (Cart.getInstance().getItems().isEmpty() && !isDirectBuy) {
-            Toast.makeText(this, "Sepetiniz boş. Mağazaya yönlendiriliyorsunuz.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Your cart is empty. You are being redirected to the store.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, StoreActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -234,9 +234,9 @@ public class CheckoutActivity extends AppCompatActivity {
         });
 
         // Sözleşme linklerini ayarla
-        textViewPreInformation.setOnClickListener(v -> showContractDialog("Ön Bilgilendirme Koşulları", getPreInformationText()));
-        textViewDistanceSales.setOnClickListener(v -> showContractDialog("Mesafeli Satış Sözleşmesi", getDistanceSalesText()));
-        textViewKvkk.setOnClickListener(v -> showContractDialog("KVKK Aydınlatma Metni", getKvkkText()));
+        textViewPreInformation.setOnClickListener(v -> showContractDialog("Preliminary Information Conditions", getPreInformationText()));
+        textViewDistanceSales.setOnClickListener(v -> showContractDialog("Distance Sales Contract", getDistanceSalesText()));
+        textViewKvkk.setOnClickListener(v -> showContractDialog("KVKK Information Text", getKvkkText()));
 
         // Fiyat detayları açılır kapanır click listener
         findViewById(R.id.layout_total_price_trigger).setOnClickListener(v -> togglePriceDetails());
@@ -339,7 +339,7 @@ public class CheckoutActivity extends AppCompatActivity {
             textShipping.setText(tlFormat.format(shipping) + " TL");
             textShipping.setTextColor(ContextCompat.getColor(this, R.color.grey_medium));
         } else {
-            textShipping.setText("Ücretsiz");
+            textShipping.setText("Free");
             textShipping.setTextColor(ContextCompat.getColor(this, R.color.green_success));
         }
 
@@ -347,7 +347,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         // MaterialButton içindeki fiyat güncellemesi
         MaterialButton buttonPay = findViewById(R.id.buttonPay);
-        buttonPay.setText("Onayla ve Bitir • " + tlFormat.format(total) + " TL");
+        buttonPay.setText("Confirm and Finish • " + tlFormat.format(total) + " TL");
 
         // İndirim varsa göster
         if (discount > 0) {
@@ -430,18 +430,18 @@ public class CheckoutActivity extends AppCompatActivity {
                 recipientInfo += " • " + selectedAddress.getRecipientPhone();
             }
             textSelectedRecipientInfo.setText(recipientInfo);
-            textAddEditAddress.setText("Değiştir");
+            textAddEditAddress.setText("Change");
         } else {
             showNoAddressState();
         }
     }
 
     private void showNoAddressState() {
-        textSelectedAddressTitle.setText("Teslimat adresi seçiniz");
+        textSelectedAddressTitle.setText("Select shipping address");
         textSelectedAddressLine1.setText("");
         textSelectedAddressLine2.setText("");
         textSelectedRecipientInfo.setText("");
-        textAddEditAddress.setText("Ekle");
+        textAddEditAddress.setText("Add");
         selectedAddress = null;
     }
 
@@ -473,8 +473,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Seçili adres yüklenirken hata", e);
-                    Toast.makeText(this, "Adres yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error loading selected address", e);
+                    Toast.makeText(this, "An error occurred while loading the address.", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -504,7 +504,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Varsayılan kart yüklenirken hata", e);
+                    Log.e(TAG, "Error loading default card", e);
                     showNoCardState();
                 });
     }
@@ -533,7 +533,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Kart yüklenirken hata", e);
+                    Log.e(TAG, "Error loading card", e);
                     showNoCardState();
                 });
     }
@@ -543,17 +543,17 @@ public class CheckoutActivity extends AppCompatActivity {
             textSelectedCardName.setText(selectedCard.getCardName());
             textSelectedCardNumber.setText(selectedCard.getMaskedCardNumber());
             textSelectedCardHolder.setText(selectedCard.getCardHolderName());
-            textAddEditCard.setText("Başka Kartla Öde");
+            textAddEditCard.setText("Pay with Another Card");
         } else {
             showNoCardState();
         }
     }
 
     private void showNoCardState() {
-        textSelectedCardName.setText("Kart bilgileri seçiniz");
+        textSelectedCardName.setText("Select card information");
         textSelectedCardNumber.setText("");
         textSelectedCardHolder.setText("");
-        textAddEditCard.setText("Ekle");
+        textAddEditCard.setText("Add");
         selectedCard = null;
     }
 
@@ -585,8 +585,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Seçili kart yüklenirken hata", e);
-                    Toast.makeText(this, "Kart yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error loading selected card", e);
+                    Toast.makeText(this, "An error occurred while loading the card", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -615,19 +615,19 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private boolean validateForm() {
         if (selectedAddress == null) {
-            Toast.makeText(this, "Lütfen teslimat adresi seçiniz.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please select a shipping address.", Toast.LENGTH_SHORT).show();
             layoutDeliveryAddress.requestFocus();
             return false;
         }
 
         if (selectedCard == null) {
-            Toast.makeText(this, "Lütfen ödeme kartı seçiniz.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please select a payment card.", Toast.LENGTH_SHORT).show();
             layoutCardSelection.requestFocus();
             return false;
         }
 
         if (Cart.getInstance().getItems().isEmpty()) {
-            Toast.makeText(this, "Sepetiniz boş! Mağazaya yönlendiriliyorsunuz.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Your cart is empty! You are being redirected to the store.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, StoreActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -636,19 +636,19 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         if (!checkboxPreInformation.isChecked()) {
-            Toast.makeText(this, "Lütfen Ön Bilgilendirme Koşulları'nı onaylayın.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please confirm the Preliminary Information Conditions.", Toast.LENGTH_SHORT).show();
             checkboxPreInformation.requestFocus();
             return false;
         }
 
         if (!checkboxDistanceSales.isChecked()) {
-            Toast.makeText(this, "Lütfen Mesafeli Satış Sözleşmesi'ni onaylayın.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please confirm the Distance Selling Agreement.", Toast.LENGTH_SHORT).show();
             checkboxDistanceSales.requestFocus();
             return false;
         }
 
         if (!checkboxKvkk.isChecked()) {
-            Toast.makeText(this, "Lütfen KVKK Aydınlatma Metni'ni onaylayın.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please approve the KVKK Information Text.", Toast.LENGTH_SHORT).show();
             checkboxKvkk.requestFocus();
             return false;
         }
@@ -658,7 +658,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private void processOrder() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Lütfen önce giriş yapın.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please log in first.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -708,7 +708,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         // Sipariş durumu ve tarihi
         orderData.put("orderDate", FieldValue.serverTimestamp());
-        orderData.put("status", "Sipariş Alındı");
+        orderData.put("status", "Order Received");
 
         // Kargo bilgileri
         orderData.put("shippingCompany", "CarCare Express");
@@ -757,13 +757,13 @@ public class CheckoutActivity extends AppCompatActivity {
                     Cart.getInstance().clearCart(this);
                     progressBar.setVisibility(View.GONE);
                     showOrderCompleteDialog(orderId);
-                    Log.d(TAG, "Sipariş başarıyla oluşturuldu: " + orderId);
+                    Log.d(TAG, "Order created successfully: " + orderId);
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
                     buttonPay.setEnabled(true);
-                    Log.e(TAG, "Sipariş işlenirken hata", e);
-                    Toast.makeText(this, "Sipariş işlenirken hata: " + e.getMessage(),
+                    Log.e(TAG, "Error while processing order", e);
+                    Toast.makeText(this, "Error while processing order: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 });
     }
@@ -777,10 +777,10 @@ public class CheckoutActivity extends AppCompatActivity {
                 .document(orderId) // Aynı ID ile kaydet
                 .set(orderData)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Sipariş ana koleksiyona da kaydedildi: " + orderId);
+                    Log.d(TAG, "The order was also recorded in the main collection: " + orderId);
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Ana koleksiyona kaydetme hatası (kritik değil): " + e.getMessage());
+                    Log.w(TAG, "Error saving to main collection (non-critical): " + e.getMessage());
                 });
     }
 
@@ -804,9 +804,9 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private void showOrderCompleteDialog(String orderId) {
         new AlertDialog.Builder(this)
-                .setTitle("Sipariş Tamamlandı")
-                .setMessage("Siparişiniz başarıyla alındı. Sipariş ID: " + orderId)
-                .setPositiveButton("Alışverişe Devam Et", (dialog, which) -> {
+                .setTitle("Order Completed")
+                .setMessage("Your order has been successfully placed. Order ID: " + orderId)
+                .setPositiveButton("Continue Shopping", (dialog, which) -> {
                     Intent intent = new Intent(CheckoutActivity.this, StoreActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
@@ -825,59 +825,59 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private String getPreInformationText() {
-        return "ÖN BİLGİLENDİRME KOŞULLARI\n\n" +
-                "1. TARAFLAR VE KONU\n" +
-                "İşbu Ön Bilgilendirme Formu, 6502 sayılı Tüketicinin Korunması Hakkında Kanun'un 48. maddesi ve Mesafeli Sözleşmeler Yönetmeliği uyarınca hazırlanmıştır.\n\n" +
-                "SATICI BİLGİLERİ:\n" +
-                "Ünvan: CarCare Otomotiv Ltd. Şti.\n" +
-                "Adres: Ankara, Türkiye\n" +
-                "Telefon: 0312 XXX XX XX\n" +
-                "E-posta: info@carcare.com\n\n" +
-                "2. ÜRÜN/HİZMET BİLGİLERİ\n" +
-                "Satışa konu ürün/hizmetin temel özelikleri, fiyatı ve ödeme şekli sipariş özeti sayfasında belirtilmiştir.\n\n" +
-                "3. CAYMA HAKKI\n" +
-                "Tüketici, 14 gün içinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayabilir.\n\n" +
-                "4. TESLİMAT BİLGİLERİ\n" +
-                "Ürünler, sipariş tarihinden itibaren en geç 30 gün içinde teslim edilecektir.";
+        return "PRELIMINARY INFORMATION CONDITIONS\n\n" +
+                "1. PARTIES AND SUBJECT\n" +
+                "This Preliminary Information Form has been prepared in accordance with Article 48 of the Consumer Protection Law No. 6502 and the Distance Contracts Regulation.\n\n" +
+                "SELLER INFORMATION:\n" +
+                "Title: CarCare Automotive Ltd. Sti.\n" +
+                "Address: Ankara, Türkiye\n" +
+                "Phone: 0312 XXX XX XX\n" +
+                "E-mail: info@carcare.com\n\n" +
+                "2. PRODUCT/SERVICE INFORMATION\n" +
+                "The main features, price, and payment method of the product/service subject to sale are specified on the order summary page.\n\n" +
+                "3. RIGHT OF WITHDRAWAL\n" +
+                "The consumer can withdraw from the contract within 14 days without providing any justification and without paying any penalty.\n\n" +
+                "4. DELIVERY INFORMATION\n" +
+                "The products will be delivered no later than 30 days from the order date.";
     }
 
     private String getDistanceSalesText() {
-        return "MESAFELİ SATIŞ SÖZLEŞMESİ\n\n" +
-                "1. TARAFLAR\n" +
-                "SATICI: CarCare Otomotiv Ltd. Şti.\n" +
-                "ALICI: Siparişi veren tüketici\n\n" +
-                "2. KONU\n" +
-                "İşbu sözleşme, ALICI'nın SATICI'ya ait www.carcare.com internet sitesi üzerinden elektronik ortamda siparişini verdiği aşağıda nitelikleri ve satış fiyatı belirtilen ürün/ürünlerin satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmelere Dair Yönetmelik hükümleri gereğince tarafların hak ve yükümlülüklerini kapsar.\n\n" +
-                "3. SÖZLEŞME KONUSU ÜRÜN/HİZMET BİLGİLERİ\n" +
-                "Ürünlerin temel özellikleri, fiyatları ve ödeme şekli sipariş sayfasında belirtilmiştir.\n\n" +
-                "4. GENEL HÜKÜMLER\n" +
-                "• Sipariş tarihinde geçerli olan fiyatlar uygulanır.\n" +
-                "• Kargo ücreti alıcıya aittir.\n" +
-                "• Ürünler hasar görmeyecek şekilde ambalajlanarak teslim edilir.\n\n" +
-                "5. CAYMA HAKKI\n" +
-                "ALICI, 14 gün içinde herhangi bir hukuki ve cezai sorumluluk üstlenmeksizin sözleşmeden cayabilir.";
+        return "DISTANCE SALES AGREEMENT\n\n" +
+                "1. PARTIES\n" +
+                "SELLER: CarCare Automotive Ltd. Sti.\n" +
+                "BUYER: The consumer placing the order\n\n" +
+                "2. SUBJECT\n" +
+                "This agreement covers the rights and obligations of the parties regarding the sale and delivery of the product(s) whose features and sales price are specified below, which the BUYER ordered electronically from the SELLER's website www.carcare.com, in accordance with the provisions of the Law on the Protection of the Consumer No. 6502 and the Regulation on Distance Contracts.\n\n" +
+                "3. PRODUCT/SERVICE INFORMATION SUBJECT TO THE CONTRACT\n" +
+                "The main features, prices, and payment method of the products are specified on the order page.\n\n" +
+                "4. GENERAL PROVISIONS\n" +
+                "• The prices valid at the time of the order will be applied.\n" +
+                "• The shipping fee is the responsibility of the buyer.\n" +
+                "• The products are packaged and delivered in a way that prevents damage.\n\n" +
+                "5. RIGHT OF WITHDRAWAL\n" +
+                "The BUYER can withdraw from the contract within 14 days without undertaking any legal or penal liability.";
     }
 
     private String getKvkkText() {
-        return "KİŞİSEL VERİLERİN KORUNMASI HAKKINDA AYDINLATMA METNİ\n\n" +
-                "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında, kişisel verileriniz CarCare Otomotiv Ltd. Şti. tarafından aşağıda açıklanan şekilde işlenmektedir.\n\n" +
-                "1. VERİ SORUMLUSU\n" +
-                "CarCare Otomotiv Ltd. Şti.\n" +
+        return "CLARIFICATION TEXT ON THE PROTECTION OF PERSONAL DATA\n\n" +
+                "Within the scope of the Law on the Protection of Personal Data No. 6698, your personal data is processed by CarCare Automotive Ltd. Sti. as described below.\n\n" +
+                "1. DATA CONTROLLER\n" +
+                "CarCare Automotive Ltd. Sti.\n" +
                 "Ankara, Türkiye\n\n" +
-                "2. KİŞİSEL VERİLERİN İŞLENME AMAÇLARI\n" +
-                "• Sipariş ve teslimat işlemlerinin gerçekleştirilmesi\n" +
-                "• Müşteri hizmetlerinin sunulması\n" +
-                "• Yasal yükümlülüklerin yerine getirilmesi\n" +
-                "• İstatistiksel analiz ve raporlama\n\n" +
-                "3. TOPLANAN KİŞİSEL VERİLER\n" +
-                "• Kimlik bilgileri (ad, soyad)\n" +
-                "• İletişim bilgileri (telefon, e-posta, adres)\n" +
-                "• Finansal bilgiler (kart bilgileri - güvenli şekilde)\n\n" +
-                "4. HAKLARINIZ\n" +
-                "• Kişisel verilerinizin işlenip işlenmediğini öğrenme\n" +
-                "• İşlenen verileriniz hakkında bilgi talep etme\n" +
-                "• Düzeltme ve silme talebinde bulunma\n" +
-                "• İtiraz etme hakkı\n\n" +
-                "Bu haklarınızı kullanmak için info@carcare.com adresine başvurabilirsiniz.";
+                "2. PURPOSES OF PROCESSING PERSONAL DATA\n" +
+                "• To carry out order and delivery processes\n" +
+                "• To provide customer services\n" +
+                "• To fulfill legal obligations\n" +
+                "• Statistical analysis and reporting\n\n" +
+                "3. PERSONAL DATA COLLECTED\n" +
+                "• Identity information (name, surname)\n" +
+                "• Contact information (phone, e-mail, address)\n" +
+                "• Financial information (card details - securely)\n\n" +
+                "4. YOUR RIGHTS\n" +
+                "• To learn whether your personal data is being processed\n" +
+                "• To request information about your processed data\n" +
+                "• To request correction and deletion\n" +
+                "• Right to object\n\n" +
+                "To exercise these rights, you can contact us at info@carcare.com.";
     }
 }
