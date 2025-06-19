@@ -78,7 +78,7 @@ public class AIAssistantActivity extends AppCompatActivity {
             }
         });
 
-        addBotMessage("Hello! I am your AI Car Assistant. You can ask me a question or tap a suggestion below.");
+        addBotMessage("Hello! I am your Car Assistant Bot. You can ask me a question or tap a suggestion below.");
     }
 
     private void sendMessage(String text) {
