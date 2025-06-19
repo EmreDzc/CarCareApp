@@ -64,10 +64,10 @@ public class AddEditCardActivity extends AppCompatActivity {
         setupCardNumberFormatting();
 
         if (cardToEditId != null) {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Kartı Düzenle");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Edit Card");
             loadCardForEditing();
         } else {
-            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Yeni Kart Ekle");
+            if (getSupportActionBar() != null) getSupportActionBar().setTitle("Add New Card");
         }
 
         btnSaveCardForm.setOnClickListener(v -> saveCard());
@@ -141,7 +141,7 @@ public class AddEditCardActivity extends AppCompatActivity {
     private void loadCardForEditing() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || cardToEditId == null) {
-            Toast.makeText(this, "Kart yüklenemedi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Card could not be loaded.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -159,29 +159,29 @@ public class AddEditCardActivity extends AppCompatActivity {
                             // Sadece son 4 haneyi göster
                             etCardNumber.setText("**** **** **** " + card.getLastFourDigits());
                             etCardNumber.setEnabled(false); // Düzenlemede kart numarası değiştirilemez
-                            etCardNumber.setHint("Güvenlik nedeniyle kart numarası değiştirilemez");
+                            etCardNumber.setHint("For security reasons, the card number cannot be changed.");
 
                             actvExpiryMonth.setText(card.getExpiryMonth(), false);
                             actvExpiryYear.setText(card.getExpiryYear(), false);
 
                             // CVV'yi düzenlemede tekrar girmesini iste
                             etCardCvv.setText("");
-                            etCardCvv.setHint("Güvenlik için CVV'yi tekrar girin");
+                            etCardCvv.setHint("Re-enter CVV for security");
 
                             cbMasterpass.setChecked(card.isMasterpassOptIn());
 
                             // Kullanıcıyı bilgilendir
                             Toast.makeText(AddEditCardActivity.this,
-                                    "Güvenlik nedeniyle kart numarası ve CVV tekrar girilmeli",
+                                    "For security reasons, card number and CVV must be entered again.",
                                     Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(AddEditCardActivity.this, "Kart bulunamadı.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddEditCardActivity.this, "Card not found.", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(AddEditCardActivity.this, "Kart yüklenirken hata: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditCardActivity.this, "Error loading card: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error loading card", e);
                 });
     }
@@ -189,7 +189,7 @@ public class AddEditCardActivity extends AppCompatActivity {
     private void saveCard() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this, "Kart kaydetmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must log in to register a card.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -204,19 +204,19 @@ public class AddEditCardActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(cardName) || TextUtils.isEmpty(cardHolderName) ||
                 TextUtils.isEmpty(cardNumberRaw) || TextUtils.isEmpty(expiryMonth) ||
                 TextUtils.isEmpty(expiryYear) || TextUtils.isEmpty(cvv)) {
-            Toast.makeText(this, "Lütfen tüm zorunlu alanları doldurun.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill in all mandatory fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Düzenleme modunda kart numarası değiştirilemez kontrolü
         if (cardToEditId != null && cardNumberRaw.contains("*")) {
-            Toast.makeText(this, "Düzenleme modunda kart numarası değiştirilemez.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "The card number cannot be changed in edit mode.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (cardNumberRaw.length() < 13 || cardNumberRaw.length() > 19) {
             if (tilCardNumber != null) {
-                tilCardNumber.setError("Geçersiz kart numarası uzunluğu");
+                tilCardNumber.setError("Invalid card number length");
             }
             return;
         } else {
@@ -252,11 +252,11 @@ public class AddEditCardActivity extends AppCompatActivity {
             db.collection(collectionPath).document(cardToEditId)
                     .set(cardData)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(AddEditCardActivity.this, "Kart başarıyla güncellendi!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddEditCardActivity.this, "Card updated successfully!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(AddEditCardActivity.this, "Kart güncellenirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddEditCardActivity.this, "Error while updating card: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Error updating card", e);
                     });
         } else {
@@ -264,11 +264,11 @@ public class AddEditCardActivity extends AppCompatActivity {
             db.collection(collectionPath)
                     .add(cardData)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(AddEditCardActivity.this, "Kart başarıyla kaydedildi!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddEditCardActivity.this, "Card registered successfully!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(AddEditCardActivity.this, "Kart kaydedilirken hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddEditCardActivity.this, "Error while registering card: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Error saving card", e);
                     });
         }
