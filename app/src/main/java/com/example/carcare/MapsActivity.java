@@ -241,7 +241,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.w(TAG, "OnTabSelected: Konum mevcut değil, yerler yüklenemiyor. (mMap: " + (mMap != null) + ", currentLocation: " + (currentLocation != null) + ")");
                     if (mMap != null) { // Harita hazırsa ama konum yoksa mesaj göster
                         Toast.makeText(MapsActivity.this,
-                                "Konum bilgisi bekleniyor veya arama yapmanız gerekiyor.",
+                                "Location information is pending or you need to search.",
                                 Toast.LENGTH_SHORT).show();
                     }
                     // Panel açıksa ve konum yoksa, belki paneli kapatmak veya boş göstermek daha iyi olabilir.
@@ -275,7 +275,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 } else {
                     Toast.makeText(MapsActivity.this,
-                            "Konum bilgisi bekleniyor.",
+                            "Location information awaited.",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -560,7 +560,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 loadNearbyPlaces();
                             } else {
                                 Log.w(TAG, "Device location is null");
-                                Toast.makeText(MapsActivity.this, "Konum bilgisi alınamadı. Arama çubuğunu kullanabilirsiniz.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MapsActivity.this, "Location information could not be obtained. You can use the search bar.", Toast.LENGTH_LONG).show();
 
                                 // Eğer daha önce hiçbir konum yoksa, varsayılan bir konum ayarla (Örneğin: Ankara)
                                 if (currentLocation == null) {
@@ -725,7 +725,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void loadNearbyPlaces() {
         if (currentLocation == null) {
             Log.w(TAG, "Cannot load places - currentLocation is null");
-            Toast.makeText(this, "Konum bilgisi mevcut değil.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Location information is not available.", Toast.LENGTH_SHORT).show();
             return;
         }
 

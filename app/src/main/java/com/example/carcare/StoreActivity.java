@@ -110,6 +110,7 @@ public class StoreActivity extends AppCompatActivity {
         checkAndShowAdminButton();
 
         handleIntent(getIntent()); // onCreate'de ilk gelen Intent'i işle
+        loadProducts();
 
     }
 
@@ -381,11 +382,13 @@ public class StoreActivity extends AppCompatActivity {
                 });
     }
 
+// StoreActivity.java
+
     private void applyFiltersFromPrefs() {
         SharedPreferences prefs = getSharedPreferences("FilterPrefs", MODE_PRIVATE);
 
         // Filtre değerlerini al
-        String searchText = prefs.getString("searchText", "");
+        String searchText = prefs.getString("searchText", "").toLowerCase(); // Arama metnini küçük harfe çevir
         float minPrice = prefs.getFloat("minPrice", 0f);
         float maxPrice = prefs.getFloat("maxPrice", Float.MAX_VALUE);
         String categoriesStr = prefs.getString("categories", "");
@@ -407,53 +410,62 @@ public class StoreActivity extends AppCompatActivity {
         Query query = db.collection("products");
         boolean needsClientSideFiltering = false;
 
-        try {
-            // Kategori filtresi (Firebase'de)
-            if (!categoryList.isEmpty() && categoryList.size() <= 10) {
-                // Firebase whereIn sorgusu maksimum 10 değer alabilir
-                query = query.whereIn("category", categoryList);
-            } else if (!categoryList.isEmpty()) {
-                // Çok fazla kategori seçilmişse client-side filtreleme yapacağız
-                needsClientSideFiltering = true;
-            }
+        // Fiyat aralığı filtresinin uygulanıp uygulanmadığını kontrol etmek için bir bayrak
+        boolean hasPriceRangeFilter = (minPrice > 0 || maxPrice < Float.MAX_VALUE);
 
-            // Fiyat filtreleri (Firebase'de)
-            if (minPrice > 0) {
-                query = query.whereGreaterThanOrEqualTo("price", minPrice);
-            }
-            if (maxPrice < Float.MAX_VALUE) {
-                query = query.whereLessThanOrEqualTo("price", maxPrice);
-            }
-
-            // Sıralama
-            switch (sortBy) {
-                case "Artan Fiyat":
-                    query = query.orderBy("price", Query.Direction.ASCENDING);
-                    break;
-                case "Azalan Fiyat":
-                    query = query.orderBy("price", Query.Direction.DESCENDING);
-                    break;
-                case "En Yeni":
-                    query = query.orderBy("createdAt", Query.Direction.DESCENDING);
-                    break;
-                case "En Yüksek Puan":
-                    query = query.orderBy("averageRating", Query.Direction.DESCENDING);
-                    break;
-                default: // Relevance
-                    query = query.orderBy("name", Query.Direction.ASCENDING);
-                    break;
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "Query oluşturulurken hata", e);
-            fetchAllProducts(); // Hata durumunda tüm ürünleri getir
-            return;
+        // Kategori filtresi (Firebase'de "whereIn" ile)
+        if (!categoryList.isEmpty() && categoryList.size() <= 10) {
+            query = query.whereIn("category", categoryList);
+        } else if (!categoryList.isEmpty()) {
+            // Eğer 10'dan fazla kategori seçilirse, bu filtrelemeyi uygulama içinde yapacağız.
+            needsClientSideFiltering = true;
         }
+
+        // Fiyat filtreleri (Firebase'de "range" ile)
+        if (minPrice > 0) {
+            query = query.whereGreaterThanOrEqualTo("price", minPrice);
+        }
+        if (maxPrice < Float.MAX_VALUE) {
+            query = query.whereLessThanOrEqualTo("price", maxPrice);
+        }
+
+        // === SIRALAMA MANTIĞI (DÜZELTİLMİŞ KISIM) ===
+        // Firestore kuralı: Bir alanda aralık filtresi (<, <=, >, >=) varsa,
+        // ilk orderBy() aynı alana göre yapılmalıdır.
+        switch (sortBy) {
+            case "Artan Fiyat":
+                query = query.orderBy("price", Query.Direction.ASCENDING);
+                break;
+            case "Azalan Fiyat":
+                query = query.orderBy("price", Query.Direction.DESCENDING);
+                break;
+            case "En Yeni":
+                if (hasPriceRangeFilter) {
+                    // Önce fiyat filtresi yapılan alana göre sırala
+                    query = query.orderBy("price", Query.Direction.ASCENDING);
+                }
+                // Sonra asıl istenen alana göre sırala
+                query = query.orderBy("createdAt", Query.Direction.DESCENDING);
+                break;
+            case "En Yüksek Puan":
+                if (hasPriceRangeFilter) {
+                    query = query.orderBy("price", Query.Direction.ASCENDING);
+                }
+                query = query.orderBy("averageRating", Query.Direction.DESCENDING);
+                break;
+            default: // Relevance (Ada göre sıralama)
+                if (hasPriceRangeFilter) {
+                    query = query.orderBy("price", Query.Direction.ASCENDING);
+                }
+                query = query.orderBy("name", Query.Direction.ASCENDING);
+                break;
+        }
+
 
         // Firebase sorgusunu çalıştır
         final boolean finalNeedsClientSideFiltering = needsClientSideFiltering;
         final List<String> finalCategoryList = categoryList;
-        final String finalSearchText = searchText.toLowerCase();
+        final String finalSearchText = searchText; // Zaten küçük harfe çevrildi
 
         query.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -465,12 +477,12 @@ public class StoreActivity extends AppCompatActivity {
                         if (product != null) {
                             boolean shouldInclude = true;
 
-                            // Client-side filtreleme gerekiyorsa
+                            // Eğer 10'dan fazla kategori seçildiyse, filtrelemeyi burada yap
                             if (finalNeedsClientSideFiltering && !finalCategoryList.isEmpty()) {
                                 shouldInclude = finalCategoryList.contains(product.getCategory());
                             }
 
-                            // Arama filtresi (her zaman client-side)
+                            // Arama metni filtresi (her zaman uygulama içinde yapılır)
                             if (shouldInclude && !finalSearchText.isEmpty()) {
                                 String productName = product.getName() != null ? product.getName().toLowerCase() : "";
                                 String productDescription = product.getDescription() != null ? product.getDescription().toLowerCase() : "";
@@ -494,7 +506,8 @@ public class StoreActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Filtered products query failed", e);
                     showLoading(false);
-                    showError("Filtrelenmiş ürünler yüklenirken hata: " + e.getMessage());
+                    // Hata mesajını doğrudan göster
+                    showError("Filtrelenmiş ürünler yüklenirken hata:\n" + e.getMessage());
                 });
     }
 
@@ -569,14 +582,8 @@ public class StoreActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("FilterPrefs", MODE_PRIVATE);
         boolean hasFilters = prefs.getBoolean("hasFilters", false);
         if (filterButton != null) {
+            // Not: "Hide/Show Filters" veya "Filtreleri Kaldır/Filtrele" gibi bir mantık kullanın
             filterButton.setText(hasFilters ? "Filtreleri Kaldır" : "Filtrele");
-        }
-        if (getIntent() == null || !getIntent().getBooleanExtra("SEARCH_QUERY_HANDLED", false)) {
-            loadProducts();
-        }
-        // Bayrağı sıfırla ki normal onResume'larda loadProducts çalışsın
-        if (getIntent() != null) {
-            getIntent().removeExtra("SEARCH_QUERY_HANDLED");
         }
     }
 }

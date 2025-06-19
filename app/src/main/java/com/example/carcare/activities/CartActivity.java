@@ -5,111 +5,126 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.carcare.R;
+import com.example.carcare.StoreActivity;
 import com.example.carcare.adapters.CartAdapter;
-import com.example.carcare.models.Product; // Gerekirse Product import
+import com.example.carcare.models.CartItem;
 import com.example.carcare.utils.Cart;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
+import java.text.NumberFormat;
 import java.util.Locale;
 
-public class CartActivity extends AppCompatActivity implements Cart.CartChangeListener {
+public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener, Cart.CartChangeListener {
 
-    private RecyclerView recyclerView;
-    private TextView totalPriceText; // emptyCartMsg kaldırıldı, emptyCartView kullanılıyor
-    private Button confirmButton, continueShoppingButton;
-    private CartAdapter adapter;
-    private View emptyCartView; // LinearLayout veya FrameLayout gibi bir container
+    private RecyclerView recyclerViewCart;
+    private CartAdapter cartAdapter;
+    private TextView textTotalPrice;
+    private LinearLayout emptyCartView;
+    private Button buttonConfirm, buttonContinueShopping;
+    private ImageButton backButton;
+    private NumberFormat currencyFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        recyclerView = findViewById(R.id.recyclerViewCart);
-        totalPriceText = findViewById(R.id.textTotalPrice);
-        confirmButton = findViewById(R.id.buttonConfirm);
-        emptyCartView = findViewById(R.id.emptyCartView); // R.id.textEmptyCart yerine bu view'ı kullan
-        continueShoppingButton = findViewById(R.id.buttonContinueShopping); // Layout'ta olduğundan emin ol
+        currencyFormat = NumberFormat.getCurrencyInstance(new Locale("tr", "TR"));
 
+        initializeViews();
+        setupRecyclerView();
+        setupEventListeners();
+
+        // Cart singleton'dan gelecek değişiklikleri dinlemek için listener ekliyoruz.
         Cart.getInstance().addCartChangeListener(this);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // CartAdapter'a this (Cart.CartChangeListener) callback'ini geçiyoruz.
-        adapter = new CartAdapter(Cart.getInstance().getItems(), this, this);
-        recyclerView.setAdapter(adapter);
+        updateCartUI();
+    }
 
-        updateTotalPrice();
-        checkEmptyCart();
+    private void initializeViews() {
+        recyclerViewCart = findViewById(R.id.recyclerViewCart);
+        textTotalPrice = findViewById(R.id.textTotalPrice);
+        emptyCartView = findViewById(R.id.emptyCartView);
+        buttonConfirm = findViewById(R.id.buttonConfirm);
+        buttonContinueShopping = findViewById(R.id.buttonContinueShopping);
+        backButton = findViewById(R.id.button_back_to_store); // ID'yi xml'den aldım
+    }
 
-        confirmButton.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                if (!Cart.getInstance().getItems().isEmpty()) {
-                    Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Sepetiniz boş!", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Lütfen önce giriş yapın", Toast.LENGTH_LONG).show();
-                // Örnek: Giriş sayfasına yönlendirme
-                // Intent intent = new Intent(CartActivity.this, LoginActivity.class);
-                // startActivity(intent);
-            }
+    private void setupRecyclerView() {
+        recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
+        cartAdapter = new CartAdapter(this, Cart.getInstance().getItems(), this);
+        recyclerViewCart.setAdapter(cartAdapter);
+    }
+
+    private void setupEventListeners() {
+        buttonConfirm.setOnClickListener(v -> {
+            // CheckoutActivity'e git
+            startActivity(new Intent(CartActivity.this, CheckoutActivity.class));
         });
 
-        if (continueShoppingButton != null) {
-            continueShoppingButton.setOnClickListener(v -> finish());
-        }
+        buttonContinueShopping.setOnClickListener(v -> {
+            // Mağazaya geri dön
+            startActivity(new Intent(CartActivity.this, StoreActivity.class));
+            finish();
+        });
 
-        ImageButton backToStore = findViewById(R.id.button_back_to_store); // Layout'ta olduğundan emin ol
-        if (backToStore != null) {
-            backToStore.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> finish());
+    }
+
+    private void updateCartUI() {
+        // Adapter'daki listeyi güncelle
+        cartAdapter.updateItems(Cart.getInstance().getItems());
+
+        // Toplam fiyatı güncelle
+        double totalPrice = Cart.getInstance().getTotalPrice();
+        textTotalPrice.setText("Toplam: " + currencyFormat.format(totalPrice));
+
+        // Boş sepet görünümünü kontrol et
+        if (Cart.getInstance().getItems().isEmpty()) {
+            emptyCartView.setVisibility(View.VISIBLE);
+            recyclerViewCart.setVisibility(View.GONE);
+            findViewById(R.id.checkoutLayout).setVisibility(View.GONE);
+        } else {
+            emptyCartView.setVisibility(View.GONE);
+            recyclerViewCart.setVisibility(View.VISIBLE);
+            findViewById(R.id.checkoutLayout).setVisibility(View.VISIBLE);
         }
+    }
+
+    // --- CartAdapterListener Metodları ---
+    @Override
+    public void onIncreaseClicked(CartItem item) {
+        Cart.getInstance().increaseQuantity(item.getProduct().getId());
     }
 
     @Override
+    public void onDecreaseClicked(CartItem item) {
+        Cart.getInstance().decreaseQuantity(item.getProduct().getId(), this);
+    }
+
+    @Override
+    public void onRemoveClicked(CartItem item) {
+        Cart.getInstance().removeItem(item.getProduct().getId(), this);
+    }
+
+    // --- Cart.CartChangeListener Metodu ---
+    @Override
     public void onCartChanged() {
-        // CartAdapter kendi listesini Cart singleton'ından alıyorsa ve
-        // Cart'taki değişikliklerde CartAdapter.notifyDataSetChanged() çağrılıyorsa
-        // burada adapter.notifyDataSetChanged() gerekmeyebilir.
-        // Ancak, adapter'a yeni bir liste geçirmek daha güvenli olabilir.
-        if (adapter != null) {
-            adapter.updateCartItems(Cart.getInstance().getItems()); // Adapter'a yeni listeyi ver
-        }
-        updateTotalPrice();
-        checkEmptyCart();
-    }
-
-    private void updateTotalPrice() {
-        double total = Cart.getInstance().getTotalPrice();
-        totalPriceText.setText(String.format(Locale.US, "Toplam: $%.2f", total));
-    }
-
-    private void checkEmptyCart() {
-        if (Cart.getInstance().getItems().isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            if (emptyCartView != null) emptyCartView.setVisibility(View.VISIBLE);
-            confirmButton.setEnabled(false);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            if (emptyCartView != null) emptyCartView.setVisibility(View.GONE);
-            confirmButton.setEnabled(true);
-        }
+        // Sepette bir değişiklik olduğunda (artırma, azaltma, silme) bu metod tetiklenir
+        // ve arayüzü günceller.
+        updateCartUI();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Aktivite yok olduğunda listener'ı kaldırmayı unutmayın
         Cart.getInstance().removeCartChangeListener(this);
     }
 }

@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.carcare.models.CartItem;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.util.Calendar;
@@ -194,7 +195,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private void setupOrderSummary() {
         recyclerOrderItems.setLayoutManager(new LinearLayoutManager(this));
-        orderAdapter = new OrderSummaryAdapter(Cart.getInstance().getItems());
+        // Adapter'a context'i ve CartItem listesini gönderiyoruz.
+        orderAdapter = new OrderSummaryAdapter(Cart.getInstance().getItems(), this);
         recyclerOrderItems.setAdapter(orderAdapter);
     }
 
@@ -728,12 +730,14 @@ public class CheckoutActivity extends AppCompatActivity {
 
         // Sipariş ürünleri
         List<Map<String, Object>> orderItems = new ArrayList<>();
-        for (Product product : Cart.getInstance().getItems()) {
+        // for (Product product : Cart.getInstance().getItems()) { // Eski hali
+        for (CartItem cartItem : Cart.getInstance().getItems()) { // Yeni hali
+            Product product = cartItem.getProduct();
             Map<String, Object> item = new HashMap<>();
             item.put("productId", product.getId());
             item.put("productName", product.getName());
-            item.put("price", product.getDiscountPrice() > 0 ? product.getDiscountPrice() : product.getPrice());
-            item.put("quantity", product.getQuantity());
+            item.put("price", product.getFinalPrice()); // getFinalPrice() kullanmak daha güvenli
+            item.put("quantity", cartItem.getQuantity()); // Miktarı cartItem'dan al
             item.put("imageBase64", product.getImageBase64());
             orderItems.add(item);
         }

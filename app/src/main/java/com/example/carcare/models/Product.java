@@ -98,4 +98,13 @@ public class Product {
     public void setQuantity(int quantity) { // Add this setter
         this.quantity = quantity;
     }
+
+    @Exclude // Bu metodun sonucunun Firebase'e yazılmasını engeller.
+    public double getFinalPrice() {
+        // Eğer indirimli fiyat geçerliyse (0'dan büyükse) onu döndür, değilse normal fiyatı döndür.
+        if (discountPrice > 0) {
+            return discountPrice;
+        }
+        return price;
+    }
 }

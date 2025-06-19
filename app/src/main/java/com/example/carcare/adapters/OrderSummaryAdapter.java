@@ -1,5 +1,6 @@
 package com.example.carcare.adapters;
 
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,15 +17,17 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
+import com.example.carcare.models.CartItem;
+
 
 public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapter.OrderSummaryViewHolder> {
     private static final String TAG = "OrderSummaryAdapter";
-    private List<Product> products;
     private DecimalFormat priceFormat = new DecimalFormat("$0.00", new DecimalFormatSymbols(Locale.US));
+    private List<CartItem> cartItems;
 
 
-    public OrderSummaryAdapter(List<Product> products) {
-        this.products = products;
+    public OrderSummaryAdapter(List<CartItem> cartItems, Context context) {
+        this.cartItems = cartItems; // Yeni
     }
 
     @NonNull
@@ -37,15 +40,20 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull OrderSummaryViewHolder holder, int position) {
-        Product product = products.get(position);
+        CartItem cartItem = cartItems.get(position); // Değişti
+        Product product = cartItem.getProduct(); // Yeni
+
         if (product == null) {
             Log.e(TAG, "Product at position " + position + " is null.");
             return;
         }
 
         holder.textProductName.setText(product.getName());
-        holder.textQuantity.setText("Adet: 1"); // Miktar CartItem'dan gelmeli
-        holder.textPrice.setText(priceFormat.format(product.getPrice()));
+        // Miktar artık dinamik olarak alınıyor!
+        holder.textQuantity.setText("Adet: " + cartItem.getQuantity());
+        // Fiyat olarak ürünün son fiyatını ve adetini çarpıyoruz.
+        double itemTotalPrice = product.getFinalPrice() * cartItem.getQuantity();
+        holder.textPrice.setText(priceFormat.format(itemTotalPrice));
 
         String imageBase64 = product.getImageBase64();
         if (imageBase64 != null && !imageBase64.isEmpty()) {
@@ -67,7 +75,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
     @Override
     public int getItemCount() {
-        return products != null ? products.size() : 0;
+        return cartItems != null ? cartItems.size() : 0; // Değişti
     }
 
     public static class OrderSummaryViewHolder extends RecyclerView.ViewHolder {

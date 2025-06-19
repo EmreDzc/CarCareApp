@@ -2,137 +2,122 @@ package com.example.carcare.adapters;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.carcare.R;
+import com.example.carcare.models.CartItem;
 import com.example.carcare.models.Product;
-import com.example.carcare.utils.Cart;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
-    private static final String TAG = "CartAdapter";
-    private List<Product> cartItems;
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+
     private Context context;
-    private Cart.CartChangeListener onCartUpdated; // Bu listener, Cart sınıfının içindeki bir interface olmalı
+    private List<CartItem> cartItems;
+    private CartAdapterListener listener;
+    private NumberFormat currencyFormat;
 
-    public CartAdapter(List<Product> items, Context ctx, Cart.CartChangeListener updateCallback) {
-        this.cartItems = items;
-        this.context = ctx;
-        this.onCartUpdated = updateCallback;
-
-        // Eğer Cart singleton ise ve global değişiklikleri dinliyorsa, bu gerekli olabilir.
-        // Ancak, adapter genellikle kendi listesindeki değişikliklere notifyDataSetChanged ile tepki verir.
-        // Cart.getInstance().addCartChangeListener(this::notifyDataSetChanged);
-        // Ya da daha spesifik olarak, Cart sınıfından gelen callback'i kullan
+    // Aktivitenin tıklamaları dinlemesi için bir arayüz (interface)
+    public interface CartAdapterListener {
+        void onIncreaseClicked(CartItem item);
+        void onDecreaseClicked(CartItem item);
+        void onRemoveClicked(CartItem item);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, price;
-        public ImageView image;
-        public Button remove;
-
-        public ViewHolder(View view) {
-            super(view);
-            name = view.findViewById(R.id.textCartItemName);
-            price = view.findViewById(R.id.textCartItemPrice);
-            image = view.findViewById(R.id.imageCartItem);
-            remove = view.findViewById(R.id.buttonRemove);
-        }
+    public CartAdapter(Context context, List<CartItem> cartItems, CartAdapterListener listener) {
+        this.context = context;
+        this.cartItems = new ArrayList<>(cartItems); // Kopyasını oluşturmak daha güvenli
+        this.listener = listener;
+        this.currencyFormat = NumberFormat.getCurrencyInstance(new Locale("tr", "TR"));
     }
 
     @NonNull
     @Override
-    public CartAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
-        return new ViewHolder(itemView);
+    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // item_cart.xml layout'unu inflate ediyoruz
+        View view = LayoutInflater.from(context).inflate(R.layout.item_cart, parent, false);
+        return new CartViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = cartItems.get(position);
-        if (product == null) {
-            Log.e(TAG, "Product at position " + position + " is null.");
-            return;
-        }
+    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
+        CartItem cartItem = cartItems.get(position);
+        Product product = cartItem.getProduct();
 
-        holder.name.setText(product.getName());
-        holder.price.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
+        holder.textCartItemName.setText(product.getName());
+        holder.textCartItemPrice.setText(currencyFormat.format(product.getFinalPrice()));
+        holder.textQuantity.setText(String.valueOf(cartItem.getQuantity()));
 
-        // Base64 string'den resim yükleme
+        // Ürün resmi
         String imageBase64 = product.getImageBase64();
         if (imageBase64 != null && !imageBase64.isEmpty()) {
-            try {
-                byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
-                Glide.with(context)
-                        .load(decodedString) // Byte array'i yükle
-                        .placeholder(R.drawable.placeholder_image) // drawable içinde olmalı
-                        .error(R.drawable.error_image) // drawable içinde olmalı
-                        .into(holder.image);
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Base64 decode hatası, ürün: " + product.getName(), e);
-                holder.image.setImageResource(R.drawable.error_image);
-            }
+            byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
+            Glide.with(context)
+                    .load(decodedString)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(holder.imageCartItem);
         } else {
-            holder.image.setImageResource(R.drawable.placeholder_image);
+            holder.imageCartItem.setImageResource(R.drawable.placeholder_image);
         }
 
-        holder.remove.setOnClickListener(v -> {
-            Product productToRemove = cartItems.get(holder.getAdapterPosition()); // Her zaman güncel pozisyonu al
-            Cart.getInstance().removeItem(productToRemove, context);
-            // notifyDataSetChanged() Cart sınıfındaki listener aracılığıyla çağrılabilir
-            // veya doğrudan burada çağrılabilir. Eğer Cart global listener'a sahipse,
-            // aşağıdaki satır gereksiz olabilir.
-            // cartItems.remove(productToRemove); // Yerel listeyi de güncellemek önemli
-            // notifyItemRemoved(holder.getAdapterPosition());
-            // notifyItemRangeChanged(holder.getAdapterPosition(), cartItems.size());
+        // Tıklama olaylarını listener aracılığıyla aktiviteye iletiyoruz
+        holder.buttonIncrease.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onIncreaseClicked(cartItem);
+            }
+        });
 
-            if (onCartUpdated != null) {
-                onCartUpdated.onCartChanged(); // Bu metod genellikle total price gibi şeyleri günceller
+        holder.buttonDecrease.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDecreaseClicked(cartItem);
+            }
+        });
+
+        holder.buttonRemoveItem.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onRemoveClicked(cartItem);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return cartItems != null ? cartItems.size() : 0;
+        return cartItems.size();
     }
 
-    // Bu metod, Cart sınıfındaki listener yönetimini basitleştirmek için eklendi.
-    // Eğer Cart sınıfı listener'ları yönetiyorsa, bu gerekli olmayabilir.
-    public void updateCartItems(List<Product> newItems) {
-        this.cartItems = newItems;
+    // Sepet güncellendiğinde listeyi yenilemek için
+    public void updateItems(List<CartItem> newItems) {
+        this.cartItems.clear();
+        this.cartItems.addAll(newItems);
         notifyDataSetChanged();
     }
 
-    // `onDetachedFromRecyclerView` içindeki listener kaldırma işlemi
-    // Cart sınıfındaki listener ekleme/kaldırma mekanizmasına bağlıdır.
-    // Eğer CartAdapter constructor'ında `Cart.getInstance().addCartChangeListener(this::notifyDataSetChanged);`
-    // gibi bir şey varsa, burada da `Cart.getInstance().removeCartChangeListener(this::notifyDataSetChanged);` olmalı.
-    // Mevcut kodunuzda `onCartUpdated` callback'ini Cart'a kaydediyorsunuz.
-    // Bu `onCartUpdated` callback'i adapter'a özgü bir referanssa (lambda değilse) kaldırılabilir.
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        // Eğer Cart.getInstance() bir listener listesi tutuyorsa ve
-        // bu adapter'a özel bir listener eklediyseniz, onu burada kaldırın.
-        // Örnek: Cart.getInstance().removeCartChangeListener(onCartUpdated);
-        // Eğer onCartUpdated, CartActivity'nin bir metoduysa ve CartActivity
-        // kendi listener'ını yönetiyorsa, bu satır burada olmamalıdır.
-        // Şu anki yapıda CartActivity Cart'a listener olarak kendini ekliyor ve
-        // CartAdapter'a da bir callback veriyor. Bu biraz karmaşık.
-        // İdeal olan, CartActivity'nin Cart'ı dinlemesi ve CartAdapter'a sadece listeyi vermesidir.
-        // Adapter listeyi güncellediğinde `notifyDataSetChanged` yapar.
+    // ViewHolder sınıfı
+    static class CartViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageCartItem;
+        TextView textCartItemName, textCartItemPrice, textQuantity;
+        ImageButton buttonIncrease, buttonDecrease, buttonRemoveItem;
+
+        public CartViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageCartItem = itemView.findViewById(R.id.imageCartItem);
+            textCartItemName = itemView.findViewById(R.id.textCartItemName);
+            textCartItemPrice = itemView.findViewById(R.id.textCartItemPrice);
+            textQuantity = itemView.findViewById(R.id.textQuantity);
+            buttonIncrease = itemView.findViewById(R.id.buttonIncrease);
+            buttonDecrease = itemView.findViewById(R.id.buttonDecrease);
+            buttonRemoveItem = itemView.findViewById(R.id.buttonRemoveItem);
+        }
     }
 }

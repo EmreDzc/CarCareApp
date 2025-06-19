@@ -20,7 +20,7 @@ public class FilterActivity extends AppCompatActivity {
     private static final String TAG = "FilterActivity";
 
     // UI Elements
-    private EditText searchFilter, minPrice, maxPrice;
+    private EditText  minPrice, maxPrice;
     private Spinner sortBySpinner;
     private Button applyButton, clearAllButton, hideFiltersButton;
 
@@ -42,7 +42,6 @@ public class FilterActivity extends AppCompatActivity {
 
     private void initViews() {
         // Text ve numeric inputs
-        searchFilter = findViewById(R.id.search_filter);
         minPrice = findViewById(R.id.min_price);
         maxPrice = findViewById(R.id.max_price);
         sortBySpinner = findViewById(R.id.sort_by_spinner);
@@ -83,8 +82,6 @@ public class FilterActivity extends AppCompatActivity {
     private void loadExistingFilters() {
         SharedPreferences prefs = getSharedPreferences("FilterPrefs", MODE_PRIVATE);
 
-        // Arama metni
-        searchFilter.setText(prefs.getString("searchText", ""));
 
         // Fiyat aralığı
         float minPriceValue = prefs.getFloat("minPrice", 0f);
@@ -177,21 +174,18 @@ public class FilterActivity extends AppCompatActivity {
         }
 
         // Diğer değerleri al
-        String searchText = searchFilter.getText().toString().trim();
         String sortBy = sortBySpinner.getSelectedItem().toString();
         String categoriesStr = String.join(",", selectedCategories);
 
         // SharedPreferences'a kaydet
         SharedPreferences.Editor editor = getSharedPreferences("FilterPrefs", MODE_PRIVATE).edit();
-        editor.putString("searchText", searchText);
         editor.putFloat("minPrice", (float) minPriceValue);
         editor.putFloat("maxPrice", (float) maxPriceValue);
         editor.putString("sortBy", sortBy);
         editor.putString("categories", categoriesStr);
 
         // Filtre var mı kontrolü
-        boolean hasFilters = !searchText.isEmpty() ||
-                minPriceValue > 0 ||
+        boolean hasFilters = minPriceValue > 0 ||
                 maxPriceValue < Double.MAX_VALUE ||
                 !selectedCategories.isEmpty() ||
                 !"Relevance".equals(sortBy);
@@ -251,7 +245,6 @@ public class FilterActivity extends AppCompatActivity {
 
     private void clearAllFilters() {
         // Tüm alanları temizle
-        searchFilter.setText("");
         minPrice.setText("");
         maxPrice.setText("");
         sortBySpinner.setSelection(0); // Relevance

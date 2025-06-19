@@ -2,63 +2,110 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="8dp">
 
+        <!-- Ürün Resmi -->
         <ImageView
             android:id="@+id/imageCartItem"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder_image"
-            android:background="#F5F5F5"/>
+            android:background="#F5F5F5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <LinearLayout
+        <!-- Ürün Adı -->
+        <TextView
+            android:id="@+id/textCartItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
             android:layout_marginStart="16dp"
-            android:layout_gravity="center_vertical">
+            android:layout_marginEnd="8dp"
+            tools:text="Ürün Adı Buraya Gelecek Çok Uzun Bir İsim Olabilir"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/imageCartItem"
+            app:layout_constraintTop_toTopOf="@id/imageCartItem"
+            app:layout_constraintEnd_toStartOf="@id/buttonRemoveItem"/>
 
-            <TextView
-                android:id="@+id/textCartItemName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Product Name"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:maxLines="2"
-                android:ellipsize="end"/>
+        <!-- Ürün Fiyatı -->
+        <TextView
+            android:id="@+id/textCartItemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="94.90 TL"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintStart_toStartOf="@id/textCartItemName"
+            app:layout_constraintTop_toBottomOf="@id/textCartItemName"
+            android:layout_marginTop="4dp"/>
 
-            <TextView
-                android:id="@+id/textCartItemPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="$199.99"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
+        <!-- Ürünü Kaldır Butonu -->
+        <ImageButton
+            android:id="@+id/buttonRemoveItem"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@android:color/darker_gray"
+            android:contentDescription="Ürünü Kaldır"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
-            android:id="@+id/buttonRemove"
+        <!-- Miktar Kontrol Paneli -->
+        <LinearLayout
+            android:id="@+id/quantity_control_panel"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:text="Remove"
-            android:textSize="12sp"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="?attr/colorPrimary"
-            android:layout_gravity="center_vertical"/>
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:background="@drawable/quantity_background"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/buttonDecrease"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_remove"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/textQuantity"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="1"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <ImageButton
+                android:id="@+id/buttonIncrease"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_add"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorPrimary"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
