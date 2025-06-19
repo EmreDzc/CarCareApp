@@ -83,7 +83,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
         // Toplam fiyatı güncelle
         double totalPrice = Cart.getInstance().getTotalPrice();
-        textTotalPrice.setText("Toplam: " + currencyFormat.format(totalPrice));
+        textTotalPrice.setText("Total: " + currencyFormat.format(totalPrice));
 
         // Boş sepet görünümünü kontrol et
         if (Cart.getInstance().getItems().isEmpty()) {

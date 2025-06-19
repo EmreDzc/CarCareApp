@@ -60,7 +60,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         }
 
         // Toplam fiyat
-        holder.textTotalPrice.setText("Toplam: " + currencyFormat.format(order.getTotalAmount()));
+        holder.textTotalPrice.setText("Total: " + currencyFormat.format(order.getTotalAmount()));
 
         // Durum
         holder.textOrderStatus.setText(order.getStatus() != null ? order.getStatus() : "Durum Bilinmiyor");
