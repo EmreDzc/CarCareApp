@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import com.example.carcare.AIAssistantActivity; // Yeni eklediğiniz activity'nin importu
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -91,6 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupCardClickListeners() {
+
+
         // Hesap Ayarları
         MaterialCardView cardAccountSettings = findViewById(R.id.card_account_settings);
         cardAccountSettings.setOnClickListener(v -> {
@@ -170,6 +173,20 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             } else {
                 Toast.makeText(ProfileActivity.this, "Kayıtlı kartları görmek için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // YENİ EKLENECEK KISIM:
+        MaterialCardView cardAiAssistant = findViewById(R.id.card_ai_assistant);
+        cardAiAssistant.setOnClickListener(v -> {
+            Log.d(TAG, "AI Araba Asistanı kartına tıklandı");
+            try {
+                Intent intent = new Intent(ProfileActivity.this, AIAssistantActivity.class);
+                startActivity(intent);
+                Log.d(TAG, "AIAssistantActivity başlatıldı");
+            } catch (Exception e) {
+                Log.e(TAG, "AIAssistantActivity başlatılamadı", e);
+                Toast.makeText(this, "Asistan sayfası açılamadı: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

@@ -213,4 +213,30 @@
         <item>9</item>
     </string-array>
 
+    <string name="dialog_vehicle_selection_title">Select Vehicle Brand</string>
+    <string name="dialog_vehicle_selection_message">For a more reliable connection please select your vehicles model</string>
+    <string name="dialog_connect_button">Connect</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="brand_spinner_prompt">Select Brand</string>
+
+    <string-array name="car_brands_array">
+        <item>Other / Automatic</item>
+        <item>Volkswagen</item>
+        <item>Skoda</item>
+        <item>Audi</item>
+        <item>Seat</item>
+        <item>BMW</item>
+        <item>Mercedes-Benz</item>
+        <item>Ford</item>
+        <item>Opel</item>
+        <item>Toyota</item>
+        <item>Honda</item>
+        <item>Hyundai</item>
+        <item>Kia</item>
+        <item>Renault</item>
+        <item>Peugeot</item>
+        <item>Citroen</item>
+        <item>Fiat</item>
+    </string-array>
+
 </resources>

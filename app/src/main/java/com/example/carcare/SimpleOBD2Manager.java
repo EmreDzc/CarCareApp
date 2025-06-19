@@ -61,7 +61,6 @@ public class SimpleOBD2Manager {
     private final Handler mainHandler;
     private final VehicleData vehicleData;
     private DataUpdateListener dataUpdateListener;
-    private int protocolCode = 0;
 
     private volatile boolean isReading = false;
     private int consecutiveFailures = 0;
@@ -270,10 +269,6 @@ public class SimpleOBD2Manager {
         this.dataUpdateListener = listener;
     }
 
-    public void setProtocol(int protocol) {
-        this.protocolCode = protocol;
-    }
-
     private boolean initializeELM327() {
         Log.i(TAG, "ELM327 başlatılıyor...");
         try {
@@ -287,9 +282,8 @@ public class SimpleOBD2Manager {
 
             clearInputStream(in);
 
-            String protocolCmd = "ATSP" + protocolCode;
             String[] initCommands = {
-                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", protocolCmd
+                    "ATZ", "ATE0", "ATL0", "ATH0", "ATS0", "ATSP0"
             };
 
             for (String cmd : initCommands) {
@@ -298,11 +292,11 @@ public class SimpleOBD2Manager {
                 if (response == null ||
                         (!response.toUpperCase().contains("OK") &&
                                 !(cmd.equalsIgnoreCase("ATZ") && (response.toUpperCase().contains("ELM") || response.contains("?"))) &&
-                                !(cmd.equalsIgnoreCase(protocolCmd) && response.toUpperCase().contains("OK"))
+                                !(cmd.equalsIgnoreCase("ATSP0") && response.toUpperCase().contains("OK"))
                         )
                 ) {
                     Log.e(TAG, "Başlatma komutu başarısız veya beklenmedik yanıt: " + cmd + " -> [" + response + "]");
-                    if (cmd.equalsIgnoreCase(protocolCmd) && (response == null || !response.toUpperCase().contains("OK"))) {
+                    if (cmd.equalsIgnoreCase("ATSP0") && (response == null || !response.toUpperCase().contains("OK"))) {
                         return false;
                     }
                 }
