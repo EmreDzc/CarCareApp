@@ -74,7 +74,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements OrderHist
     private void loadUserOrders() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Lütfen giriş yapın", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -107,7 +107,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements OrderHist
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading orders", e);
-                    Toast.makeText(this, "Siparişler yüklenirken hata: " + e.getMessage(),
+                    Toast.makeText(this, "Error while loading orders: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                     showLoading(false);
                 });
@@ -117,7 +117,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements OrderHist
         if (orderList.isEmpty()) {
             recyclerViewOrders.setVisibility(View.GONE);
             emptyOrdersText.setVisibility(View.VISIBLE);
-            emptyOrdersText.setText("Henüz hiç siparişiniz yok.");
+            emptyOrdersText.setText("You don't have any orders yet.");
         } else {
             recyclerViewOrders.setVisibility(View.VISIBLE);
             emptyOrdersText.setVisibility(View.GONE);

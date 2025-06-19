@@ -57,15 +57,15 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     // Toolbar Elemanları
     private LinearLayout layoutSearchBarDetail;
-    private ImageButton btnToolbarCart; // ID XML'dekiyle eşleşmeli: btn_cart_toolbar
+    private ImageButton btnToolbarCart;
     private TextView cartBadgeToolbar;
-    private ImageButton btnToolbarShare; // ID XML'dekiyle eşleşmeli: btn_share_detail
-    private ImageButton btnToolbarBack; // ID XML'dekiyle eşleşmeli: btn_back
+    private ImageButton btnToolbarShare;
+    private ImageButton btnToolbarBack;
 
     // Sayfa İçeriği Elemanları
     private ImageView productImage;
     private TextView productName, productBrand, productModelCode, productSeller, productStockStatus;
-    private TextView productPriceContent; // Sayfa içindeki ana fiyat gösterimi
+    private TextView productPriceContent;
     private RatingBar productRatingMain;
     private TextView productReviewCountMain;
     private TextView productDescription;
@@ -81,7 +81,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Button addToCartButton, buyNowButton;
 
     // Diğer Elemanlar
-    private ImageButton favoriteButton; // Sayfa içi favori
+    private ImageButton favoriteButton;
     private ProgressBar progressBar;
     private Toolbar toolbar;
 
@@ -108,7 +108,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         productId = getIntent().getStringExtra("PRODUCT_ID");
         if (TextUtils.isEmpty(productId)) {
-            Toast.makeText(this, "Ürün ID bulunamadı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Product ID not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -119,31 +119,26 @@ public class ProductDetailActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // SearchActivity için ActivityResultLauncher'ı initialize et
         searchActivityLauncherDetail = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         String searchQuery = result.getData().getStringExtra("SEARCH_QUERY");
                         if (searchQuery != null && !searchQuery.isEmpty()) {
-                            // ProductDetail'den arama yapıldığında direkt StoreActivity'ye git
-                            // ve arama sorgusunu StoreActivity'ye ilet.
+
                             Intent storeIntent = new Intent(ProductDetailActivity.this, StoreActivity.class);
                             storeIntent.putExtra("SEARCH_QUERY", searchQuery);
-                            // StoreActivity zaten açıksa yenisini başlatmak yerine onu öne getir ve üzerindekileri temizle
                             storeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             startActivity(storeIntent);
-                            // ProductDetailActivity'yi kapatmak isteğe bağlı, kullanıcı geri gelmek isteyebilir
-                            // finish();
                         }
                     }
                 }
         );
 
         initViews();
-        setupToolbarActions(); // layoutSearchBarDetail listener'ı burada ayarlanıyor
+        setupToolbarActions();
         setupListeners();
-        loadProductDetails(); // Bu metod içinde loadReviews çağrılacak ve showLoading yönetilecek
+        loadProductDetails();
 
         if (focusReview && fromOrder) {
             findViewById(android.R.id.content).post(this::scrollToReviewSection);
@@ -162,9 +157,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(true); // Başlığı göstereceğiz
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Kendi geri butonumuzu kullanıyoruz
-            getSupportActionBar().setTitle(""); // Başlangıçta boş, updateUI'da set edilecek
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle("");
         }
 
         // Toolbar elemanları
@@ -249,13 +244,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (currentProduct != null && currentProduct.getName() != null) {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
-                    String productLink = "https://www.example.com/product/" + currentProduct.getId(); // Gerçek link yapınızla değiştirin
-                    String shareBody = "Şu ürüne göz at: " + currentProduct.getName() + "\n" + productLink;
+                    String productLink = "https://www.example.com/product/" + currentProduct.getId();
+                    String shareBody = "Check out this product: " + currentProduct.getName() + "\n" + productLink;
                     shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentProduct.getName());
                     shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                    startActivity(Intent.createChooser(shareIntent, "Şununla paylaş:"));
+                    startActivity(Intent.createChooser(shareIntent, "Share via:"));
                 } else {
-                    Toast.makeText(this, "Paylaşılacak ürün bilgisi yüklenemedi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to load product information to share.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -273,13 +268,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (currentProduct != null) {
                     if (currentProduct.getStock() > 0) {
                         Cart.getInstance().addItem(currentProduct, this);
-                        Toast.makeText(this, currentProduct.getName() + " sepete eklendi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, currentProduct.getName() + "added to cart", Toast.LENGTH_SHORT).show();
                         updateCartBadgeToolbar();
                     } else {
-                        Toast.makeText(this, "Ürün stokta yok", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Product is out of stock", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "Ürün bilgisi yüklenemedi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Product information could not be loaded.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -289,7 +284,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (currentProduct != null) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user == null) {
-                        Toast.makeText(this, "Satın almak için lütfen giriş yapın", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Please log in to purchase", Toast.LENGTH_LONG).show();
                         return;
                     }
                     if (currentProduct.getStock() > 0) {
@@ -299,10 +294,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                         Intent intent = new Intent(ProductDetailActivity.this, CheckoutActivity.class);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(this, "Ürün stokta yok", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Product is out of stock", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "Ürün bilgisi yüklenemedi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to load product information.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -327,18 +322,18 @@ public class ProductDetailActivity extends AppCompatActivity {
                             checkFavoriteStatus(currentProduct);
                             loadReviews();
                         } else {
-                            showError("Ürün bilgileri dönüştürülemedi.");
+                            showError("Product information could not be converted.");
                             showLoading(false);
                         }
                     } else {
-                        showError("Ürün bulunamadı.");
+                        showError("No product found.");
                         showLoading(false);
                     }
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
-                    Log.e(TAG, "Ürün yükleme hatası", e);
-                    showError("Hata: " + e.getMessage());
+                    Log.e(TAG, "Product installation error", e);
+                    showError("Error: " + e.getMessage());
                 });
     }
 
@@ -346,15 +341,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (product == null) { Log.e(TAG, "updateUI called with null product."); return; }
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(product.getName() != null ? product.getName() : "Ürün Detayı");
+            getSupportActionBar().setTitle(product.getName() != null ? product.getName() : "Product Details");
         }
 
         updateTextViewVisibility(productBrand, product.getBrand(), "");
         if (productName != null) productName.setText(product.getName() != null ? product.getName() : "N/A");
-        updateTextViewVisibility(productModelCode, product.getModelCode(), ""); // "Model: " prefixi XML'de varsa kalabilir.
+        updateTextViewVisibility(productModelCode, product.getModelCode(), "");
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("tr", "TR"));
-        String formattedPrice = currencyFormat.format(product.getPrice()); // Sadece ana fiyatı alıyoruz
+        String formattedPrice = currencyFormat.format(product.getPrice());
 
         if (productPriceContent != null) {
             productPriceContent.setText(formattedPrice);
@@ -364,12 +359,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         if (bottomBarFreeShippingText != null) {
-            // Kargo bedava koşulunu buraya ekleyin (örn: product.isFreeShipping() veya product.getPrice() > X)
-            boolean isFreeShippingActually = product.getPrice() > 0; // Örnek koşul, fiyat varsa kargo bedava
-            isFreeShippingActually = false; // Ya da her zaman gizli tutmak için
+            boolean isFreeShippingActually = product.getPrice() > 0;
+            isFreeShippingActually = false;
             bottomBarFreeShippingText.setVisibility(isFreeShippingActually ? View.VISIBLE : View.GONE);
             if(isFreeShippingActually){
-                bottomBarFreeShippingText.setText("Kargo Bedava");
+                bottomBarFreeShippingText.setText("Free Shipping");
             }
         }
 
@@ -386,7 +380,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             if (buyNowButton != null) buyNowButton.setEnabled(true);
         } else {
             if (productStockStatus != null) {
-                productStockStatus.setText("Tükendi");
+                productStockStatus.setText("Sold Out");
                 productStockStatus.setTextColor(ContextCompat.getColor(this, R.color.red_dark));
             }
             if (addToCartButton != null) addToCartButton.setEnabled(false);
@@ -468,7 +462,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     this.reviewList.addAll(loadedReviews);
 
                     if (reviewAdapter != null) {
-                        reviewAdapter.updateReviews(this.reviewList); // this.reviewList'i kullanmak daha doğru
+                        reviewAdapter.updateReviews(this.reviewList);
                     }
                     updateReviewsUIVisibility();
                     showLoading(false);
@@ -484,15 +478,15 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void submitReview() {
         FirebaseUser firebaseUser = auth.getCurrentUser();
         if (firebaseUser == null) {
-            Toast.makeText(this, "Değerlendirme yapmak için giriş yapmalısınız.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must be logged in to leave a review..", Toast.LENGTH_SHORT).show();
             return;
         }
         if (ratingBarSubmit == null || editTextReviewComment == null) {
-            Toast.makeText(this, "Bir hata oluştu.", Toast.LENGTH_SHORT).show(); return;
+            Toast.makeText(this, "An error occurred.", Toast.LENGTH_SHORT).show(); return;
         }
         float ratingValue = ratingBarSubmit.getRating();
         if (ratingValue == 0) {
-            Toast.makeText(this, "Lütfen ürüne puan verin.", Toast.LENGTH_SHORT).show(); return;
+            Toast.makeText(this, "Please rate the product.", Toast.LENGTH_SHORT).show(); return;
         }
         String comment = editTextReviewComment.getText() != null ? editTextReviewComment.getText().toString().trim() : "";
         showLoading(true);
@@ -500,7 +494,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         String userName = firebaseUser.getDisplayName();
         if (TextUtils.isEmpty(userName)) {
             String email = firebaseUser.getEmail();
-            userName = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Anonim Kullanıcı";
+            userName = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : "Anonymous User";
         }
         Map<String, Object> reviewData = new HashMap<>();
         reviewData.put("userId", userId);
@@ -512,11 +506,11 @@ public class ProductDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentReference -> {
                     if (ratingBarSubmit!=null) ratingBarSubmit.setRating(0);
                     if (editTextReviewComment.getText() != null) editTextReviewComment.getText().clear();
-                    Toast.makeText(this, "Değerlendirmeniz gönderildi!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Your review has been submitted!", Toast.LENGTH_SHORT).show();
                     updateProductRatingStats();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Değerlendirme gönderilemedi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Could not submit a review: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     showLoading(false);
                 });
     }
@@ -574,7 +568,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void updateReviewsHeader() {
         if (currentProduct != null && textReviewsTitle != null) {
             String headerText = (currentProduct.getTotalReviews() > 0) ?
-                    String.format(Locale.getDefault(), "Ürün Değerlendirmeleri ⭐ %.1f • %d Değerlendirme", currentProduct.getAverageRating(), currentProduct.getTotalReviews()) :
+                    String.format(Locale.getDefault(), "Product Reviews ⭐ %.1f • %d Review", currentProduct.getAverageRating(), currentProduct.getTotalReviews()) :
                     "Product Reviews";
             textReviewsTitle.setText(headerText);
         }
@@ -644,7 +638,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void toggleFavorite(Product product) {
         if (product == null || TextUtils.isEmpty(product.getId())) return;
         FirebaseUser user = auth.getCurrentUser();
-        if (user == null) { Toast.makeText(this, "Lütfen giriş yapın.", Toast.LENGTH_SHORT).show(); return; }
+        if (user == null) { Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show(); return; }
         String userId = user.getUid(), prodId = product.getId();
         db.collection("users").document(userId).collection("favorites").document(prodId).get()
                 .addOnSuccessListener(docSnap -> {
