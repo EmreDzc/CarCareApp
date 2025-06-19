@@ -90,7 +90,7 @@
         android:id="@+id/filter_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show Filters"
+        android:text="SHOW FILTERS"
         android:drawableStart="@drawable/ic_filter"
         android:drawablePadding="8dp"
         android:layout_marginStart="16dp"

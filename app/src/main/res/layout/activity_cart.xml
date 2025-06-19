@@ -110,7 +110,7 @@
             android:id="@+id/buttonConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Confirm Order"
+            android:text="CONFIRM ORDER"
             android:textColor="#FFFFFF"
             android:backgroundTint="?attr/colorPrimary"/>
     </LinearLayout>

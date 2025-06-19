@@ -18,7 +18,7 @@
         android:id="@+id/btn_add_new_delivery_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ Add Delivery Address"
+        android:text="+ ADD DELIVERY ADDRESS"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
@@ -54,7 +54,7 @@
             android:id="@+id/btn_add_first_delivery_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add First Delivery Address" />
+            android:text="ADD FIRST DELIVERY ADDRESS" />
     </LinearLayout>
 
 </RelativeLayout>

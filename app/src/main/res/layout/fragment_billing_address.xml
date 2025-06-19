@@ -19,7 +19,7 @@
         android:id="@+id/btn_add_new_billing_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ Add Billing Address"
+        android:text="+ ADD BILLING ADDRESS"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
@@ -55,7 +55,7 @@
             android:id="@+id/btn_add_first_billing_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add First Billing Address" />
+            android:text="ADD FIRST BILLING ADDRESS" />
     </LinearLayout>
 
 </RelativeLayout>
