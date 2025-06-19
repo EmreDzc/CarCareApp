@@ -294,7 +294,7 @@ android:paddingBottom="88dp"> <!-- BottomAppBar için padding (yüksekliğine g�
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginBottom="24dp"
-        android:text="Submit Review"
+        android:text="SUBMIT REVIEW"
         android:textColor="@color/white"
         app:backgroundTint="@color/blue_primary" />
 
