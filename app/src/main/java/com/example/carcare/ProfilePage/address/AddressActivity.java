@@ -35,10 +35,10 @@ public class AddressActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
-                    tab.setText("Teslimat Adreslerim");
+                    tab.setText("My Delivery Addresses");
                     break;
                 case 1:
-                    tab.setText("Fatura Adreslerim");
+                    tab.setText("My Billing Addresses");
                     break;
             }
         }).attach();
